@@ -5,6 +5,8 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { HashLink } from 'react-router-hash-link';
 import Buttons from '../ItemsGroup/Button/Buttons';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 const items: MenuProps['items'] = [
     {
@@ -26,6 +28,8 @@ const items: MenuProps['items'] = [
 ];
 
 const Header = () => {
+    const { authenticated } = useContext(AuthContext);
+    const { authenProvider } = useContext(AuthContext);
     return (
         <>
             <nav className="border-gray-200 bg-[#8A8178] fixed w-full z-20">
@@ -41,33 +45,38 @@ const Header = () => {
                             <li>
                                 <HashLink to="/#services" className='hover:text-[#FCB245]'>บริการ</HashLink>
                             </li>
-                            <li>
-                                <Link to="/provider/signup-provider" className='hover:text-[#FCB245]'>สมัครเป็นผู้ให้บริการ</Link>
-                            </li>
+                            <Link to={authenProvider ? '/provider' : '/provider/signup-provider'} className='hover:text-[#FCB245]'>
+                                {authenProvider ? 'ไปยังหน้าผู้ให้บริการ' : 'สมัครเป็นผู้ให้บริการ'}
+                            </Link>
                             <li>
                                 <HashLink to="/#aboutus" className='hover:text-[#FCB245]'>เกี่ยวกับเรา</HashLink>
                             </li>
                         </ul>
                     </div>
                     <div className="flex min-[900px]:order-2 space-x-3 min-[900px]:space-x-0 rtl:space-x-reverse">
-                        <Link to='/login'>
-                            <Buttons 
-                                label='เข้าสู่ระบบ' 
-                                className='rounded-xl px-4 py-3' 
-                                buttonType='primary' 
-                                onClick={()=>{}} 
-                            />
-                        </Link>
-                        <MyDropdown />
-                        <button className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg min-[900px]:hidden hover:bg-[#a89e94]">
-                            <Dropdown menu={{ items }} arrow={{ pointAtCenter: true }}>
-                                <a onClick={(e) => e.preventDefault()}>
-                                    <Space>
-                                        <DownOutlined />
-                                    </Space>
-                                </a>
-                            </Dropdown>
-                        </button>
+                        {authenticated ? (
+                            <>
+                                <MyDropdown />
+                                <button className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg min-[900px]:hidden hover:bg-[#a89e94]">
+                                    <Dropdown menu={{ items }} arrow={{ pointAtCenter: true }}>
+                                        <a onClick={(e) => e.preventDefault()}>
+                                            <Space>
+                                                <DownOutlined />
+                                            </Space>
+                                        </a>
+                                    </Dropdown>
+                                </button>
+                            </>
+                        ) : (
+                            <Link to='/login'>
+                                <Buttons
+                                    label='เข้าสู่ระบบ'
+                                    className='rounded-xl px-4 py-3'
+                                    buttonType='primary'
+                                    onClick={() => { }}
+                                />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </nav>

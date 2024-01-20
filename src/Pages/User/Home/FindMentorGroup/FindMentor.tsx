@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -18,8 +18,10 @@ const FindMentor = () => {
     const [petData, setPetData] = useState<FindMentorProps[]>([]);
     const [districtData, setDistrictData] = useState<FindMentorProps[]>([]);
     const [serviceData, setServiceData] = useState<FindMentorProps[]>([]);
-    const [priceData, setPriceData] = useState<FindMentorProps[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [petId, setPetId] = useState<number>(0);
+    const [districtId, setDistrictId] = useState<number>(0);
+    const [serviceId, setServiceId] = useState<number>(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,21 +32,33 @@ const FindMentor = () => {
                 setDistrictData(responseDistrict.data);
                 const responseService = await axios.get('http://localhost:3000/service');
                 setServiceData(responseService.data);
-                const responsePrice = await axios.get('http://localhost:3000/price');
-                setPriceData(responsePrice.data);
-                setError(null);
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     console.log('error message: ', error.message);
-                    setError(error.message);
                 } else {
                     console.log('unexpected error: ', error);
-                    setError('An unexpected error occurred');
                 }
             }
         };
         fetchData();
     }, []);
+    const handleSearch = async () => {
+        if (petId && districtId && serviceId) {
+            try {
+                const searchParams = new URLSearchParams({
+                    petId: petId.toString(),
+                    districtId: districtId.toString(),
+                    serviceId: serviceId.toString()
+                });
+    
+                navigate(`/search-service?${searchParams.toString()}`);
+            } catch (error) {
+                console.error("Error in handleSearch:", error);
+            }
+        } else {
+            console.log("Please select values for all options");
+        }
+    };
 
     return (
         <>
@@ -57,7 +71,10 @@ const FindMentor = () => {
                         <p className='text-white pb-[33px] '>ให้เราช่วยคุณหาผู้ช่วยใกล้ๆคุณสิ</p>
                         <div className="max-w-[335px]">
                             <form method="post" className='flex flex-col '>
-                                <select className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer '>
+                                <select
+                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
+                                    onChange={(e) => setPetId(Number(e.target.value))}
+                                >
                                     <option value="pet" className='' hidden>สัตว์เลี้ยง</option>
                                     {petData?.map((pet) => (
                                         <option key={pet.pet_id} value={pet.pet_id}>
@@ -65,7 +82,10 @@ const FindMentor = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <select className='mb-5 pl-6  h-[43px] rounded-full cursor-pointer'>
+                                <select
+                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
+                                    onChange={(e) => setDistrictId(Number(e.target.value))}
+                                >
                                     <option value="district" className='' hidden>อำเภอ</option>
                                     {districtData?.map((district) => (
                                         <option key={district.district_id} value={district.district_id}>
@@ -73,7 +93,10 @@ const FindMentor = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <select className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'>
+                                <select
+                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
+                                    onChange={(e) => setServiceId(Number(e.target.value))}
+                                >
                                     <option value="service" className='' hidden>บริการ</option>
                                     {serviceData?.map((service) => (
                                         <option key={service.service_id} value={service.service_id}>
@@ -81,22 +104,12 @@ const FindMentor = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <select className='mb-8 pl-6  h-[43px] rounded-full cursor-pointer'>
-                                    <option value="price" className='' hidden>ราคา</option>
-                                    {priceData?.map((price) => (
-                                        <option key={price.price_id} value={price.price_id}>
-                                            {price.price_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <Link to='/search-service'>
-                                    <Buttons
-                                        label="ค้นหา"
-                                        buttonType="primary"
-                                        className="w-20 p-2 rounded-full mb-10"
-                                        onClick={() => { }}
-                                    />
-                                </Link>
+                                <Buttons
+                                    label="ค้นหา"
+                                    buttonType="primary"
+                                    className="w-20 p-2 rounded-full mb-14"
+                                    onClick={handleSearch}
+                                />
                             </form>
                         </div>
                     </div>

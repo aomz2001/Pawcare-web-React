@@ -126,7 +126,7 @@ const Signup = () => {
                   id="address"
                   label="ที่อยู่"
                   name="address"
-                  placeholder="ที่อยู่"
+                  placeholder="ที่อยู่ (**โปรดกรอกที่อยู่อย่างละเอียด**)"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />

@@ -1,36 +1,51 @@
 import type { MenuProps } from 'antd';
 import { Dropdown, Space, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-
-const items: MenuProps['items'] = [
-    {
-        key: 'myaccount',
-        label: (
-            <a href="/my-account" className='px-10'>
-                ตั้งค่าบัญชี
-            </a>
-        ),
-    },
-    {
-        key: 'notifications',
-        label: (
-            <a href="/notifications" className='px-10'>
-                การแจ้งเตือน
-            </a>
-        ),
-    },
-    {
-        key: 'signout',
-        label: (
-            <a href="/" className='px-10'>
-                ออกจากระบบ
-            </a>
-        ),
-    },
-];
+import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import Cookies from 'universal-cookie';
 
 
 export const MyDropdown = () => {
+    const { setAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+        const cookies = new Cookies();
+        cookies.remove('token');
+        setAuthenticated(false);
+        navigate('/');
+        
+    };
+
+    const items: MenuProps['items'] = [
+        {
+            key: 'myaccount',
+            label: (
+                <Link to="/my-account" className='px-10'>
+                    ตั้งค่าบัญชี
+                </Link>
+            ),
+        },
+        {
+            key: 'notifications',
+            label: (
+                <Link to="/notifications" className='px-10'>
+                    การแจ้งเตือน
+                </Link>
+            ),
+        },
+        {
+            key: 'signout',
+            label: (
+                <div className='px-10' onClick={handleSignOut}>
+                    ออกจากระบบ
+                </div>
+            ),
+        },
+    ];
+    
     return (
         <>
             <Space direction="vertical">
