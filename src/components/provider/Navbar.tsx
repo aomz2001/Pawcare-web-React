@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom"
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom"
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
+  const { setAuthenProvider } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+      localStorage.clear();
+      setAuthenProvider(false);
+      navigate('/');
+    };
   return (
     <>
       <nav id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 mt-[80px]">
@@ -32,12 +42,12 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/provider" className="flex items-center p-2 text-white rounded-lg  dark:hover:bg-[#b0a499]">
+              <div onClick={handleSignOut} className="flex items-center p-2 text-white rounded-lg  dark:hover:bg-[#b0a499]">
                 <svg className="w-5 h-5 text-[#584E4E] " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
                   <path stroke="currentColor" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">ออกจากระบบ</span>
-              </Link>
+              </div>
             </li>
           </ul>
         </div>

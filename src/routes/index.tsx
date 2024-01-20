@@ -22,6 +22,8 @@ import { WorkforPet } from "../Pages/Provider/Work/WorkforPet";
 import { Contact } from "../Pages/Provider/ContactAdmin/Contact";
 import { AdminWork } from "../Pages/admin/AdminWork/AdminWork";
 import { ContactPawcare } from "../Pages/User/Page/ContactPawcare";
+import PrivateRoute from "./PrivateRoute";
+import PrivateProviderRoute from "./PrivateProviderRoute";
 
 const router = createBrowserRouter([
   //===============================================path user
@@ -39,27 +41,27 @@ const router = createBrowserRouter([
       },
       {
         path: '/my-account',
-        element: <MyAccount />,
+        element: <PrivateRoute ><MyAccount /></PrivateRoute>,
       },
       {
         path: '/search-service',
-        element: <Search />,
+        element: <PrivateRoute ><Search /></PrivateRoute>,
       },
       {
-        path: '/provider-profile',
-        element: <ProviderProfile />,
+        path: '/provider-profile/:provider_id',
+        element: <PrivateRoute ><ProviderProfile /></PrivateRoute>,
       },
       {
         path: '/notifications',
-        element: <Notifications />,
+        element: <PrivateRoute ><Notifications /></PrivateRoute>,
       },
       {
         path: '/payment',
-        element: <Payment />,
+        element: <PrivateRoute ><Payment /></PrivateRoute>,
       },
       {
         path: '/review-provider',
-        element: <Review />,
+        element: <PrivateRoute ><Review /></PrivateRoute>,
       },
       {
         path: '/contact-pawcare',
@@ -78,23 +80,23 @@ const router = createBrowserRouter([
   //===============================================path provider
   {
     path: '/provider',
-    element: <HomePageProvider />,
+    element: <PrivateProviderRoute><HomePageProvider /></PrivateProviderRoute>,
     children: [
       {
         index: true,
-        element: <HomeProvider />
+        element: <PrivateProviderRoute><HomeProvider /></PrivateProviderRoute>
       },
       {
         path: '/provider/account-provider',
-        element: <ProviderAccount />
+        element: <PrivateProviderRoute><ProviderAccount /></PrivateProviderRoute>
       },
       {
         path: '/provider/your-work',
-        element: <WorkforPet />
+        element: <PrivateProviderRoute><WorkforPet /></PrivateProviderRoute>
       },
       {
         path: '/provider/request-to-admin',
-        element: <Contact />
+        element: <PrivateProviderRoute><Contact /></PrivateProviderRoute>
       },
     ],
   },
@@ -109,19 +111,19 @@ const router = createBrowserRouter([
   //===============================================path admin
   {
     path: '/for-admin-only',
-    element: <AdminPage />,
+    element: <PrivateProviderRoute><AdminPage /></PrivateProviderRoute>,
     children: [
       {
         index: true,
-        element: <HomeAdmin />
+        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>
       },
       {
         path: 'system-information',
-        element: <SysInfo />,
+        element: <PrivateProviderRoute><SysInfo /></PrivateProviderRoute>,
       },
       {
         path: 'work-admin',
-        element: <AdminWork />,
+        element: <PrivateProviderRoute><AdminWork /></PrivateProviderRoute>,
       },
     ]
   },

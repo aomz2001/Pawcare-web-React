@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import InputForm from "../../../components/ItemsGroup/InputForm"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { AuthContext } from "../../../context/AuthContext";
 
 interface SignInProps {
     status: string;
@@ -16,6 +17,8 @@ const Signin = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const cookies = new Cookies();
+    const { setAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const LoginUsers = async () => {
         try {
@@ -29,14 +32,12 @@ const Signin = () => {
                 }
             );
 
-            console.log(JSON.stringify(data, null, 4));
-            console.log(status);
-
             if (data.status === "ok" && data.token) {
                 alert("Sign in Success");
 
                 cookies.set('token', data.token);
-                window.location.href = '/';
+                setAuthenticated(true)
+                navigate('/')
             } else {
                 alert("Sign in Failed");
             }

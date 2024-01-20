@@ -33,7 +33,9 @@ export const Payment = () => {
                             </div>
                         </div>
                     </div>
-                    <Link to='/notifications' className="flex justify-end pt-16 underline" >กลับไปหน้าก่อนหน้านี้</Link>
+                    <div className="flex justify-end pt-16 underline">
+                    <Link to='/notifications' className="" >กลับไปหน้าก่อนหน้านี้</Link>
+                    </div>
                 </div>
             </div>
         </>

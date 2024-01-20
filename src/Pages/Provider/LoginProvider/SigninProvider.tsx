@@ -1,25 +1,27 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import InputForm from "../../../components/ItemsGroup/InputForm"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
-import { useState } from "react";
-import Cookies from "universal-cookie";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../../../context/AuthContext";
 
 interface SignInProps {
   status: string;
   token?: string;
   message?: string;
+  provider_id?: number;
 }
 
 const Signin = () => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const cookies = new Cookies();
+  const { setAuthenProvider } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const LoginProvider = async () => {
     try {
-      const { data, status } = await axios.post<SignInProps>(
+      const { data,} = await axios.post<SignInProps>(
         'http://localhost:3000/login-provider',
         { provider_email: email, provider_password: password },
         {
@@ -28,15 +30,14 @@ const Signin = () => {
           },
         }
       );
-
-      console.log(JSON.stringify(data, null, 4));
-      console.log(status);
-
+      // console.log(JSON.stringify(data, null, 4));
+      // console.log(status);
       if (data.status === "ok" && data.token) {
         alert("Sign in Success");
-
-        cookies.set('token', data.token);
-        window.location.href = '/provider';
+        localStorage.setItem('provider_id', String(data.provider_id));
+        localStorage.setItem('token', data.token);
+        setAuthenProvider(true)
+        navigate('/provider')
       } else {
         alert("Sign in Failed");
       }

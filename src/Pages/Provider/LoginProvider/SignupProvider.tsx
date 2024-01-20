@@ -112,9 +112,9 @@ export const SignupProvider = () => {
                                 />
                                 <InputForm
                                     id="address"
-                                    label="อำเภอที่ให้บริการ"
+                                    label="ที่อยู่"
                                     name="address"
-                                    placeholder="อำเภอ (เช่น อำเภอเมืองเชียงใหม่)"
+                                    placeholder="ที่อยู่ (**โปรดกรอกที่อยู่อย่างละเอียด**)"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
@@ -139,7 +139,7 @@ export const SignupProvider = () => {
                             </div>
                         </form>
                         <p className="flex w-full text-sm font-light text-gray-400">
-                            <Link to="/provider/login-provider" className="font-medium hover:text-white underline ">กลับไปหน้าเข้าสู่ระบบ</Link>
+                            <Link to="/provider/login-provider" className="font-medium hover:text-white underline ">ไปยังหน้าเข้าสู่ระบบ</Link>
                         </p>
                     </div>
                 </div>
