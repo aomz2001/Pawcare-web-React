@@ -1,31 +1,87 @@
+import { Modal } from "antd"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons"
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+interface AdminWorkProps {
+    users_id: number;
+    users_firstname: string;
+    users_lastname: string;
+    district_id: number;
+    district_name: string;
+    pet_id: number;
+    pet_name: string;
+    service_id: number;
+    service_name: string;
+    service_price: number;
+    provider_id: number;
+    provider_firstname: string;
+    provider_lastname: string;
+    payment: string;
+}
 
 export const AdminWork = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [paymentData, setPaymentData] = useState<AdminWorkProps[]>([]);
+    const [imageData, setImageData] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/api/show-payment-state");
+                setPaymentData(response.data.data);
+            } catch (error) {
+                console.error("Error fetching payment data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+    console.log('paymentData', paymentData)
+
+    const handleOk = async (clickedPaymentItem : AdminWorkProps) => {
+        const paymentFilename = clickedPaymentItem.payment;
+        const apiUrl = `http://localhost:3000${paymentFilename}`;
+        console.log('paymentFilename', paymentFilename)
+        try {
+            const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
+
+            setImageData(response.data);
+
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
     return (
         <>
             <div className="text-3xl font-semibold pb-10">งานของคุณ</div>
             <div className=" h-48 mb-4 rounded text-lg">
-                <div className="grid grid-cols-1 gap-8 border-2 p-10 xl:grid-cols-2">
-                    <div className="flex-row justify-between items-center gap-3 xl:border-r-2 border-r-0 lg:flex md:border-b-2 md:pb-5 xl:pb-0 xl:border-b-0">
+            {paymentData.length === 0 ? (
+                <div className="flex justify-center">!!! ยินดีด้วยคุณยังไม่มีงาน !!!</div>
+            ) : (
+                paymentData.map((paymentItem, index) => (
+                    <div key={index} className="flex justify-between items-center border-2 mb-5 p-10 rounded-lg">
                         <div className="">
-                            <h3>ผู้ใช้บริการ : </h3>
-                            <p>ใช้บริการ : </p>
-                            <p>สถานะการชำระเงิน : </p>
+                            <h3>ผู้ใช้บริการ : {`${paymentItem.users_firstname} ${paymentItem.users_lastname}`}</h3>
+                            <h3>ใช้บริการ : {paymentItem.service_name}</h3>
+                            <h3>ราคาที่ชำระ : {paymentItem.service_price}</h3>
                         </div>
                         <div className="flex flex-col gap-3 mr-8">
                             <Buttons
-                                label="อนุญาตให้เริ่มงาน"
+                                label="ตรวจสอบสลีปชำระเงิน"
                                 color="#3498DB"
                                 className="p-2 rounded-xl hover:bg-[#5DADE2]"
-                                onClick={() => { }}
+                                onClick={() => handleOk(paymentItem)}
                             />
                         </div>
-                    </div>
-                    <div className="flex-row lg:flex justify-between items-center gap-3 ">
                         <div className="">
-                            <h3>ผู้ให้บริการ : </h3>
-                            <p>ให้บริการ : </p>
-                            <p>สถานะงาน : </p>
+                            <h3>ผู้ให้บริการ : {`${paymentItem.provider_firstname} ${paymentItem.provider_lastname}`}</h3>
+                            <p>ให้บริการ : {paymentItem.service_name}</p>
                         </div>
                         <div className="flex flex-col gap-3">
                             <Buttons
@@ -40,15 +96,31 @@ export const AdminWork = () => {
                                 className="p-2 rounded-xl"
                                 onClick={() => { }}
                             />
-                            <Buttons
-                                label="ยกเลิกการจ้างงาน"
-                                buttonType="danger"
-                                className="p-2 rounded-xl"
-                                onClick={() => { }}
-                            />
                         </div>
                     </div>
-                </div>
+                ))
+                )}
+                <Modal
+                    title="ใบเสร็จการชำระเงิน"
+                    open={isModalOpen}
+                    footer={false}
+                    className="font-kanit">
+                    <div className="flex  justify-center items-center gap-2">
+                        {imageData && (
+                            <img
+                                src={`data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}`}
+                                alt="Payment Receipt"
+                                style={{ maxWidth: '100%' }}
+                            />
+                        )}
+                        <Buttons
+                            label="ปิด"
+                            buttonType="danger"
+                            className="mt-5 w-1/4 p-2 rounded-full"
+                            onClick={handleCancel}
+                        />
+                    </div>
+                </Modal>
             </div>
         </>
     )

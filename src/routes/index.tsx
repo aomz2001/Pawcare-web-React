@@ -48,7 +48,7 @@ const router = createBrowserRouter([
         element: <PrivateRoute ><Search /></PrivateRoute>,
       },
       {
-        path: '/provider-profile/:provider_id',
+        path: '/provider-profile',
         element: <PrivateRoute ><ProviderProfile /></PrivateRoute>,
       },
       {

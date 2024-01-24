@@ -69,7 +69,7 @@ const ServiceCard = () => {
   const handleConfirmation = async () => {
     try {
       const token = localStorage.getItem('token');
-      const provider_id = localStorage.getItem('provider_id');
+      const provider_id = localStorage.getItem('providerId');
 
       if (!token || !provider_id) {
         console.error("Token or provider_id not found");
@@ -108,7 +108,7 @@ const ServiceCard = () => {
 
   return (
     <>
-      <div className="text-xl flex flex-col gap-5 border-t-2 py-6">
+      <div className="text-xl flex flex-col gap-5 py-6">
         อำเภอที่ต้องการให้บริการ
         <Checkbox.Group
           options={districtData.map((district) =>
