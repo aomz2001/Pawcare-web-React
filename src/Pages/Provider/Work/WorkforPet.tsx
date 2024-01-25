@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { UploadFile } from "../../../components/ItemsGroup/UploadFile";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import axios from "axios";
 
@@ -16,6 +15,7 @@ interface ReqServiceDataItem {
     service_id: number;
     service_name: string;
     service_price: number;
+    status_work: string;
 }
 
 export function WorkforPet() {
@@ -64,13 +64,34 @@ export function WorkforPet() {
             });
     };
     console.log('reqServiceData', reqServiceData)
+    const updateJobCompletionStatus = async (item: ReqServiceDataItem) => {
+        try {
+            const providerId = localStorage.getItem('providerId');
+            const response = await axios.put('http://localhost:3000/api/job-complete-status', {
+                job_complete: 'เสร็จงาน',
+                providerId:providerId,
+                districtId: item.district_id,
+                petId: item.pet_id,
+                serviceId: item.service_id,
+                service_price: item.service_price,
+                usersId: item.users_id,
+            });
+    
+            // Check if the request was successful
+            if (response.status === 200) {
+                console.log(response.data);
+            }
+        } catch (error) {
+            console.error("Error updating job completion status:", error);
+        }
+    };
 
     return (
         <>
             <div className="flex flex-col  mb-4 rounded ">
                 <h3 className="text-3xl font-semibold pb-5">งานของคุณ</h3>
                 {reqServiceData ? (
-                    reqServiceData.map((item: any) => (
+                    reqServiceData.map((item: ReqServiceDataItem) => (
                         <div key={item.users_id} className="flex flex-col md:flex-row items-center justify-between p-10 h-auto rounded-xl bg-gray-100 mb-5">
                             <div className="flex flex-col gap-2">
                                 <p className="text-xl text-gray-400 dark:text-gray-500">
@@ -92,24 +113,43 @@ export function WorkforPet() {
                                     เบอร์โทรศัพท์ติดต่อ : {item.users_phone}
                                 </p>
                                 <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    สถานะงาน : 
+                                    สถานะงาน : {item.status_work}
                                 </p>
                             </div>
                             {!isJobAccepted && (
-                                <div className="flex flex-col text-white gap-4 w-40">
-                                    <Buttons
-                                        label="รับงาน"
-                                        className="p-2 rounded-xl"
-                                        buttonType="success"
-                                        onClick={() => handleAcceptJob(item)}
-                                    />
-                                    <Buttons
-                                        label="ไม่รับงาน"
-                                        className="p-2 rounded-xl"
-                                        buttonType="danger"
-                                        onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id)}
-                                    />
-                                </div>
+                                item.status_work === "เริ่มงานได้" ? (
+                                    <div className=" flex flex-col justify-end gap-3">
+                                        <div className="flex ">
+                                            กดเสร็จงานเมื่อส่งงานลูกค้าแล้วเพื่อรับเงินผ่านPromptPay
+                                        </div>
+                                        <div className="flex justify-center">
+                                            <Buttons
+                                                label="เสร็จงาน"
+                                                className="p-2 w-36 rounded-xl"
+                                                buttonType="primary"
+                                                onClick={() => {
+                                                    updateJobCompletionStatus(item);
+                                                    handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col text-white gap-4 w-40">
+                                        <Buttons
+                                            label="รับงาน"
+                                            className="p-2 rounded-xl"
+                                            buttonType="success"
+                                            onClick={() => handleAcceptJob(item)}
+                                        />
+                                        <Buttons
+                                            label="ไม่รับงาน"
+                                            className="p-2 rounded-xl"
+                                            buttonType="danger"
+                                            onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id)}
+                                        />
+                                    </div>
+                                )
                             )}
                             {isJobAccepted && (
                                 <>

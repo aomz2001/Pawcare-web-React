@@ -37,9 +37,9 @@ export const Notifications = () => {
             });
     }, []);
 
-    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number) => {
+    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number,service_price:number) => {
         axios.delete("http://localhost:3000/api/delete-accept-service", {
-            data: { usersId, districtId, serviceId, petId }
+            data: { usersId, districtId, serviceId, petId ,service_price}
         })
             .then(response => {
                 console.log("Service request deleted successfully");
@@ -48,12 +48,13 @@ export const Notifications = () => {
             .catch(error => {
                 console.error("Error deleting service request:", error);
             });
+            console.log('usersId', usersId)
     };
     const handlePayment = (item: AcceptServiceDataItem) => {
         navigate(`/payment?usersId=${item.users_id}&districtId=${item.district_id}&serviceId=${item.service_id}&petId=${item.pet_id}&providerId=${item.provider_id}`);
     };
     
-    // console.log('acceptServiceData', acceptServiceData)
+    console.log('acceptServiceData', acceptServiceData)
     
     return (
         <>
@@ -71,6 +72,7 @@ export const Notifications = () => {
                                             <div>พื้นที่ให้บริการ : {item.district_name}</div>
                                             <div>ประเภทสัตว์เลี้ยง : {item.pet_name}</div>
                                             <div>ราคา : {item.service_price} บาท</div>
+                                            <div>สถานะการชำระเงิน : </div>
                                         </div>
                                         <div className="flex flex-col">
                                             <Buttons
@@ -78,12 +80,12 @@ export const Notifications = () => {
                                                 className="p-2 mb-3 rounded-xl w-full"
                                                 buttonType="success"
                                                 onClick={() => handlePayment(item)}
-                                            ></Buttons>
+                                            />
                                             <Buttons
                                                 label="ยกเลิก"
                                                 className="p-2 rounded-xl"
                                                 buttonType="danger"
-                                                onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id)}
+                                                onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id, item.service_price)}
                                             />
                                         </div>
                                     </div>

@@ -115,7 +115,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>
+        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>,
       },
       {
         path: 'system-information',

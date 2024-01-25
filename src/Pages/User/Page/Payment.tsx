@@ -91,8 +91,8 @@ export const Payment = () => {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-
                 console.log(response.data);
+                setIsModalOpen(false);
             } catch (error) {
                 console.error("Error uploading file:", error);
             }
@@ -115,7 +115,6 @@ export const Payment = () => {
                                 QR Payment
                             </div>
                         </div>
-
                         <Modal
                             title="แสกนจ่ายโดยแอพธนาคาร"
                             open={isModalOpen}
