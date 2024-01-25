@@ -79,7 +79,6 @@ export const Payment = () => {
             try {
                 const formData = new FormData();
                 formData.append('file', file);
-                // แนบข้อมูลที่ต้องการให้อัปเดตในตาราง
                 formData.append('providerId', providerId);
                 formData.append('districtId', districtId);
                 formData.append('petId', petId);

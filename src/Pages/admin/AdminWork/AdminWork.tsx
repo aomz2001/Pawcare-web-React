@@ -97,6 +97,26 @@ export const AdminWork = () => {
         setStatusWork(false);
     };
 
+    const updateJobCompletionStatus = async (item: AdminWorkProps) => {
+        try {
+            const response = await axios.put('http://localhost:3000/api/put-status-payment', {
+                payment_status: 'ชำระเงินเรียบร้อยแล้ว',
+                providerId:item.provider_id,
+                districtId: item.district_id,
+                petId: item.pet_id,
+                serviceId: item.service_id,
+                service_price: item.service_price,
+                usersId: item.users_id,
+            });
+    
+            if (response.status === 200) {
+                console.log(response.data);
+            }
+        } catch (error) {
+            console.error("Error updating job completion status:", error);
+        }
+    };
+
     return (
         <>
             <div className="text-3xl font-semibold pb-10">งานของคุณ</div>
@@ -122,7 +142,7 @@ export const AdminWork = () => {
                                     label="แจ้งสถานะผู้ใช้งาน"
                                     buttonType="success"
                                     className="p-2 rounded-xl"
-                                    onClick={() => {}}
+                                    onClick={() => updateJobCompletionStatus(paymentItem)}
                                 />
                             </div>
                             <div className="">

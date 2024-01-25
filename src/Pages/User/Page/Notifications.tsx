@@ -18,6 +18,7 @@ interface AcceptServiceDataItem {
     provider_id: number;
     provider_firstname: string;
     provider_lastname: string;
+    payment_status: string;
 }
 
 export const Notifications = () => {
@@ -37,9 +38,9 @@ export const Notifications = () => {
             });
     }, []);
 
-    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number,service_price:number) => {
+    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number, service_price: number) => {
         axios.delete("http://localhost:3000/api/delete-accept-service", {
-            data: { usersId, districtId, serviceId, petId ,service_price}
+            data: { usersId, districtId, serviceId, petId, service_price }
         })
             .then(response => {
                 console.log("Service request deleted successfully");
@@ -48,14 +49,18 @@ export const Notifications = () => {
             .catch(error => {
                 console.error("Error deleting service request:", error);
             });
-            console.log('usersId', usersId)
+        console.log('usersId', usersId)
     };
     const handlePayment = (item: AcceptServiceDataItem) => {
         navigate(`/payment?usersId=${item.users_id}&districtId=${item.district_id}&serviceId=${item.service_id}&petId=${item.pet_id}&providerId=${item.provider_id}`);
     };
-    
+
+    const handleReview = (item: AcceptServiceDataItem) => {
+        navigate(`/review-provider?usersId=${item.users_id}&districtId=${item.district_id}&serviceId=${item.service_id}&petId=${item.pet_id}&providerId=${item.provider_id}`);
+    };
+
     console.log('acceptServiceData', acceptServiceData)
-    
+
     return (
         <>
             <div className="bg-[#FFF8EA]">
@@ -72,21 +77,37 @@ export const Notifications = () => {
                                             <div>พื้นที่ให้บริการ : {item.district_name}</div>
                                             <div>ประเภทสัตว์เลี้ยง : {item.pet_name}</div>
                                             <div>ราคา : {item.service_price} บาท</div>
-                                            <div>สถานะการชำระเงิน : </div>
+                                            <div>สถานะการชำระเงิน : {item.payment_status}</div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <Buttons
-                                                label="ชำระเงิน"
-                                                className="p-2 mb-3 rounded-xl w-full"
-                                                buttonType="success"
-                                                onClick={() => handlePayment(item)}
-                                            />
-                                            <Buttons
-                                                label="ยกเลิก"
-                                                className="p-2 rounded-xl"
-                                                buttonType="danger"
-                                                onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id, item.service_price)}
-                                            />
+                                            {item.payment_status !== "ชำระเงินเรียบร้อยแล้ว" && (
+                                                <>
+                                                    <Buttons
+                                                        label="ชำระเงิน"
+                                                        className="p-2 mb-3 rounded-xl w-32"
+                                                        buttonType="success"
+                                                        onClick={() => handlePayment(item)}
+                                                    />
+                                                    <Buttons
+                                                        label="ยกเลิก"
+                                                        className="p-2 rounded-xl"
+                                                        buttonType="danger"
+                                                        onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id, item.service_price)}
+                                                    />
+                                                </>
+                                            )}
+                                            {item.payment_status === "ชำระเงินเรียบร้อยแล้ว" && (
+                                                <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <p className="font-bold">รอรับบริการและพี่เลี้ยงจะติดต่อคุณกลับ</p>
+                                                    <p>หลังรับบริการแล้วคุณสามารถรีวิวได้ที่นี่!</p>
+                                                        <Buttons
+                                                            label="รีวิวพี่เลี้ยงที่นี่"
+                                                            className="p-2 mb-3 rounded-xl w-36"
+                                                            buttonType="primary"
+                                                            onClick={() => handleReview(item)}
+                                                        />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))

@@ -77,7 +77,6 @@ export function WorkforPet() {
                 usersId: item.users_id,
             });
     
-            // Check if the request was successful
             if (response.status === 200) {
                 console.log(response.data);
             }
