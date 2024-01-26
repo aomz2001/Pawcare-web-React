@@ -21,7 +21,7 @@ const Signin = () => {
 
   const LoginProvider = async () => {
     try {
-      const { data,} = await axios.post<SignInProps>(
+      const { data } = await axios.post<SignInProps>(
         'http://localhost:3000/login-provider',
         { provider_email: email, provider_password: password },
         {
@@ -34,7 +34,7 @@ const Signin = () => {
       // console.log(status);
       if (data.status === "ok" && data.token) {
         alert("Sign in Success");
-        localStorage.setItem('provider_id', String(data.provider_id));
+        localStorage.setItem('providerId', String(data.provider_id));
         localStorage.setItem('token', data.token);
         setAuthenProvider(true)
         navigate('/provider')

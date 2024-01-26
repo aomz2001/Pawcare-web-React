@@ -48,7 +48,7 @@ const router = createBrowserRouter([
         element: <PrivateRoute ><Search /></PrivateRoute>,
       },
       {
-        path: '/provider-profile/:provider_id',
+        path: '/provider-profile',
         element: <PrivateRoute ><ProviderProfile /></PrivateRoute>,
       },
       {
@@ -115,7 +115,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>
+        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>,
       },
       {
         path: 'system-information',

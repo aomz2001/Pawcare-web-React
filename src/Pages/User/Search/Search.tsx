@@ -42,13 +42,13 @@ export const Search = () => {
     }, [petId, districtId, serviceId]);
 
     const handleSearch = (providerId: number) => {
-        if (petId && districtId && serviceId) {
+        if (petId && districtId && serviceId && providerId ) {
             try {
                 const searchParams = new URLSearchParams({
                     petId: petId.toString(),
                     districtId: districtId.toString(),
                     serviceId: serviceId.toString(),
-                    provider_id: providerId.toString()
+                    providerId: providerId.toString()
                 });
 
                 navigate(`/provider-profile?${searchParams.toString()}`);
@@ -59,6 +59,7 @@ export const Search = () => {
             console.log("Please select values for all options");
         }
     };
+    console.log('searchResults', searchResults)
 
     return (
         <>
@@ -72,10 +73,9 @@ export const Search = () => {
                         </div>
 
                         {searchResults.map((result) => (
-                            <Link
+                            <div
                                 key={result.provider_id}
-                                to={`/provider-profile/${result.provider_id}`}
-                                className="text-lg h-auto bg-[#2D2D2D] w-4/5 mb-5 rounded-3xl pl-12 pt-6 pb-6 flex justify-between hover:bg-[#4f4f4f]"
+                                className="text-lg h-auto bg-[#2D2D2D] w-4/5 mb-5 rounded-3xl pl-12 pt-6 pb-6 flex justify-between hover:bg-[#4f4f4f] cursor-pointer"
                                 onClick={() => handleSearch(result.provider_id)}>
                                 <div className="md:flex">
                                     <div className="h-44 bg-white w-44 flex items-center justify-center rounded-full">profile</div>
@@ -87,7 +87,7 @@ export const Search = () => {
                                     </div>
                                 </div>
                                 <div className="text-[#F0C163] pr-12 flex items-center">{result.service_price} บาท / บริการ</div>
-                            </Link>
+                            </div>
                         ))}
 
                     </div>

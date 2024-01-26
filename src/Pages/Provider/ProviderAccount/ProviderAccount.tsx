@@ -4,6 +4,7 @@ import Buttons from '../../../components/ItemsGroup/Button/Buttons';
 import axios from 'axios';
 import InputForm from '../../../components/ItemsGroup/InputForm';
 import ServiceCard from './AccountCard/ServiceCard';
+import BookingCard from './AccountCard/BookingCard';
 
 interface ProviderData {
     provider: any;
@@ -57,7 +58,7 @@ export const ProviderAccount = () => {
     const fetchProviderData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const providerId = localStorage.getItem('provider_id');
+            const providerId = localStorage.getItem('providerId');
 
             if (!token || !providerId) {
                 console.error("Token or provider_id not found");
@@ -174,14 +175,11 @@ export const ProviderAccount = () => {
     const items = [
         { label: 'อีเมล', value: providerData?.provider[0]?.provider_email || '' },
         { label: 'ชื่อ-นามสกุล', value: `${providerData?.provider[0]?.provider_firstname} ${providerData?.provider[0]?.provider_lastname}` || '' },
-        { label: 'เบอร์โทรศัพท์', value: providerData?.provider[0]?.provider_phone || '' },
+        { label: 'เบอร์โทรศัพท์ (หมายเลย PromptPay)', value: providerData?.provider[0]?.provider_phone || '' },
         { label: 'ที่อยู่', value: providerData?.provider[0]?.provider_address || '' },
         { label: 'อำเภอที่ให้บริการ', value: districtData?.district || '' },
         { label: 'สัตว์เลี้ยงที่ให้บริการ', value: petData?.pet || '' },
-        { label: 'เบอร์โทรศัพท์ / หมายเลย PromptPay' },
         { label: 'บริการ', value: serviceItems },
-        { label: 'ลิ้งค์ที่อยู่ให้บริการของคุณ' },
-
     ];
 
     return (
@@ -192,15 +190,16 @@ export const ProviderAccount = () => {
                     <input type="file" id="upload" name="upload" accept="image/*" onChange={handleImageChange} />
                 </div>
             </div>
-            <Descriptions title={<h3 className='text-3xl font-kanit pt-10'>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
+            <Descriptions title={<h3 className='text-3xl font-kanit pt-10 '>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
                 key: item.label,
                 label: <h4 className='text-xl font-kanit'>{item.label}</h4>,
-                children: <p className='text-xl font-kanit'>{item.value}</p>,
+                children: <p className='text-xl font-kanit '>{item.value}</p>,
             }))}
-            column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 3, xxl: 3 }}
+                column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 3, xxl: 3 }}
             />
-
-            <ServiceCard />
+            <div className="border-b-2"></div>
+                    <ServiceCard />
+                    <BookingCard />
             <div className="flex justify-center gap-3">
                 <Buttons
                     label="แก้ไขข้อมูล"

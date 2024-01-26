@@ -10,6 +10,7 @@ interface SignInProps {
     status: string;
     token?: string;
     message?: string;
+    users_id?: number;
 }
 
 const Signin = () => {
@@ -22,7 +23,7 @@ const Signin = () => {
 
     const LoginUsers = async () => {
         try {
-            const { data, status } = await axios.post<SignInProps>(
+            const { data } = await axios.post<SignInProps>(
                 'http://localhost:3000/login',
                 { users_email: email, users_password: password },
                 {
@@ -32,9 +33,9 @@ const Signin = () => {
                 }
             );
 
-            if (data.status === "ok" && data.token) {
+            if (data.status === "ok" && data.token ) {
                 alert("Sign in Success");
-
+                cookies.set('userId', data.users_id)
                 cookies.set('token', data.token);
                 setAuthenticated(true)
                 navigate('/')

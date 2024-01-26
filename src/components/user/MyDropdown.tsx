@@ -14,6 +14,7 @@ export const MyDropdown = () => {
     const handleSignOut = () => {
         const cookies = new Cookies();
         cookies.remove('token');
+        cookies.remove('userId');
         setAuthenticated(false);
         navigate('/');
         
