@@ -6,6 +6,9 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 type ProviderProfileData = {
+    users_id: number;
+    users_firstname: string;
+    users_lastname: string;
     providerId: number;
     provider_firstname: string;
     provider_lastname: string;
@@ -14,11 +17,15 @@ type ProviderProfileData = {
     district_name: string;
     service_price: number;
     pet_name: string;
+    review_text: string;
+    ratings: number;
+    report: number;
 };
 
 export const ProviderProfile = () => {
     const [searchParams] = useSearchParams();
     const [providerProfileData, setProviderProfileData] = useState<ProviderProfileData[] | null>(null);
+    const [reviewData, setReviewData] = useState<ProviderProfileData[] | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const petId = searchParams.get("petId");
     const districtId = searchParams.get("districtId");
@@ -75,12 +82,16 @@ export const ProviderProfile = () => {
         }
     }, [providerId, petId, districtId, serviceId]);
 
-    console.log('providerProfileData', providerProfileData)
-    console.log('providerId', providerId)
-    console.log('petId', petId)
-    console.log('districtId', districtId)
-    console.log('serviceId', serviceId)
-    console.log('userId', userId)
+    useEffect(() => {
+        axios.get(`http://localhost:3000/api/get-review?provider_id=${providerId}`)
+            .then(response => {
+                setReviewData(response.data.data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }, []);
+    console.log('reviewData', reviewData)
 
     return (
         <div className="bg-[#FFF8EA] ">
@@ -102,7 +113,7 @@ export const ProviderProfile = () => {
                                             label="ตรวจสอบวัน / การจอง"
                                             color="#3498DB"
                                             className=" w-48 p-2 rounded-full hover:bg-[#5DADE2]"
-                                            onClick={()=>{}}
+                                            onClick={() => { }}
                                         />
                                         <Buttons
                                             label="ส่งคำขอใช้บริการ"
@@ -150,9 +161,18 @@ export const ProviderProfile = () => {
                                 <span className="text-xl mt-3">รีวิวจากผู้ใช้งาน </span>
                                 <div className="h-48 bg-white border-stone-200 border-[1px] rounded-3xl hover:overflow-y-auto overflow-hidden">
                                     <div className="p-5 ">
-                                        <div className="border-stone-200 border-[1px] rounded-3xl p-5 mb-3">User ? : comment 5.0 คะแนน</div>
-                                        <div className="border-stone-200 border-[1px] rounded-3xl p-5 mb-3">User ? : comment 5.0 คะแนน</div>
-                                        <div className="border-stone-200 border-[1px] rounded-3xl p-5 mb-3">User ? : comment 5.0 คะแนน</div>
+                                        {reviewData ? (
+                                            reviewData.map((item) => (
+                                                <div className="bg-stone-100 rounded-3xl p-5 mb-3 font-semibold">
+                                                    <div className="">ผู้ใช้งาน : {item.users_firstname} {item.users_lastname} </div>
+                                                    <div className="">ให้คะแนน : {item.ratings} คะแนน</div>
+                                                    <div className="">แสดงความคิดเห็น : {item.review_text}</div>
+                                                    <div className="">รายงาน : {item.report}</div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <><div className="border-stone-200 border-[1px] rounded-3xl p-5 mb-3">ยังไม่มีรีวิวจากผู้ใช้งาน</div></>
+                                        )}
                                     </div>
                                 </div>
                             </div>
