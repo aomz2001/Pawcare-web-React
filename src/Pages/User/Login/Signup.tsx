@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputForm from "../../../components/ItemsGroup/InputForm";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import { useState } from "react";
@@ -14,44 +14,55 @@ const Signup = () => {
   const [lastname, setLastname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [address, setAddress] = useState<string>("");
+  const [checkbox, setCheckbox] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const createUsers = async () => {
-    try {
-      const { data, status } = await axios.post<SignupProps>(
-        'http://localhost:3000/signup',
-        {
-          users_email: email,
-          users_password: password,
-          users_firstname: firstname,
-          users_lastname: lastname,
-          users_phone: phone,
-          users_address: address
-
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+    if (!email || !password || !firstname || !lastname || !phone || !address || !checkbox) {
+      alert('โปรดกรอกข้อมูลให้ครบ!');
+      return;
+    }
+    else{
+      try {
+        const { data, status } = await axios.post<SignupProps>(
+          'http://localhost:3000/signup',
+          {
+            users_email: email,
+            users_password: password,
+            users_firstname: firstname,
+            users_lastname: lastname,
+            users_phone: phone,
+            users_address: address
           },
-        },
-      );
-
-      console.log(JSON.stringify(data, null, 4));
-      console.log(status);
-
-      setEmail('');
-      setPassword('');
-      setFirstname('');
-      setLastname('');
-      setPhone('');
-      setAddress('');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-      } else {
-        console.log('unexpected error: ', error);
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          },
+        );
+  
+        console.log(JSON.stringify(data, null, 4));
+        console.log(status);
+  
+        setEmail('');
+        setPassword('');
+        setFirstname('');
+        setLastname('');
+        setPhone('');
+        setAddress('');
+        alert("ลงทะเบียนสำเร็จ");
+        navigate('/login');
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log('error message: ', error.message);
+        } else {
+          console.log('unexpected error: ', error);
+        }
       }
     }
+    
   };
 
   return (
@@ -80,13 +91,14 @@ const Signup = () => {
             <h1 className="flex justify-center text-xl font-bold  md:text-2xl text-white">
               ลงทะเบียน
             </h1>
-            <form action="">
-              <div className="grid md:grid-cols-2 gap-2 mb-6">
+            <div>
+              <div className="grid md:grid-cols-2 gap-2 mb-6 ">
                 <InputForm
                   id="email"
                   label="อีเมล"
                   name="email"
                   placeholder="xxx@email.com"
+                  labelClassName='text-white'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -95,6 +107,7 @@ const Signup = () => {
                   label="รหัสผ่าน"
                   type="password"
                   placeholder="••••••••"
+                  labelClassName='text-white'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -103,6 +116,7 @@ const Signup = () => {
                   label="ชื่อ"
                   name="fname"
                   placeholder="ชื่อ"
+                  labelClassName='text-white'
                   value={firstname}
                   onChange={(e) => setFirstname(e.target.value)}
                 />
@@ -111,6 +125,7 @@ const Signup = () => {
                   label="นามสกุล"
                   name="lname"
                   placeholder="นามสกุล"
+                  labelClassName='text-white'
                   value={lastname}
                   onChange={(e) => setLastname(e.target.value)}
                 />
@@ -119,6 +134,7 @@ const Signup = () => {
                   label="เบอร์โทรศัพท์"
                   name="phone"
                   placeholder="เบอร์โทรศัพท์"
+                  labelClassName='text-white'
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
@@ -127,6 +143,7 @@ const Signup = () => {
                   label="ที่อยู่"
                   name="address"
                   placeholder="ที่อยู่ (**โปรดกรอกที่อยู่อย่างละเอียด**)"
+                  labelClassName='text-white'
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />
@@ -135,10 +152,13 @@ const Signup = () => {
                 <InputForm
                   type="checkbox"
                   className="mx-2 cursor-pointer mt-[6px]"
+                  checked={checkbox}
+                  onChange={() => setCheckbox(!checkbox)}
                 />
                 <Link
                   to="/condition"
                   className="underline text-gray-400 hover:text-white"
+                  target="_blank"
                 >
                   ฉันได้อ่านและยอมรับเงื่อนไขการใช้งานของ PAWCARE
                 </Link>
@@ -151,7 +171,7 @@ const Signup = () => {
                   onClick={createUsers}
                 />
               </div>
-            </form>
+            </div>
             <p className="flex w-full text-sm font-light text-gray-400">
               <Link
                 to="/login"

@@ -4,6 +4,11 @@ import { Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import InputForm from "../../../../components/ItemsGroup/InputForm";
+import { DatePicker, Space } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
+import { RangeValue } from "rc-picker/lib/interface"
+
+const { RangePicker } = DatePicker;
 
 type ServiceCardProps = {
   pet_id: number;
@@ -27,7 +32,8 @@ const ServiceCard = () => {
   const [selectedServices, setSelectedServices] = useState<CheckboxValueType[]>([]);
   const [isPriceVisible, setIsPriceVisible] = useState(false);
   const [servicePrices, setServicePrices] = useState<{ [key: number]: number }>({});
-
+  const [serviceDateTime, setServiceDateTime] = useState<{ [key: number]: [Dayjs, Dayjs] }>({});
+  // console.log('serviceDateTime', serviceDateTime?.[1]?.[1]?.toISOString())
 
   const onChange = (checkedValues: CheckboxValueType[], type: string) => {
     switch (type) {
@@ -44,6 +50,16 @@ const ServiceCard = () => {
       default:
         break;
     }
+  };
+
+  const onServiceDateTimeChange = (value: RangeValue<dayjs.Dayjs>, serviceId: number) => {
+    const data = value as [Dayjs, Dayjs]
+    console.log("onServiceDateTimeChange", new Date(data[0]?.toISOString()));
+    
+    setServiceDateTime((prevServiceDateTime) => ({
+      ...prevServiceDateTime,
+      [serviceId]: data,
+    }));
   };
 
   const fetchData = async () => {
@@ -83,6 +99,8 @@ const ServiceCard = () => {
       const servicePayload = selectedServices.map((serviceId: CheckboxValueType) => ({
         service_id: serviceId as number,
         service_price: servicePrices[serviceId as number] || 0,
+        booking_start: serviceDateTime[serviceId as number][0].add(7,"hours").toISOString(),
+        booking_end: serviceDateTime[serviceId as number][1].add(7,"hours").toISOString(),
       }));
 
       await axios.put(`http://localhost:3000/provider-data-district/${provider_id}`, {
@@ -94,8 +112,6 @@ const ServiceCard = () => {
       await axios.put(`http://localhost:3000/provider-data-service/${provider_id}`, {
         serviceList: servicePayload
       });
-      // console.log(districtResponse.data);
-      // console.log(petResponse.data);
       window.location.reload()
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -144,23 +160,40 @@ const ServiceCard = () => {
         {isPriceVisible && selectedServices.length > 0 && (
           <div className="max-w-xl flex flex-col gap-y-3 text-base">
             {selectedServices.map((serviceId: CheckboxValueType) => (
-              <InputForm
-                key={`price_service_${serviceId}`}
-                id={`price_service_${serviceId}`}
-                label={`กรอกราคาสำหรับ ${serviceData.find(s => s.service_id === (serviceId as number))?.service_name}`}
-                placeholder="กรอกราคาที่คุณให้บริการ เช่น 200 ..."
-                onChange={(e) => {
-                  const price = parseFloat(e.target.value);
-                  setServicePrices((prevPrices) => ({
-                    ...prevPrices,
-                    [(serviceId as number)]: price,
-                  }));
-                }}
-              />
+              <div key={`price_service_${serviceId}`} className="bg-slate-200 p-5 rounded-xl">
+                <h3>กำหนดวันที่ให้บริการและเวลาที่ให้บริการล่วงหน้า</h3>
+                <Space direction="vertical" size={12}>
+                  <RangePicker
+                    showTime={{ format: 'HH:mm' }}
+                    format="YYYY-MM-DD HH:mm"
+                    value={
+                      serviceDateTime[serviceId as number] ?
+                        [
+                          serviceDateTime[+serviceId][0],
+                          serviceDateTime[+serviceId][1]
+                        ]
+                        : undefined
+                    }
+                    onChange={(value) => onServiceDateTimeChange(value, +serviceId)}
+                  />
+                </Space>
+                <InputForm
+                  key={`price_service_${serviceId}`}
+                  id={`price_service_${serviceId}`}
+                  label={`กรอกราคาสำหรับ ${serviceData.find(s => s.service_id === (serviceId as number))?.service_name}`}
+                  placeholder="กรอกราคาที่คุณให้บริการ เช่น 200 ..."
+                  onChange={(e) => {
+                    const price = parseFloat(e.target.value);
+                    setServicePrices((prevPrices) => ({
+                      ...prevPrices,
+                      [serviceId as number]: price,
+                    }));
+                  }}
+                />
+              </div>
             ))}
           </div>
         )}
-
       </div>
       <Buttons
         label="ยืนยัน"

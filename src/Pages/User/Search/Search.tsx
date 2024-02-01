@@ -1,6 +1,14 @@
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import dayjs from "dayjs"
+import "dayjs/locale/th"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.locale("th")
 
 type SearchResults = {
     provider_id: number;
@@ -10,6 +18,8 @@ type SearchResults = {
     pet_name: string;
     service_name: string;
     service_price: number;
+    booking_start: string;
+    booking_end: string;
 }[];
 
 export const Search = () => {
@@ -75,24 +85,31 @@ export const Search = () => {
                         {searchResults.map((result) => (
                             <div
                                 key={result.provider_id}
-                                className="text-lg h-auto bg-[#2D2D2D] w-4/5 mb-5 rounded-3xl pl-12 pt-6 pb-6 flex justify-between hover:bg-[#4f4f4f] cursor-pointer"
+                                className="text-lg h-auto bg-[#2D2D2D] w-4/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer"
                                 onClick={() => handleSearch(result.provider_id)}>
                                 <div className="md:flex">
-                                    <div className="h-44 bg-white w-44 flex items-center justify-center rounded-full">profile</div>
-                                    <div className="pl-9 gap-2 flex flex-col justify-center">
+                                    <div className="gap-2 flex flex-col justify-center">
                                         <h3 className="text-[#F0C163]">ชื่อผู้ให้บริการ : {result.provider_firstname} {result.provider_lastname}</h3>
                                         <p className="text-white">บริการ : {result.service_name}</p>
                                         <p className="text-white">อำเภอ : {result.district_name}</p>
                                         <p className="text-white">สัตว์เลี้ยงที่ให้บริการ : {result.pet_name}</p>
+                                        <p className="text-white">
+                                            ให้บริการ : {`${dayjs(result.booking_start).format("DD MMMM YYYY [เวลา:] HH:mm")}`} 
+                                            ถึง {`${dayjs(result.booking_end).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
+                                            {(()=>{
+                                                console.log("END",new Date(result.booking_end) , result.booking_end, );
+                                                return<></>
+                                            })()}
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="text-[#F0C163] pr-12 flex items-center">{result.service_price} บาท / บริการ</div>
+                                <div className="text-[#F0C163] flex items-center">{result.service_price} บาท / บริการ</div>
                             </div>
                         ))}
 
                     </div>
                     <div className="flex justify-end pr-28 pb-12 underline">
-                        <Link to='/'>กลับไปหน้าก่อนหน้านี้</Link>
+                        <Link to='/'>กลับไปหน้าหลัก</Link>
                     </div>
                 </div>
             </div>

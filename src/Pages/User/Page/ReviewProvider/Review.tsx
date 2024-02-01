@@ -2,8 +2,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Space, Rate, Modal } from 'antd';
-import InputForm from "../../../../components/ItemsGroup/InputForm";
+import { Space, Rate } from 'antd';
 
 interface ReviewProps {
   users_id: number;
@@ -25,8 +24,6 @@ export const Review = () => {
   const desc = ['1 คะแนน', '2 คะแนน', '3 คะแนน', '4 คะแนน', '5 คะแนน'];
   const [value, setValue] = useState<number>(1);
   const [comment, setComment] = useState<string>("")
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusText, setStatusText] = useState<string>("");
   const [reportProvider, setReportProvider] = useState<ReviewProps[] | null>(null);
   const [searchParams] = useSearchParams();
   const usersId = searchParams.get("usersId");
@@ -53,59 +50,33 @@ export const Review = () => {
       });
   }, [usersId, petId, districtId, serviceId, providerId]);
 
-  const handleOpen = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloes = () => {
-    setIsModalOpen(false);
-  };
-  const ReportProvider = async () => {
+  const handleOk = async () => {
     try {
       if (!reportProvider || !reportProvider[0]) {
         console.error("Invalid reportProvider data");
         return;
       }
-
       const item = reportProvider[0];
-
-      const response = await axios.put('http://localhost:3000/api/report-provider', {
-        report: statusText,
+  
+      const response = await axios.post("http://localhost:3000/api/review-job", {
         providerId: item.provider_id,
+        usersId: item.users_id,
         districtId: item.district_id,
         petId: item.pet_id,
         serviceId: item.service_id,
         service_price: item.service_price,
-        usersId: item.users_id,
-      });
-
-      if (response.status === 200) {
-        console.log(response.data);
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error updating job completion status:", error);
-    }
-  };
-
-  const handleOk = async () => {
-    try {
-      const response = await axios.post("http://localhost:3000/api/review-job", {
-        providerId: reportProvider && reportProvider[0]?.provider_id,
-        usersId: reportProvider && reportProvider[0]?.users_id,
-        districtId: reportProvider && reportProvider[0]?.district_id,
-        petId: reportProvider && reportProvider[0]?.pet_id,
-        serviceId: reportProvider && reportProvider[0]?.service_id,
-        service_price: reportProvider && reportProvider[0]?.service_price,
         review_text: comment,
         ratings: value
       });
+  
       console.log(response);
-      window.location.reload();
-      navigate
+      alert("ขอบคุณสำหรับการแสดงความคิดเห็น")
+      navigate("/");
     } catch (error) {
       console.error("Error Review:", error);
     }
   };
+  console.log('reportProvider', reportProvider)
 
   return (
     <>
@@ -141,39 +112,7 @@ export const Review = () => {
               buttonType="primary"
               onClick={handleOk}
             />
-            <div className="mt-10 underline text-black cursor-pointer"
-              onClick={handleOpen}>
-              รายงาน
-            </div>
           </div>
-          <Modal
-            title="รายงานผู้ให้บริการ"
-            open={isModalOpen}
-            footer={false}
-            className="font-kanit">
-            <div className="flex flex-col justify-center items-center gap-2 p-5">
-              <InputForm
-                label=""
-                placeholder="รายงาน"
-                value={statusText}
-                onChange={(e) => setStatusText(e.target.value)}
-              />
-              <div className="w-full flex justify-center gap-3">
-                <Buttons
-                  label="รายงาน"
-                  buttonType="edit"
-                  className="mt-5 w-1/4 p-2 rounded-full"
-                  onClick={ReportProvider}
-                />
-                <Buttons
-                  label="ยกเลิก"
-                  buttonType="danger"
-                  className="mt-5 w-1/4 p-2 rounded-full"
-                  onClick={handleCloes}
-                />
-              </div>
-            </div>
-          </Modal>
         </div>
       </div>
     </>

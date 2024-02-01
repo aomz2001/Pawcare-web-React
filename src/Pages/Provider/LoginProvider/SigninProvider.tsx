@@ -30,8 +30,6 @@ const Signin = () => {
           },
         }
       );
-      // console.log(JSON.stringify(data, null, 4));
-      // console.log(status);
       if (data.status === "ok" && data.token) {
         alert("Sign in Success");
         localStorage.setItem('providerId', String(data.provider_id));
@@ -62,12 +60,13 @@ const Signin = () => {
             <h1 className="flex justify-center text-xl font-bold md:text-2xl text-white">
               เข้าสู่ระบบผู้ให้บริการ
             </h1>
-            <form className="flex flex-col space-y-4 md:space-y-6" action="#">
+            <div className="flex flex-col space-y-4 md:space-y-6">
               <InputForm
                 id="example"
                 label="อีเมล"
                 name="email"
                 placeholder="xxx@email.com"
+                labelClassName="text-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -76,13 +75,11 @@ const Signin = () => {
                 label="รหัสผ่าน"
                 type="password"
                 placeholder="••••••••"
+                labelClassName="text-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <div className="flex w-full justify-end">
-                <Link to="/" className="text-sm font-medium text-gray-400 hover:underline ">ลืมรหัสผ่าน?</Link>
-              </div>
-              <div className="flex justify-center">
+              <div className="flex justify-center pt-3">
                 <Buttons
                   label="ลงทะเบียน"
                   className="w-1/3 text-white p-2 rounded-full mb-6"
@@ -93,7 +90,7 @@ const Signin = () => {
               <p className="text-sm font-light text-gray-400">
                 ยังไม่มีบัญชี? <Link to="/provider/signup-provider" className="font-medium text-white hover:underline ">ลงทะเบียน</Link>
               </p>
-            </form>
+            </div>
           </div>
         </div>
       </div>
