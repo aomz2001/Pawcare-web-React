@@ -6,7 +6,7 @@ interface ButtonProps {
   className?: string;
   buttonType?: 'primary' | 'secondary' | 'success' | 'danger' | 'edit';
   color?: string;
-  
+  disabled?: boolean;
 }
 
 const Colors: Record<string, string> = {

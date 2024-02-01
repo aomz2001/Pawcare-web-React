@@ -24,6 +24,7 @@ import { AdminWork } from "../Pages/admin/AdminWork/AdminWork";
 import { ContactPawcare } from "../Pages/User/Page/ContactPawcare";
 import PrivateRoute from "./PrivateRoute";
 import PrivateProviderRoute from "./PrivateProviderRoute";
+import ProviderSearch from "../Pages/User/Search/ProviderSearch";
 
 const router = createBrowserRouter([
   //===============================================path user
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: '/search-service',
         element: <PrivateRoute ><Search /></PrivateRoute>,
+      },
+      {
+        path: '/search-provider-service',
+        element: <PrivateRoute ><ProviderSearch /></PrivateRoute>,
       },
       {
         path: '/provider-profile',

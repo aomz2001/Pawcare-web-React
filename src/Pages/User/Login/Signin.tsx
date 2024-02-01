@@ -70,6 +70,7 @@ const Signin = () => {
                                 label="อีเมล"
                                 name="email"
                                 placeholder="xxx@email.com"
+                                labelClassName="text-white"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -78,15 +79,13 @@ const Signin = () => {
                                 label="รหัสผ่าน"
                                 type="password"
                                 placeholder="••••••••"
+                                labelClassName="text-white"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <div className="flex w-full justify-end">
-                                <Link to="/" className="text-sm font-medium text-gray-400 hover:underline ">ลืมรหัสผ่าน?</Link>
-                            </div>
-                            <div className="flex justify-center">
+                            <div className="flex justify-center pt-3">
                                 <Buttons
-                                    label="ลงทะเบียน"
+                                    label="เข้าสู่ระบบ"
                                     className="px-6 py-2 rounded-full"
                                     onClick={LoginUsers}
                                     buttonType="secondary"

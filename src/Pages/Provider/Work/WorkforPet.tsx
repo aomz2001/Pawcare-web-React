@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import axios from "axios";
+import dayjs from "dayjs";
+import "dayjs/locale/th";
+import { Modal } from "antd";
+
+dayjs.locale("th");
 
 interface ReqServiceDataItem {
     users_id: number;
@@ -16,33 +21,48 @@ interface ReqServiceDataItem {
     service_name: string;
     service_price: number;
     status_work: string;
+    booking_first: string;
+    booking_second: string;
+    users_cancel: string;
 }
 
 export function WorkforPet() {
     const [isJobAccepted, setIsJobAccepted] = useState<boolean>(false);
     const [reqServiceData, setReqServiceData] = useState<ReqServiceDataItem[] | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [statusText, setStatusText] = useState<string>("");
+
+    const handleOpen = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloes = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
-        const providerId = localStorage.getItem('providerId');
-        axios.get(`http://localhost:3000/api/show-req-service?provider_id=${providerId}`)
-            .then(response => {
+        const providerId = localStorage.getItem("providerId");
+        axios
+            .get(`http://localhost:3000/api/show-req-service?provider_id=${providerId}`)
+            .then((response) => {
                 setReqServiceData(response.data.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error fetching data:", error);
             });
     }, []);
 
     const handleAcceptJob = async (item: ReqServiceDataItem) => {
         try {
-            const providerId = localStorage.getItem('providerId');
-            const response = await axios.post('http://localhost:3000/api/accept-service', {
+            const providerId = localStorage.getItem("providerId");
+            const response = await axios.post("http://localhost:3000/api/accept-service", {
                 pet_id: item.pet_id,
                 district_id: item.district_id,
                 service_id: item.service_id,
                 provider_id: providerId,
                 service_price: item.service_price,
                 users_id: item.users_id,
+                provider_cancel: statusText
             });
             console.log(response.data);
             setIsJobAccepted(true);
@@ -52,31 +72,49 @@ export function WorkforPet() {
     };
 
     const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number) => {
+        if (!statusText) {
+            alert('โปรดแจ้งเหตุผลที่ไม่รับงาน');
+            return;
+        }
+        else {
+            axios.delete("http://localhost:3000/api/delete-req-service", {
+                data: { usersId, districtId, serviceId, petId },
+            })
+                .then((response) => {
+                    console.log("Service request deleted successfully");
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    console.error("Error deleting service request:", error);
+                });
+        }
+    };
+    const understandWork = (usersId: number, districtId: number, serviceId: number, petId: number) => {
         axios.delete("http://localhost:3000/api/delete-req-service", {
-            data: { usersId, districtId, serviceId, petId }
+            data: { usersId, districtId, serviceId, petId },
         })
-            .then(response => {
+            .then((response) => {
                 console.log("Service request deleted successfully");
                 window.location.reload();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error deleting service request:", error);
             });
     };
-    console.log('reqServiceData', reqServiceData)
+
     const updateJobCompletionStatus = async (item: ReqServiceDataItem) => {
         try {
-            const providerId = localStorage.getItem('providerId');
-            const response = await axios.put('http://localhost:3000/api/job-complete-status', {
-                job_complete: 'เสร็จงาน',
-                providerId:providerId,
+            const providerId = localStorage.getItem("providerId");
+            const response = await axios.put("http://localhost:3000/api/job-complete-status", {
+                job_complete: "เสร็จงาน",
+                providerId: providerId,
                 districtId: item.district_id,
                 petId: item.pet_id,
                 serviceId: item.service_id,
                 service_price: item.service_price,
                 usersId: item.users_id,
             });
-    
+
             if (response.status === 200) {
                 console.log(response.data);
             }
@@ -84,7 +122,8 @@ export function WorkforPet() {
             console.error("Error updating job completion status:", error);
         }
     };
-
+    console.log('reqServiceData', reqServiceData)
+    console.log('statusText', statusText)
     return (
         <>
             <div className="flex flex-col  mb-4 rounded ">
@@ -93,32 +132,53 @@ export function WorkforPet() {
                     reqServiceData.map((item: ReqServiceDataItem) => (
                         <div key={item.users_id} className="flex flex-col md:flex-row items-center justify-between p-10 h-auto rounded-xl bg-gray-100 mb-5">
                             <div className="flex flex-col gap-2">
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    ผู้ใช้งาน : {item.users_firstname} {item.users_lastname}
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    ขอใช้บริการ : {item.service_name}
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    ราคาที่ขอใช้บริการ : {item.service_price} บาท
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    พื้นที่ใช้บริการ : {item.district_name}
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    ที่อยู่ที่คุณต้องไปรับงาน : {item.users_address}
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    เบอร์โทรศัพท์ติดต่อ : {item.users_phone}
-                                </p>
-                                <p className="text-xl text-gray-400 dark:text-gray-500">
-                                    สถานะงาน : {item.status_work}
-                                </p>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">ผู้ใช้งาน : </p>
+                                    <p className="text-gray-500">{item.users_firstname} {item.users_lastname}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">ขอใช้บริการ : </p>
+                                    <p className="text-gray-500">{item.service_name}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">ประเภทสัตว์เลี้ยง : </p>
+                                    <p className="text-gray-500">{item.pet_name}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">ราคาที่ขอใช้บริการ : </p>
+                                    <p className="text-gray-500">{item.service_price}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">พื้นที่ใช้บริการ : </p>
+                                    <p className="text-gray-500">{item.district_name}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">ที่อยู่ที่คุณต้องไปรับงาน : </p>
+                                    <p className="text-gray-500">{item.users_address}</p>
+                                </div>
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">เบอร์โทรศัพท์ติดต่อ : </p>
+                                    <p className="text-gray-500">{item.users_phone}</p>
+                                </div>
+                                {item.status_work !== "" && (
+                                    <div className="flex gap-x-1">
+                                        <p className="font-semibold">สถานะงานจากแอดมิน : </p>
+                                        <p className="text-gray-500">{item.status_work}</p>
+                                    </div>
+                                )}
+                                <div className="text-lg flex gap-x-1">
+                                    <p className="font-semibold">วันและเวลาที่สนใจเป็นพิเศษ : </p>
+                                    <p className="text-gray-500">
+                                        {item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}
+                                        {item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}`}
+                                        {!item.booking_first && !item.booking_second && "ไม่มี"}
+                                    </p>
+                                </div>
                             </div>
                             {!isJobAccepted && (
                                 item.status_work === "เริ่มงานได้" ? (
                                     <div className=" flex flex-col justify-end gap-3">
-                                        <div className="flex ">
+                                        <div className="flex">
                                             กดเสร็จงานเมื่อส่งงานลูกค้าแล้วเพื่อรับเงินผ่านPromptPay
                                         </div>
                                         <div className="flex justify-center">
@@ -126,28 +186,104 @@ export function WorkforPet() {
                                                 label="เสร็จงาน"
                                                 className="p-2 w-36 rounded-xl"
                                                 buttonType="primary"
-                                                onClick={() => {
-                                                    updateJobCompletionStatus(item);
-                                                    handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
-                                                }}
+                                                onClick={handleOpen}
                                             />
                                         </div>
+                                        <Modal
+                                            title="ให้บริการเสร็จสิ้นแล้วกดตกตลงเพื่อแจ้งแอดมิน"
+                                            open={isModalOpen}
+                                            footer={false}
+                                            className="font-kanit"
+                                        >
+                                            <div className="flex flex-col justify-center items-center gap-2 p-5">
+                                                <div className="w-full flex justify-center gap-3">
+                                                    <Buttons
+                                                        label="ตกลง"
+                                                        buttonType="success"
+                                                        className="mt-5 w-1/4 p-2 rounded-full"
+                                                        onClick={() => {
+                                                            updateJobCompletionStatus(item);
+                                                            handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
+                                                        }}
+                                                    />
+                                                    <Buttons
+                                                        label="ยกเลิก"
+                                                        buttonType="danger"
+                                                        className="mt-5 w-1/4 p-2 rounded-full"
+                                                        onClick={handleCloes}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Modal>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col text-white gap-4 w-40">
-                                        <Buttons
-                                            label="รับงาน"
-                                            className="p-2 rounded-xl"
-                                            buttonType="success"
-                                            onClick={() => handleAcceptJob(item)}
-                                        />
-                                        <Buttons
-                                            label="ไม่รับงาน"
-                                            className="p-2 rounded-xl"
-                                            buttonType="danger"
-                                            onClick={() => handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id)}
-                                        />
-                                    </div>
+                                    <>
+                                        {item.users_cancel !== "" && (
+                                            <div className="w-[260px] flex flex-col items-center">
+                                                <p className="font-semibold text-red-700">
+                                                    ขออภัย ! งานของคุณถูกยกเลิกเนื่องจากคุณ {item.users_firstname} {item.users_lastname} {item.users_cancel}
+                                                </p>
+                                                <Buttons
+                                                    label="รับทราบ"
+                                                    buttonType="primary"
+                                                    className="mt-5 w-28 p-2 rounded-full"
+                                                    onClick={() => {
+                                                        understandWork(item.users_id, item.district_id, item.service_id, item.pet_id)
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        {item.users_cancel === "" && (
+                                            <div className="flex flex-col text-white gap-4 w-40">
+                                                <Buttons
+                                                    label="รับงาน"
+                                                    className="p-2 rounded-xl"
+                                                    buttonType="success"
+                                                    onClick={() => handleAcceptJob(item)}
+                                                />
+                                                <Buttons
+                                                    label="ไม่รับงาน"
+                                                    className="p-2 rounded-xl"
+                                                    buttonType="danger"
+                                                    onClick={handleOpen}
+                                                />
+                                                <Modal
+                                                    title="โปรดระบุเหตุผลที่ไม่รับงาน"
+                                                    open={isModalOpen}
+                                                    footer={false}
+                                                    className="font-kanit"
+                                                >
+                                                    <div className="flex flex-col justify-center items-center gap-2 p-5">
+                                                        <textarea
+                                                            rows={4}
+                                                            className="block p-2.5 w-full text-base rounded-xl text-black bg-slate-100"
+                                                            placeholder="Write your thoughts here..."
+                                                            value={statusText}
+                                                            onChange={(e) => setStatusText(e.target.value)}
+                                                        >
+                                                        </textarea>
+                                                        <div className="w-full flex justify-center gap-x-3">
+                                                            <Buttons
+                                                                label="ตกลง"
+                                                                buttonType="secondary"
+                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                onClick={() => {
+                                                                    handleAcceptJob(item)
+                                                                    handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
+                                                                }}
+                                                            />
+                                                            <Buttons
+                                                                label="ยกเลิก"
+                                                                buttonType="primary"
+                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                onClick={handleCloes}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </Modal>
+                                            </div>
+                                        )}
+                                    </>
                                 )
                             )}
                             {isJobAccepted && (

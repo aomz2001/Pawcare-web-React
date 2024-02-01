@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import InputForm from "../../../components/ItemsGroup/InputForm";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import axios from "axios";
@@ -14,44 +14,54 @@ export const SignupProvider = () => {
     const [lastname, setLastname] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [address, setAddress] = useState<string>("");
+    const [checkbox, setCheckbox] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const createProvider = async () => {
-        try {
-            const { data, status } = await axios.post<SignupProps>(
-                'http://localhost:3000/signup-provider',
-                {
-                    provider_email: email,
-                    provider_password: password,
-                    provider_firstname: firstname,
-                    provider_lastname: lastname,
-                    provider_phone: phone,
-                    provider_address: address
+        if (!email || !password || !firstname || !lastname || !phone || !address || !checkbox) {
+            alert('โปรดกรอกข้อมูลให้ครบ!');
+            return;
+        }
+        else {
+            try {
+                const { data, status } = await axios.post<SignupProps>(
+                    'http://localhost:3000/signup-provider',
+                    {
+                        provider_email: email,
+                        provider_password: password,
+                        provider_firstname: firstname,
+                        provider_lastname: lastname,
+                        provider_phone: phone,
+                        provider_address: address
 
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
                     },
-                },
-            );
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                    },
+                );
 
-            console.log(JSON.stringify(data, null, 4));
-            console.log(status);
-
-            setEmail('');
-            setPassword('');
-            setFirstname('');
-            setLastname('');
-            setPhone('');
-            setAddress('');
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.log('error message: ', error.message);
-            } else {
-                console.log('unexpected error: ', error);
+                console.log(JSON.stringify(data, null, 4));
+                console.log(status);
+                setEmail('');
+                setPassword('');
+                setFirstname('');
+                setLastname('');
+                setPhone('');
+                setAddress('');
+                alert("ลงทะเบียนสำเร็จ");
+                navigate('/provider/login-provider');
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.log('error message: ', error.message);
+                } else {
+                    console.log('unexpected error: ', error);
+                }
             }
         }
+
     };
 
     return (
@@ -68,13 +78,14 @@ export const SignupProvider = () => {
                         <h1 className="flex justify-center text-xl font-bold md:text-2xl text-white">
                             ลงทะเบียนผู้ให้บริการ
                         </h1>
-                        <form action="">
+                        <div>
                             <div className="grid md:grid-cols-2 gap-2 mb-6">
                                 <InputForm
                                     id="email"
                                     label="อีเมล"
                                     name="email"
                                     placeholder="xxx@email.com"
+                                    labelClassName="text-white"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -83,6 +94,7 @@ export const SignupProvider = () => {
                                     label="รหัสผ่าน"
                                     type="password"
                                     placeholder="••••••••"
+                                    labelClassName="text-white"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -91,6 +103,7 @@ export const SignupProvider = () => {
                                     label="ชื่อ"
                                     name="fname"
                                     placeholder="ชื่อ"
+                                    labelClassName="text-white"
                                     value={firstname}
                                     onChange={(e) => setFirstname(e.target.value)}
                                 />
@@ -99,6 +112,7 @@ export const SignupProvider = () => {
                                     label="นามสกุล"
                                     name="lname"
                                     placeholder="นามสกุล"
+                                    labelClassName="text-white"
                                     value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}
                                 />
@@ -107,6 +121,7 @@ export const SignupProvider = () => {
                                     label="เบอร์โทรศัพท์"
                                     name="phone"
                                     placeholder="เบอร์โทรศัพท์"
+                                    labelClassName="text-white"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                 />
@@ -115,6 +130,7 @@ export const SignupProvider = () => {
                                     label="ที่อยู่"
                                     name="address"
                                     placeholder="ที่อยู่ (**โปรดกรอกที่อยู่อย่างละเอียด**)"
+                                    labelClassName="text-white"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
@@ -123,9 +139,14 @@ export const SignupProvider = () => {
                                 <InputForm
                                     type="checkbox"
                                     className="mx-2 cursor-pointer mt-[6px]"
-
+                                    checked={checkbox}
+                                    onChange={() => setCheckbox(!checkbox)}
                                 />
-                                <Link to='/condition' className="underline text-gray-400 hover:text-white">
+                                <Link
+                                    to='/condition'
+                                    className="underline text-gray-400 hover:text-white"
+                                    target="_blank"
+                                >
                                     ฉันได้อ่านและยอมรับเงื่อนไขการใช้งานของ PAWCARE
                                 </Link>
                             </div>
@@ -137,7 +158,7 @@ export const SignupProvider = () => {
                                     onClick={createProvider}
                                 />
                             </div>
-                        </form>
+                        </div>
                         <p className="flex w-full text-sm font-light text-gray-400">
                             <Link to="/provider/login-provider" className="font-medium hover:text-white underline ">ไปยังหน้าเข้าสู่ระบบ</Link>
                         </p>

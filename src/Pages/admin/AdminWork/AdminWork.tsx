@@ -21,6 +21,7 @@ interface AdminWorkProps {
     payment: string;
     provider_phone: string;
     job_complete: string;
+    report: string;
 }
 
 export const AdminWork = () => {
@@ -30,7 +31,7 @@ export const AdminWork = () => {
     const [imageData, setImageData] = useState<string | null>(null);
     const [statusText, setStatusText] = useState<string>("");
     const [clickedPaymentItem, setClickedPaymentItem] = useState<AdminWorkProps | null>(null);
-
+    console.log('statusText', statusText)
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -111,6 +112,7 @@ export const AdminWork = () => {
     
             if (response.status === 200) {
                 console.log(response.data);
+                alert("แจ้งสถานะการชำระเงินผู้ใช้งานและคอมเม้นและรายงานเรียบร้อย")
             }
         } catch (error) {
             console.error("Error updating job completion status:", error);
@@ -139,7 +141,7 @@ export const AdminWork = () => {
                                     onClick={() => handleOk(paymentItem)}
                                 />
                                 <Buttons
-                                    label="แจ้งสถานะผู้ใช้งาน"
+                                    label="แจ้งสถานะผู้ใช้งานรอรับบริการและคอมเม้น"
                                     buttonType="success"
                                     className="p-2 rounded-xl"
                                     onClick={() => updateJobCompletionStatus(paymentItem)}
@@ -149,11 +151,12 @@ export const AdminWork = () => {
                                 <h3>ผู้ให้บริการ : {`${paymentItem.provider_firstname} ${paymentItem.provider_lastname}`}</h3>
                                 <p>ให้บริการ : {paymentItem.service_name}</p>
                                 <p>เบอร์โทรศัพท์ / หมายเลข PromptPay : {paymentItem.provider_phone}</p>
-                                <p>สถานะงาน : {paymentItem.job_complete}</p>
+                                <p>สถานะการเสร็จงาน : {paymentItem.job_complete}</p>
+                                <p>การรายงาน : {paymentItem.report}</p>
                             </div>
                             <div className="flex flex-col gap-3">
                                 <Buttons
-                                    label="แจ้งสถานะงานให้ผู้บริการ"
+                                    label="แจ้งเริ่มงานให้ผู้บริการ"
                                     buttonType="success"
                                     className="p-2 rounded-xl"
                                     onClick={() => handleOpenWork(paymentItem)}

@@ -57,6 +57,7 @@ const FindMentor = () => {
             }
         } else {
             console.log("Please select values for all options");
+            alert('โปรดเลือกข้อมูลให้ครบ');
         }
     };
 
@@ -70,7 +71,7 @@ const FindMentor = () => {
                         </div>
                         <p className='text-white pb-[33px] '>ให้เราช่วยคุณหาผู้ช่วยใกล้ๆคุณสิ</p>
                         <div className="max-w-[335px]">
-                            <form method="post" className='flex flex-col '>
+                            <div className='flex flex-col '>
                                 <select
                                     className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
                                     onChange={(e) => setPetId(Number(e.target.value))}
@@ -110,7 +111,7 @@ const FindMentor = () => {
                                     className="w-20 p-2 rounded-full mb-14"
                                     onClick={handleSearch}
                                 />
-                            </form>
+                            </div>
                         </div>
                     </div>
                     <div className="pt-[75px] pl-28 max-[1250px]:hidden">

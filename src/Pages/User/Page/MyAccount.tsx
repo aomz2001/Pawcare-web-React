@@ -142,8 +142,6 @@ const MyAccount = () => {
         }
     };
     
-
-
     return (
         <>
             <div className="bg-[#FFF8EA]">
@@ -151,21 +149,21 @@ const MyAccount = () => {
                     <div className="w-[700px] h-auto bg-white my-24 rounded-3xl">
                         <div className="p-12">
                             <h3 className="text-lg">โปรไฟล์ของคุณ</h3>
-                            <form>
-                                <div className="h-auto flex justify-center items-center mb-16">
+                            <div>
+                                {/* <div className="h-auto flex justify-center items-center mb-16">
                                     <div className="flex flex-col justify-center items-center">
                                         <img src={previewImage || '#'} alt="" className="bg-slate-200 h-40 w-40 rounded-full mb-5" />
                                         <input type="file" id="upload" name="upload" accept="image/*" className="w-[100px]" onChange={handleImageChange} />
                                     </div>
-                                </div>
-                                <div className="flex flex-col gap-10 text-lg pl-16 mb-16">
+                                </div> */}
+                                <div className="flex flex-col gap-10 text-lg pl-16 my-16">
                                     <p>อีเมล : {userData.users[0]?.users_email}</p>
                                     <p>ชื่อ : {userData.users[0]?.users_firstname}</p>
                                     <p>นามสกุล : {userData.users[0]?.users_lastname}</p>
                                     <p>เบอร์โทรศัพท์ : {userData.users[0]?.users_phone}</p>
                                     <p>ที่อยู่ : {userData.users[0]?.users_address}</p>
                                 </div>
-                            </form>
+                            </div>
                             <div className="flex justify-center gap-3">
                                 <Buttons
                                     label="แก้ไขข้อมูล"

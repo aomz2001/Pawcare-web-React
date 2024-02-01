@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 
 interface PaymentServiceDataItem {
@@ -32,6 +32,7 @@ export const Payment = () => {
     const providerId = searchParams.get("providerId");
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [file, setFile] = useState<File | undefined>(undefined);
+    const navigate = useNavigate();
 
     const handleOk = async () => {
         // เรียก API สร้าง QR Code
@@ -92,6 +93,8 @@ export const Payment = () => {
                 });
                 console.log(response.data);
                 setIsModalOpen(false);
+                navigate('/');
+                alert("อัพโหลดรูปภาพสำเร็จและรอแอดมินตรวจสอบหากชำระเงินสำเร็จพี่เลี้ยงจะติดต่อคุณกลับไป");
             } catch (error) {
                 console.error("Error uploading file:", error);
             }

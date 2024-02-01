@@ -1,5 +1,7 @@
 import React, { forwardRef, ForwardedRef, InputHTMLAttributes } from "react";
 
+import './InputForm.style.css'
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   inputClassName?: string;
@@ -15,7 +17,7 @@ const CustomInput: React.ForwardRefRenderFunction<HTMLInputElement, InputProps> 
     <div className="flex flex-col font-kanit" >
       {label && (
         <label
-          className={`text-white ${labelClassName || ''}`}
+          className={` ${labelClassName || ''}`}
           htmlFor={inputProps.id}
           style={{ color: labelColor }}
         >

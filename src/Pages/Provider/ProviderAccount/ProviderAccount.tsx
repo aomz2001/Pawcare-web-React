@@ -4,7 +4,11 @@ import Buttons from '../../../components/ItemsGroup/Button/Buttons';
 import axios from 'axios';
 import InputForm from '../../../components/ItemsGroup/InputForm';
 import ServiceCard from './AccountCard/ServiceCard';
-import BookingCard from './AccountCard/BookingCard';
+
+import dayjs from "dayjs"
+import "dayjs/locale/th"
+
+dayjs.locale("th")
 
 interface ProviderData {
     provider: any;
@@ -24,6 +28,8 @@ interface ProviderData {
         service_id: number;
         service_name: string;
         service_price: number;
+        booking_start:string;
+        booking_end:string;
     }[];
 }
 
@@ -162,11 +168,15 @@ export const ProviderAccount = () => {
         }
     };
 
+    
+    
     const serviceItems = serviceData?.service?.map((serviceItem, index) => (
         <div key={serviceItem?.service_id || index}>
             {serviceItem && serviceItem.service_name && serviceItem.service_price && (
-                <div className='flex'>
-                    {`${serviceItem.service_name} ราคา :  ${serviceItem.service_price}`}
+                <div className='flex bg-stone-200 mb-3 p-3 rounded-xl'>
+                    {`${serviceItem.service_name}`}<br/>
+                    {` วันและเวลาที่ให้บริการ : ${dayjs(serviceItem.booking_start).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} ถึง ${dayjs(serviceItem.booking_end).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} `}<br/>
+                    {`ราคา : ${serviceItem.service_price} `}
                 </div>
             )}
         </div>
@@ -181,26 +191,24 @@ export const ProviderAccount = () => {
         { label: 'สัตว์เลี้ยงที่ให้บริการ', value: petData?.pet || '' },
         { label: 'บริการ', value: serviceItems },
     ];
-
     return (
         <>
-            <div className="h-56 flex justify-start items-center ">
+            {/* <div className="h-56 flex justify-start items-center ">
                 <div className="flex flex-col ">
                     <img src={previewImage || '#'} alt="" className="bg-slate-200 h-40 w-40 rounded-full mb-5" />
                     <input type="file" id="upload" name="upload" accept="image/*" onChange={handleImageChange} />
                 </div>
-            </div>
-            <Descriptions title={<h3 className='text-3xl font-kanit pt-10 '>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
+            </div> */}
+            <Descriptions title={<h3 className='text-3xl font-kanit '>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
                 key: item.label,
                 label: <h4 className='text-xl font-kanit'>{item.label}</h4>,
                 children: <p className='text-xl font-kanit '>{item.value}</p>,
             }))}
-                column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 3, xxl: 3 }}
+                column={{ xs: 1, sm: 1, md: 1, xl: 2 }}
             />
             <div className="border-b-2"></div>
-                    <ServiceCard />
-                    <BookingCard />
-            <div className="flex justify-center gap-3">
+                <ServiceCard />
+            <div className="flex justify-center gap-3 pt-8">
                 <Buttons
                     label="แก้ไขข้อมูล"
                     buttonType="edit"
