@@ -36,6 +36,10 @@ const Signin = () => {
         localStorage.setItem('token', data.token);
         setAuthenProvider(true)
         navigate('/provider')
+        setTimeout(() => {
+          localStorage.removeItem('token');
+          window.location.reload()
+        }, 12 * 60 * 60 * 1000);
       } else {
         alert("Sign in Failed");
       }
