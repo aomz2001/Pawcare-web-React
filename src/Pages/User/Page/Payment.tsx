@@ -93,8 +93,8 @@ export const Payment = () => {
                 });
                 console.log(response.data);
                 setIsModalOpen(false);
-                navigate('/');
                 alert("อัพโหลดรูปภาพสำเร็จและรอแอดมินตรวจสอบหากชำระเงินสำเร็จพี่เลี้ยงจะติดต่อคุณกลับไป");
+                navigate('/');
             } catch (error) {
                 console.error("Error uploading file:", error);
             }

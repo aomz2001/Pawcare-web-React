@@ -30,7 +30,6 @@ export const Notifications = () => {
     const [isCancelJob, setCancelJob] = useState(false);
     const [statusText, setStatusText] = useState<string>("");
     const [cancelText, setCancelText] = useState<string>("");
-
     const handleOpen = () => {
         setIsModalOpen(true);
     };
@@ -100,7 +99,7 @@ export const Notifications = () => {
 
             if (response.status === 200) {
                 console.log(response.data);
-                alert("รายงานเสร็จสิ้น")
+                alert("ขอบคุณสำหรับการรายงาน")
                 navigate("/")
             }
         } catch (error) {
@@ -108,16 +107,16 @@ export const Notifications = () => {
         }
     };
     const understandJobCancel = (providerId: number, districtId: number, petId: number, serviceId: number, service_price: number, usersId: number, provider_cancel: string) => {
-            axios.delete("http://localhost:3000/api/understand-job-cancel", {
-                data: { providerId, districtId, petId, serviceId, service_price, usersId, provider_cancel }
+        axios.delete("http://localhost:3000/api/understand-job-cancel", {
+            data: { providerId, districtId, petId, serviceId, service_price, usersId, provider_cancel }
+        })
+            .then(response => {
+                console.log("Service request deleted successfully");
+                window.location.reload();
             })
-                .then(response => {
-                    console.log("Service request deleted successfully");
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error("Error deleting service request:", error);
-                });
+            .catch(error => {
+                console.error("Error deleting service request:", error);
+            });
     };
     const userCancelJob = async (index: number) => {
         try {
@@ -242,9 +241,14 @@ export const Notifications = () => {
                                                                                 className="p-2 w-24 rounded-full"
                                                                                 buttonType="secondary"
                                                                                 onClick={() => {
-                                                                                    userCancelJob(index);
-                                                                                    handleDeclineJob(item.provider_id, item.district_id, item.pet_id, item.service_id, item.service_price, item.users_id)
+                                                                                    if (cancelText) {
+                                                                                        userCancelJob(index);
+                                                                                        handleDeclineJob(item.provider_id, item.district_id, item.pet_id, item.service_id, item.service_price, item.users_id);
+                                                                                    } else {
+                                                                                        alert("กรุณาแจ้งสาเหตุยกเลิกงานให้พี่เลี้ยง");
+                                                                                    }
                                                                                 }}
+                                                                                disabled={!cancelText}
                                                                             />
                                                                             <Buttons
                                                                                 label="ยกเลิก"
@@ -296,9 +300,14 @@ export const Notifications = () => {
                                                                     buttonType="edit"
                                                                     className="mt-5 w-1/4 p-2 rounded-full"
                                                                     onClick={() => {
-                                                                        handleOpen();
-                                                                        ReportProvider(index);
+                                                                        if (statusText) {
+                                                                            handleOpen();
+                                                                            ReportProvider(index);
+                                                                        } else {
+                                                                            alert("กรุณาแจ้งสาเหตุที่รายงานให้แอดมินทราบ");
+                                                                        }
                                                                     }}
+                                                                    disabled={!statusText}
                                                                 />
                                                                 <Buttons
                                                                     label="ยกเลิก"
