@@ -189,7 +189,7 @@ export const ProviderProfile = () => {
                                 <div className="bg-white p-6 flex flex-col gap-2 border-stone-200 border-[1px] rounded-3xl">
                                     {`${dayjs(providerProfileData[0].booking_start).format("DD MMMM YYYY [เวลา:] HH:mm")}`} ถึง {`${dayjs(providerProfileData[0].booking_end).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
                                 </div>
-                                <span className="text-xl mt-3">รีวิวจากผู้ใช้งาน </span>
+                                <span className="text-2xl mt-3">รีวิวจากผู้ใช้งาน </span>
                                 <div className="h-48 bg-white border-stone-200 border-[1px] rounded-3xl hover:overflow-y-auto overflow-hidden">
                                     <div className="p-5 ">
                                         {reviewData ? (
