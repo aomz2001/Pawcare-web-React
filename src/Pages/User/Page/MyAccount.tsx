@@ -4,6 +4,7 @@ import InputForm from "../../../components/ItemsGroup/InputForm";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import Cookies from "universal-cookie";
 import axios from "axios";
+import httpClient from "../../../utils/httpClient";
 
 interface UserData {
     users: any;
@@ -59,11 +60,7 @@ const MyAccount = () => {
                 return;
             }
 
-            const { data } = await axios.get<UserData>('http://localhost:3000/users-data', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const { data } = await httpClient.get<UserData>('user/users-data');
 
             if (data) {
                 setUserData(data);
@@ -94,16 +91,10 @@ const MyAccount = () => {
                 users_phone: editPhone || userData.users_phone,
                 users_address: editAddress || userData.users_address,
             };
-            window.location.href ='/my-account'
-            const { data } = await axios.put<UserData>(
-                `http://localhost:3000/users-data/${userData.users?.[0]?.users_id}`,
+            window.location.reload()
+            const { data } = await httpClient.put<UserData>(
+                `user/users-data/${userData.users?.[0]?.users_id}`,
                 updatedData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
             );
             setUserData(data);
             setOpenEdit(false);
@@ -124,10 +115,11 @@ const MyAccount = () => {
     const handleDelete = async (users_id: number): Promise<void> => {
         if (userData.users) {
             try {
-                const { status } = await axios.delete(
-                    `http://localhost:3000/users-data/${users_id}`
+                const { status } = await httpClient.delete(
+                    `user/users-data/${users_id}`
                 );
                 cookies.remove('token');
+                cookies.remove('userId');
                 console.log(status);
                 const updatedUsers = userData.users.filter((u: UserData) => u.users_id !== users_id);
                 setUserData({ ...userData, users: updatedUsers });

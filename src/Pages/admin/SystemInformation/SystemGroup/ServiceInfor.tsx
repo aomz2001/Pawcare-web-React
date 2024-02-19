@@ -4,6 +4,7 @@ import axios from "axios";
 import InputForm from "../../../../components/ItemsGroup/InputForm";
 import { Modal } from "antd";
 import EditModal from "../../../../components/ItemsGroup/Modals/EditModal";
+import httpClient from "../../../../utils/httpClient";
 
 type ServiceProps = {
   service_name: string;
@@ -33,15 +34,9 @@ export const ServiceInfor = () => {
   const handleSaveEdit = async (): Promise<void> => {
     if (serviceData && editId) {
       try {
-        const { data, status } = await axios.put<ServiceProps>(
-          `http://localhost:3000/service/${editId}`,
-          { service_name: editName },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
+        const { data, status } = await httpClient.put<ServiceProps>(
+          `admin/service/${editId}`,
+          { service_name: editName }
         );
 
         console.log(JSON.stringify(data, null, 4));
@@ -68,8 +63,8 @@ export const ServiceInfor = () => {
   const handleDelete = async (service_id: number): Promise<void> => {
     if (serviceData) {
       try {
-        const { status } = await axios.delete(
-          `http://localhost:3000/service/${service_id}`
+        const { status } = await httpClient.delete(
+          `admin/service/${service_id}`
         );
 
         console.log(status);
@@ -90,15 +85,9 @@ export const ServiceInfor = () => {
 
   const createservice = async () => {
     try {
-      const { data, status } = await axios.post<ServiceProps>(
-        'http://localhost:3000/service',
-        { service_name: service }, // เปลี่ยน key เป็น service_name
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        },
+      const { data, status } = await httpClient.post<ServiceProps>(
+        'admin/service',
+        { service_name: service }
       );
 
       console.log(JSON.stringify(data, null, 4));
@@ -121,7 +110,7 @@ export const ServiceInfor = () => {
     // ใช้ useEffect เพื่อดึงข้อมูลเมื่อคอมโพเนนต์โหลด
     const fetchData = async () => {
       try {
-        const response = await axios.get<ServiceProps[]>('http://localhost:3000/service');
+        const response = await httpClient.get<ServiceProps[]>('public/service');
         setServiceData(response.data);
         setError(null);
       } catch (error) {

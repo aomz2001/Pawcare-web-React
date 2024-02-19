@@ -1,8 +1,8 @@
 import { Modal } from "antd";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
+import httpClient from "../../../utils/httpClient";
 
 interface PaymentServiceDataItem {
     users_id: number;
@@ -37,7 +37,7 @@ export const Payment = () => {
     const handleOk = async () => {
         // เรียก API สร้าง QR Code
         try {
-            const response = await axios.post("http://localhost:3000/api/generate-qr", {
+            const response = await httpClient.post("user/api/generate-qr", {
                 mobileNumber: "0982676425",
                 amount: paymentServiceData && paymentServiceData[0]?.service_price,
             });
@@ -54,7 +54,7 @@ export const Payment = () => {
         setIsModalOpen(false);
     };
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/show-accept-service`, { params: { users_id: +usersId! } })
+        httpClient.get(`user/api/show-accept-service`, { params: { users_id: +usersId! } })
             .then(response => {
                 const filteredData = response.data.data.filter((item: PaymentServiceDataItem) =>
                     item.users_id === parseInt(usersId!) &&
@@ -86,11 +86,7 @@ export const Payment = () => {
                 formData.append('serviceId', serviceId);
                 formData.append('usersId', usersId);
 
-                const response = await axios.put("http://localhost:3000/api/upload-payment", formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
+                const response = await httpClient.put("user/api/upload-payment", formData);
                 console.log(response.data);
                 setIsModalOpen(false);
                 alert("อัพโหลดรูปภาพสำเร็จและรอแอดมินตรวจสอบหากชำระเงินสำเร็จพี่เลี้ยงจะติดต่อคุณกลับไป");

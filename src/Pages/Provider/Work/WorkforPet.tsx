@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
-import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import { Modal } from "antd";
+import httpClient from "../../../utils/httpClient";
 
 dayjs.locale("th");
 
@@ -57,8 +57,7 @@ export function WorkforPet() {
 
     useEffect(() => {
         const providerId = localStorage.getItem("providerId");
-        axios
-            .get(`http://localhost:3000/api/show-req-service?provider_id=${providerId}`)
+        httpClient.get(`provider/api/show-req-service?provider_id=${providerId}`)
             .then((response) => {
                 setReqServiceData(response.data.data);
             })
@@ -70,7 +69,7 @@ export function WorkforPet() {
     const handleAcceptJob = async (item: ReqServiceDataItem) => {
         try {
             const providerId = localStorage.getItem("providerId");
-            const response = await axios.post("http://localhost:3000/api/accept-service", {
+            const response = await httpClient.post("provider/api/accept-service", {
                 pet_id: item.pet_id,
                 district_id: item.district_id,
                 service_id: item.service_id,
@@ -86,7 +85,7 @@ export function WorkforPet() {
     };
 
     const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number) => {
-        axios.delete("http://localhost:3000/api/delete-req-service", {
+        httpClient.delete("provider/api/delete-req-service", {
             data: { usersId, districtId, serviceId, petId },
         })
             .then((response) => {
@@ -98,7 +97,7 @@ export function WorkforPet() {
             });
     };
     const understandWork = (usersId: number, districtId: number, serviceId: number, petId: number) => {
-        axios.delete("http://localhost:3000/api/delete-req-service", {
+        httpClient.delete("provider/api/delete-req-service", {
             data: { usersId, districtId, serviceId, petId },
         })
             .then((response) => {
@@ -113,7 +112,7 @@ export function WorkforPet() {
     const updateJobCompletionStatus = async (item: ReqServiceDataItem) => {
         try {
             const providerId = localStorage.getItem("providerId");
-            const response = await axios.put("http://localhost:3000/api/job-complete-status", {
+            const response = await httpClient.put("provider/api/job-complete-status", {
                 job_complete: "เสร็จงาน",
                 providerId: providerId,
                 districtId: item.district_id,
@@ -130,8 +129,6 @@ export function WorkforPet() {
             console.error("Error updating job completion status:", error);
         }
     };
-    console.log('reqServiceData', reqServiceData)
-    console.log('statusText', statusText)
     return (
         <>
             <div className="flex flex-col  mb-4 rounded ">

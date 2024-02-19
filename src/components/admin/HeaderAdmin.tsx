@@ -25,7 +25,7 @@ export const HeaderAdmin = () => {
                 <path stroke="currentColor" d="M1 1h15M1 7h15M1 13h15" />
               </svg>
             </button>
-            <Link to="/for-admin-only" className="flex items-center space-x-3 rtl:space-x-reverse">
+            <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
               <img src="src/assets/image/Logo.png" className="h-10 " alt="" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">Pawcare Admin</span>
             </Link>

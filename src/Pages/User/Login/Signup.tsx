@@ -3,6 +3,8 @@ import InputForm from "../../../components/ItemsGroup/InputForm";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import { useState } from "react";
 import axios from "axios";
+import httpClient from "../../../utils/httpClient";
+import { Alert, Space } from "antd";
 
 type SignupProps = {};
 
@@ -15,18 +17,22 @@ const Signup = () => {
   const [phone, setPhone] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [checkbox, setCheckbox] = useState<boolean>(false);
+  const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [showFail, setShowFail] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   const createUsers = async () => {
     if (!email || !password || !firstname || !lastname || !phone || !address || !checkbox) {
-      alert('โปรดกรอกข้อมูลให้ครบ!');
+      setShowWarning(true);
+      setShowFail(false);
       return;
     }
-    else{
+    else {
       try {
-        const { data, status } = await axios.post<SignupProps>(
-          'http://localhost:3000/signup',
+        const { data, status } = await httpClient.post<SignupProps>(
+          'public/signup',
           {
             users_email: email,
             users_password: password,
@@ -34,35 +40,34 @@ const Signup = () => {
             users_lastname: lastname,
             users_phone: phone,
             users_address: address
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          },
+          }
         );
-  
         console.log(JSON.stringify(data, null, 4));
         console.log(status);
-  
+        console.log('message', data)
+        setShowWarning(false);
+        setShowFail(false);
+        setShowSuccess(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 300);
         setEmail('');
         setPassword('');
         setFirstname('');
         setLastname('');
         setPhone('');
         setAddress('');
-        alert("ลงทะเบียนสำเร็จ");
-        navigate('/login');
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log('error message: ', error.message);
+          setShowFail(true);
+          setShowWarning(false);
         } else {
           console.log('unexpected error: ', error);
         }
       }
     }
-    
+
   };
 
   return (
@@ -162,6 +167,42 @@ const Signup = () => {
                 >
                   ฉันได้อ่านและยอมรับเงื่อนไขการใช้งานของ PAWCARE
                 </Link>
+              </div>
+              <div className="pb-5">
+                {showSuccess && (
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Alert
+                      message="ลงทะเบียนสำเร็จ"
+                      type="success"
+                      showIcon
+                      className="font-kanit"
+                    />
+                  </Space>
+                )}
+                {showWarning && (
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Alert
+                      message="โปรดกรอกข้อมูลให้ครบ !!"
+                      type="warning"
+                      showIcon
+                      closable
+                      onClose={() => setShowWarning(false)}
+                      className="font-kanit"
+                    />
+                  </Space>
+                )}
+                {showFail && (
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Alert
+                      message="อีเมลนี้มีผู้ใช้งานแล้ว"
+                      type="error"
+                      showIcon
+                      closable
+                      onClose={() => setShowFail(false)}
+                      className="font-kanit"
+                    />
+                  </Space>
+                )}
               </div>
               <div className="flex justify-center">
                 <Buttons

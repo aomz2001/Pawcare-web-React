@@ -4,6 +4,7 @@ import axios from "axios";
 import InputForm from "../../../../components/ItemsGroup/InputForm";
 import { Modal } from "antd";
 import EditModal from "../../../../components/ItemsGroup/Modals/EditModal";
+import httpClient from "../../../../utils/httpClient";
 
 type DistrictProps = {
   district_name: string;
@@ -33,8 +34,8 @@ export const DistrictInfor = () => {
   const handleSaveEdit = async (): Promise<void> => {
     if (districtData && editId) {
       try {
-        const { data, status } = await axios.put<DistrictProps>(
-          `http://localhost:3000/district/${editId}`,
+        const { data, status } = await httpClient.put<DistrictProps>(
+          `admin/district/${editId}`,
           { district_name: editName },
           {
             headers: {
@@ -68,8 +69,8 @@ export const DistrictInfor = () => {
   const handleDelete = async (district_id: number): Promise<void> => {
     if (districtData) {
       try {
-        const { status } = await axios.delete(
-          `http://localhost:3000/district/${district_id}`
+        const { status } = await httpClient.delete(
+          `admin/district/${district_id}`
         );
 
         console.log(status);
@@ -90,15 +91,9 @@ export const DistrictInfor = () => {
 
   const createDistrict = async () => {
     try {
-      const { data, status } = await axios.post<DistrictProps>(
-        'http://localhost:3000/district',
-        { district_name: district }, // เปลี่ยน key เป็น district_name
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        },
+      const { data, status } = await httpClient.post<DistrictProps>(
+        'admin/district',
+        { district_name: district },
       );
 
       console.log(JSON.stringify(data, null, 4));
@@ -121,7 +116,7 @@ export const DistrictInfor = () => {
     // ใช้ useEffect เพื่อดึงข้อมูลเมื่อคอมโพเนนต์โหลด
     const fetchData = async () => {
       try {
-        const response = await axios.get<DistrictProps[]>('http://localhost:3000/district');
+        const response = await httpClient.get<DistrictProps[]>('public/district');
         setDistrictData(response.data);
         setError(null);
       } catch (error) {

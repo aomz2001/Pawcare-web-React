@@ -10,28 +10,28 @@ const Footer = () => {
             <div>
               <h2 className="mb-6 font-semibold text-yellow-500">PAWCARE</h2>
               <ul className="text-gray-400 font-medium">
-                <li className="mb-4">
-                  <Link to='/condition' className="hover:underline hover:text-white" >ข้อกำหนดการใช้งาน</Link>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <Link target="_blank" to='/condition' className=" hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out" >ข้อกำหนดการใช้งาน</Link>
                 </li>
-                <li className="mb-4">
-                  <Link to='/contact-pawcare' className="hover:underline hover:text-white">ติดต่อเรา</Link>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <Link target="_blank" to='/contact-pawcare' className="hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out">ติดต่อเรา</Link>
                 </li>
               </ul>
             </div>
             <div>
               <h2 className="mb-6 font-semibold text-yellow-500">บริการสำหรับสัตว์เลี้ยง</h2>
               <ul className="text-gray-400 font-medium">
-                <li className="mb-4">
-                  <HashLink to="/#services" className="hover:underline hover:text-white">ฝากสัตว์เลี้ยงข้ามคืน</HashLink>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <HashLink smooth to="/#services" className="hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out">ฝากสัตว์เลี้ยงข้ามคืน</HashLink>
                 </li>
-                <li className="mb-4">
-                  <HashLink to="/#services" className="hover:underline hover:text-white">พาสุนัขเดินเล่น</HashLink>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <HashLink smooth to="/#services" className="hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out">พาสุนัขเดินเล่น</HashLink>
                 </li>
-                <li className="mb-4">
-                  <HashLink to="/#services" className="hover:underline hover:text-white">บริการรับ-ส่ง</HashLink>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <HashLink smooth to="/#services" className="hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out ">บริการรับ-ส่ง</HashLink>
                 </li>
-                <li className="mb-4">
-                  <HashLink to="/#services" className="hover:underline hover:text-white">อาบน้ำตัดขนสัตว์เลี้ยง</HashLink>
+                <li className="mb-4 group transition-all duration-100 ease-in-out">
+                  <HashLink smooth to="/#services" className="hover:text-white bg-left-bottom bg-gradient-to-r from-white to-[#815B5B] bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300 ease-out">อาบน้ำตัดขนสัตว์เลี้ยง</HashLink>
                 </li>
               </ul>
             </div>
@@ -58,7 +58,7 @@ const Footer = () => {
               </Link>
             </div>
             <div className="flex justify-center pt-2 md:pt-0">
-              <span className="text-lg text-gray-400 lg:text-center">© 2023 <Link to="/">Pawcare™</Link>
+              <span className="text-lg text-gray-400 lg:text-center">© 2024 <Link to="/">Pawcare™</Link>
               </span>
             </div>
           </div>

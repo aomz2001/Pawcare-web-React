@@ -4,6 +4,7 @@ import InputForm from "../../../../components/ItemsGroup/InputForm"
 import axios from "axios";
 import EditModal from "../../../../components/ItemsGroup/Modals/EditModal";
 import Modal from "antd/es/modal/Modal";
+import httpClient from "../../../../utils/httpClient";
 
 type PetProps = {
     pet_name: string;
@@ -32,79 +33,65 @@ export const PetInfor = () => {
 
     const handleSaveEdit = async (): Promise<void> => {
         if (petData && editId) {
-          try {
-            const { data, status } = await axios.put<PetProps>(
-              `http://localhost:3000/pet/${editId}`,
-              { pet_name: editName },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-              }
-            );
-    
-            console.log(JSON.stringify(data, null, 4));
-            console.log(status);
-    
-            const updatedPet = petData.map((pet) =>
-              pet.pet_id === editId ? { ...pet, pet_name: editName } : pet
-            );
-    
-            setPetData(updatedPet);
-            closeEditModal();
-          } catch (error) {
-            if (axios.isAxiosError(error)) {
-              console.log("error message: ", error.message);
-              setError(error.message);
-            } else {
-              console.log("unexpected error: ", error);
-              setError("An unexpected error occurred");
-            }
-          }
-        }
-      };
+            try {
+                const { data, status } = await httpClient.put<PetProps>(
+                    `admin/pet/${editId}`,
+                    { pet_name: editName },
+                );
 
-      const handleDelete = async (pet_id: number): Promise<void> => {
-        if (petData) {
-          try {
-            const { status } = await axios.delete(
-              `http://localhost:3000/pet/${pet_id}`
-            );
-    
-            console.log(status);
-    
-            const updatedPet = petData.filter((pet) => pet.pet_id !== pet_id);
-            setPetData(updatedPet);
-          } catch (error) {
-            if (axios.isAxiosError(error)) {
-              console.log("error message: ", error.message);
-              setError(error.message);
-            } else {
-              console.log("unexpected error: ", error);
-              setError("An unexpected error occurred");
+                console.log(JSON.stringify(data, null, 4));
+                console.log(status);
+
+                const updatedPet = petData.map((pet) =>
+                    pet.pet_id === editId ? { ...pet, pet_name: editName } : pet
+                );
+
+                setPetData(updatedPet);
+                closeEditModal();
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.log("error message: ", error.message);
+                    setError(error.message);
+                } else {
+                    console.log("unexpected error: ", error);
+                    setError("An unexpected error occurred");
+                }
             }
-          }
         }
-      };
-    
+    };
+
+    const handleDelete = async (pet_id: number): Promise<void> => {
+        if (petData) {
+            try {
+                const { status } = await httpClient.delete(
+                    `admin/pet/${pet_id}`
+                );
+
+                console.log(status);
+
+                const updatedPet = petData.filter((pet) => pet.pet_id !== pet_id);
+                setPetData(updatedPet);
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.log("error message: ", error.message);
+                    setError(error.message);
+                } else {
+                    console.log("unexpected error: ", error);
+                    setError("An unexpected error occurred");
+                }
+            }
+        }
+    };
+
 
     const createPet = async () => {
         try {
-            const { data, status } = await axios.post<PetProps>(
-                'http://localhost:3000/pet',
+            const { data, status } = await httpClient.post<PetProps>(
+                'admin/pet',
                 { pet_name: pet },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                },
             );
-
             console.log(JSON.stringify(data, null, 4));
             console.log(status);
-
             setError(null);
             setPet('');
         } catch (error) {
@@ -122,7 +109,7 @@ export const PetInfor = () => {
         // ใช้ useEffect เพื่อดึงข้อมูลเมื่อคอมโพเนนต์โหลด
         const fetchData = async () => {
             try {
-                const response = await axios.get<PetProps[]>('http://localhost:3000/pet');
+                const response = await httpClient.get<PetProps[]>('public/pet');
                 setPetData(response.data);
                 setError(null);
             } catch (error) {

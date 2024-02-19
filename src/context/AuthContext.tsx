@@ -8,15 +8,19 @@ type ContextProps = {
 type AuthContextProps = {
     authenticated: boolean;
     authenProvider: boolean;
+    role: boolean;
     setAuthenticated: (newState: boolean) => void;
     setAuthenProvider: (newState: boolean) => void;
+    setRole: (newState: boolean) => void;
 }
 
 const initialValue = {
     authenticated: false,
     authenProvider: false,
+    role: false,
     setAuthenticated: () => { },
     setAuthenProvider: () => { },
+    setRole: () => { },
 }
 
 const AuthContext = createContext<AuthContextProps>(initialValue);
@@ -27,9 +31,15 @@ const AuthProvider = ({ children }: ContextProps) => {
         return !!token; 
     });
 
+    const [role, setRole] = useState(() => {
+        const encodedRole = new Cookies().get('role');
+        const role = encodedRole ? parseInt(atob(encodedRole)) : null;
+        return !!role ; 
+    });
+
     const [authenProvider, setAuthenProvider] = useState(() => {
         const token = localStorage.getItem('token');
-        return !!token; 
+        return !!token;
     });
 
     useEffect(() => {
@@ -40,18 +50,41 @@ const AuthProvider = ({ children }: ContextProps) => {
     }, []);
 
     useEffect(() => {
+        const encodedRole = new Cookies().get('role');
+        const role = encodedRole ? parseInt(atob(encodedRole)) : null;
+        if (role === 1) {
+            setRole(true);
+        } else {
+            setRole(false);
+        }
+    }, []);
+
+    useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             setAuthenProvider(true);
+            const TIME =  60 * 60 * 1000;
+            setTimeout(() => {
+                localStorage.clear();
+                setAuthenProvider(false);
+            }, TIME);
         }
     }, []);
     
+    const value = {
+        authenticated,
+        authenProvider,
+        role,
+        setAuthenticated,
+        setAuthenProvider,
+        setRole,
+    };
+    
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated,authenProvider, setAuthenProvider } } >
+        <AuthContext.Provider value={value} >
             {children}
         </AuthContext.Provider>
     );
 };
 
 export { AuthContext,  AuthProvider }
-

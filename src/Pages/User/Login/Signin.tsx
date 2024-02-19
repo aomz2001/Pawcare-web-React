@@ -1,49 +1,59 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import InputForm from "../../../components/ItemsGroup/InputForm"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import { useContext, useState } from "react";
-import axios from "axios";
 import Cookies from "universal-cookie";
 import { AuthContext } from "../../../context/AuthContext";
+import httpClient from "../../../utils/httpClient";
+import { Alert, Space } from "antd";
 
 interface SignInProps {
     status: string;
     token?: string;
     message?: string;
-    users_id?: number;
+    usersId?: number;
+    isAdmin?: number;
 }
 
 const Signin = () => {
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [showSuccess, setShowSuccess] = useState<boolean>(false);
+    const [showWarning, setShowWarning] = useState<boolean>(false);
+    const [showFail, setShowFail] = useState<boolean>(false);
     const cookies = new Cookies();
     const { setAuthenticated } = useContext(AuthContext);
-    const navigate = useNavigate();
 
     const LoginUsers = async () => {
         try {
-            const { data } = await axios.post<SignInProps>(
-                'http://localhost:3000/login',
+            if (!email || !password) {
+                setShowFail(false);
+                setShowWarning(true);
+                return
+            }
+            const { data } = await httpClient.post<SignInProps>(
+                'public/login',
                 { users_email: email, users_password: password },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
             );
 
-            if (data.status === "ok" && data.token ) {
-                alert("Sign in Success");
-                cookies.set('userId', data.users_id)
-                cookies.set('token', data.token);
+            if (data.status === "ok" && data.token) {
+                setShowWarning(false);
+                setShowFail(false);
+                setShowSuccess(true);
+                const encodedRole = btoa(String(data.isAdmin));
+                cookies.set('userId', data.usersId)
+                cookies.set('token', data.token)
+                cookies.set('role', encodedRole)
                 setAuthenticated(true)
-                navigate('/')
+                window.location.href = '/';
             } else {
-                alert("Sign in Failed");
+                setShowFail(true);
+                setShowWarning(false);
             }
-            setEmail('')
-            setPassword('')
+            setEmail('');
+            setPassword('');
+            console.log('data', data);
         } catch (error) {
             console.error("Error:", error);
         }
@@ -83,6 +93,40 @@ const Signin = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                            {showSuccess && (
+                                <Space direction="vertical" style={{ width: '100%' }}>
+                                    <Alert
+                                        message="เข้าสู่ระบบสำเร็จ"
+                                        type="success"
+                                        showIcon
+                                        className="font-kanit"
+                                    />
+                                </Space>
+                            )}
+                            {showWarning && (
+                                <Space direction="vertical" style={{ width: '100%' }}>
+                                    <Alert
+                                        message="โปรดกรอกข้อมูลให้ครบ !!"
+                                        type="warning"
+                                        showIcon
+                                        closable
+                                        onClose={() => setShowWarning(false)}
+                                        className="font-kanit"
+                                    />
+                                </Space>
+                            )}
+                            {showFail && (
+                                <Space direction="vertical" style={{ width: '100%' }}>
+                                    <Alert
+                                        message="เข้าสู่ระบบล้มเหลว"
+                                        type="error"
+                                        showIcon
+                                        closable
+                                        onClose={() => setShowFail(false)}
+                                        className="font-kanit"
+                                    />
+                                </Space>
+                            )}
                             <div className="flex justify-center pt-3">
                                 <Buttons
                                     label="เข้าสู่ระบบ"
@@ -105,4 +149,4 @@ const Signin = () => {
     )
 }
 
-export default Signin
+export default Signin;

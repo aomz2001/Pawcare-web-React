@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import axios from "axios";
+import httpClient from "../../../../utils/httpClient";
 
 type FindMentorProps = {
     pet_id: number;
@@ -26,11 +27,11 @@ const FindMentor = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const responsePet = await axios.get('http://localhost:3000/pet');
+                const responsePet = await httpClient.get('public/pet');
                 setPetData(responsePet.data);
-                const responseDistrict = await axios.get('http://localhost:3000/district');
+                const responseDistrict = await httpClient.get('public/district');
                 setDistrictData(responseDistrict.data);
-                const responseService = await axios.get('http://localhost:3000/service');
+                const responseService = await httpClient.get('public/service');
                 setServiceData(responseService.data);
             } catch (error) {
                 if (axios.isAxiosError(error)) {

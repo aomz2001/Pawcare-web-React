@@ -1,7 +1,7 @@
 import { Modal } from "antd"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
-import axios from "axios";
+import httpClient from "../../../utils/httpClient";
 
 interface AdminWorkProps {
     users_id: number;
@@ -43,7 +43,7 @@ export const AdminWork = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/show-payment-state");
+                const response = await httpClient.get("public/api/show-payment-state");
                 setPaymentData(response.data.data);
             } catch (error) {
                 console.error("Error fetching payment data:", error);
@@ -55,8 +55,9 @@ export const AdminWork = () => {
 
     const handleOk = async (clickedPaymentItem: AdminWorkProps) => {
         const paymentFilename = clickedPaymentItem.payment;
-        const apiUrl = `http://localhost:3000${paymentFilename}`;
+        const apiUrl = `http://localhost:3000/public${paymentFilename}`;
         console.log('paymentFilename', paymentFilename)
+        console.log('apiUrl', apiUrl)
         try {
             setImageData(apiUrl)
             setIsModalOpen(true);
@@ -94,7 +95,7 @@ export const AdminWork = () => {
 
             console.log('requestData', requestData);
 
-            await axios.put("http://localhost:3000/api/update-status-work", requestData);
+            await httpClient.put("admin/api/update-status-work", requestData);
             setStatusText("");
             setStatusWork(false);
         } catch (error) {
@@ -108,7 +109,7 @@ export const AdminWork = () => {
 
     const updateJobCompletionStatus = async (item: AdminWorkProps) => {
         try {
-            const response = await axios.put('http://localhost:3000/api/put-status-payment', {
+            const response = await httpClient.put('admin/api/put-status-payment', {
                 payment_status: 'ชำระเงินเรียบร้อยแล้ว',
                 providerId: item.provider_id,
                 districtId: item.district_id,

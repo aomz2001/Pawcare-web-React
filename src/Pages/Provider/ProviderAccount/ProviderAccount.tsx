@@ -7,6 +7,7 @@ import ServiceCard from './AccountCard/ServiceCard';
 
 import dayjs from "dayjs"
 import "dayjs/locale/th"
+import httpClient from '../../../utils/httpClient';
 
 dayjs.locale("th")
 
@@ -28,8 +29,8 @@ interface ProviderData {
         service_id: number;
         service_name: string;
         service_price: number;
-        booking_start:string;
-        booking_end:string;
+        booking_start: string;
+        booking_end: string;
     }[];
 }
 
@@ -46,6 +47,7 @@ export const ProviderAccount = () => {
     const [districtData, setDistrictData] = useState<ProviderData | null>(null);
     const [petData, setPetData] = useState<ProviderData | null>(null);
     const [serviceData, setServiceData] = useState<ProviderData>();
+    
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -71,20 +73,16 @@ export const ProviderAccount = () => {
                 return;
             }
 
-            const { data } = await axios.get<ProviderData>(`http://localhost:3000/provider-data`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const { data } = await httpClient.get<ProviderData>(`provider/provider-data`);
 
-            const { data: districtData } = await axios.get<ProviderData>(
-                `http://localhost:3000/provider-data-district/${providerId}`
+            const { data: districtData } = await httpClient.get<ProviderData>(
+                `provider/provider-data-district/${providerId}`
             );
-            const { data: petData } = await axios.get<ProviderData>(
-                `http://localhost:3000/provider-data-pet/${providerId}`
+            const { data: petData } = await httpClient.get<ProviderData>(
+                `provider/provider-data-pet/${providerId}`
             );
-            const { data: serviceData } = await axios.get<ProviderData>(
-                `http://localhost:3000/provider-data-service/${providerId}`
+            const { data: serviceData } = await httpClient.get<ProviderData>(
+                `provider/provider-data-service/${providerId}`
             );
             if (data) {
                 setProviderData(data);
@@ -119,12 +117,7 @@ export const ProviderAccount = () => {
                 provider_address: editAddress || providerData?.provider[0]?.provider_address || '',
             };
 
-            const response = await axios.put(`http://localhost:3000/provider-data/${providerData?.provider[0]?.provider_id}`, updatedData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await httpClient.put(`provider/provider-data/${providerData?.provider[0]?.provider_id}`, updatedData );
 
             if (response.data) {
                 console.log("Provider data updated successfully!");
@@ -145,11 +138,7 @@ export const ProviderAccount = () => {
                 return;
             }
 
-            const { status } = await axios.delete(`http://localhost:3000/provider-data/${providerId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const { status } = await httpClient.delete(`provider/provider-data/${providerId}`);
 
             if (status === 200) {
                 console.log("Provider data deleted successfully!");
@@ -168,14 +157,12 @@ export const ProviderAccount = () => {
         }
     };
 
-    
-    
     const serviceItems = serviceData?.service?.map((serviceItem, index) => (
         <div key={serviceItem?.service_id || index}>
             {serviceItem && serviceItem.service_name && serviceItem.service_price && (
                 <div className='flex bg-stone-200 mb-3 p-3 rounded-xl'>
-                    {`${serviceItem.service_name}`}<br/>
-                    {` วันและเวลาที่ให้บริการ : ${dayjs(serviceItem.booking_start).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} ถึง ${dayjs(serviceItem.booking_end).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} `}<br/>
+                    {`${serviceItem.service_name}`}<br />
+                    {` วันและเวลาที่ให้บริการ : ${dayjs(serviceItem.booking_start).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} ถึง ${dayjs(serviceItem.booking_end).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")} `}<br />
                     {`ราคา : ${serviceItem.service_price} `}
                 </div>
             )}
@@ -207,7 +194,7 @@ export const ProviderAccount = () => {
                 column={{ xs: 1, sm: 1, md: 1, xl: 2 }}
             />
             <div className="border-b-2"></div>
-                <ServiceCard />
+            <ServiceCard />
             <div className="flex justify-center gap-3 pt-8">
                 <Buttons
                     label="แก้ไขข้อมูล"

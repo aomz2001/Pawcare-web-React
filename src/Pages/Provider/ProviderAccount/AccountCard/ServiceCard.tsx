@@ -7,6 +7,7 @@ import InputForm from "../../../../components/ItemsGroup/InputForm";
 import { DatePicker, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { RangeValue } from "rc-picker/lib/interface"
+import httpClient from "../../../../utils/httpClient";
 
 const { RangePicker } = DatePicker;
 
@@ -33,7 +34,6 @@ const ServiceCard = () => {
   const [isPriceVisible, setIsPriceVisible] = useState(false);
   const [servicePrices, setServicePrices] = useState<{ [key: number]: number }>({});
   const [serviceDateTime, setServiceDateTime] = useState<{ [key: number]: [Dayjs, Dayjs] }>({});
-  // console.log('serviceDateTime', serviceDateTime?.[1]?.[1]?.toISOString())
 
   const onChange = (checkedValues: CheckboxValueType[], type: string) => {
     switch (type) {
@@ -64,11 +64,11 @@ const ServiceCard = () => {
 
   const fetchData = async () => {
     try {
-      const responsePet = await axios.get('http://localhost:3000/pet');
+      const responsePet = await httpClient.get('public/pet');
       setPetData(responsePet.data);
-      const responseDistrict = await axios.get('http://localhost:3000/district');
+      const responseDistrict = await httpClient.get('public/district');
       setDistrictData(responseDistrict.data);
-      const responseService = await axios.get('http://localhost:3000/service');
+      const responseService = await httpClient.get('public/service');
       setServiceData(responseService.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -103,13 +103,13 @@ const ServiceCard = () => {
         booking_end: serviceDateTime[serviceId as number][1].add(7,"hours").toISOString(),
       }));
 
-      await axios.put(`http://localhost:3000/provider-data-district/${provider_id}`, {
+      await httpClient.put(`provider/provider-data-district/${provider_id}`, {
         districtList: selectedDistricts
       });
-      await axios.put(`http://localhost:3000/provider-data-pet/${provider_id}`, {
+      await httpClient.put(`provider/provider-data-pet/${provider_id}`, {
         petList: selectedPets
       });
-      await axios.put(`http://localhost:3000/provider-data-service/${provider_id}`, {
+      await httpClient.put(`provider/provider-data-service/${provider_id}`, {
         serviceList: servicePayload
       });
       window.location.reload()

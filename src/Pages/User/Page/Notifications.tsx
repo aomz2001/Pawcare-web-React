@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import axios from "axios";
 import { Modal } from "antd";
+import httpClient from "../../../utils/httpClient";
 
 interface AcceptServiceDataItem {
     users_id: number;
@@ -48,7 +48,7 @@ export const Notifications = () => {
         const cookies = new Cookies();
         const userId = cookies.get('userId');
 
-        axios.get(`http://localhost:3000/api/show-accept-service?users_id=${userId}`)
+        httpClient.get(`user/api/show-accept-service?users_id=${userId}`)
             .then(response => {
                 setAcceptServiceData(response.data.data);
             })
@@ -58,7 +58,7 @@ export const Notifications = () => {
     }, []);
 
     const handleDeclineJob = (providerId: number, districtId: number, petId: number, serviceId: number, service_price: number, usersId: number) => {
-        axios.delete("http://localhost:3000/api/delete-accept-service", {
+        httpClient.delete("user/api/delete-accept-service", {
             data: { providerId, districtId, petId, serviceId, service_price, usersId }
         })
             .then(response => {
@@ -87,7 +87,7 @@ export const Notifications = () => {
 
             const item = acceptServiceData[index];
 
-            const response = await axios.put('http://localhost:3000/api/report-provider', {
+            const response = await httpClient.put('user/api/report-provider', {
                 report: statusText,
                 providerId: item.provider_id,
                 districtId: item.district_id,
@@ -107,7 +107,7 @@ export const Notifications = () => {
         }
     };
     const understandJobCancel = (providerId: number, districtId: number, petId: number, serviceId: number, service_price: number, usersId: number, provider_cancel: string) => {
-        axios.delete("http://localhost:3000/api/understand-job-cancel", {
+        httpClient.delete("user/api/understand-job-cancel", {
             data: { providerId, districtId, petId, serviceId, service_price, usersId, provider_cancel }
         })
             .then(response => {
@@ -127,7 +127,7 @@ export const Notifications = () => {
 
             const item = acceptServiceData[index];
 
-            const response = await axios.put('http://localhost:3000/api/users-cancel-job', {
+            const response = await httpClient.put('user/api/users-cancel-job', {
                 users_cancel: cancelText,
                 providerId: item.provider_id,
                 districtId: item.district_id,
@@ -147,8 +147,6 @@ export const Notifications = () => {
         }
 
     };
-
-
     console.log('acceptServiceData', acceptServiceData)
 
     return (

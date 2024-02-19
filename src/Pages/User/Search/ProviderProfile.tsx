@@ -1,8 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Modal, Space, DatePicker } from 'antd';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
-import axios from "axios";
 import Cookies from "universal-cookie";
 import { RangeValue } from "rc-picker/lib/interface"
 
@@ -10,6 +9,8 @@ const { RangePicker } = DatePicker;
 import dayjs from "dayjs"
 import "dayjs/locale/th"
 import { UserOutlined } from "@ant-design/icons";
+import httpClient from "../../../utils/httpClient";
+import { AuthContext } from "../../../context/AuthContext";
 
 dayjs.locale("th")
 
@@ -45,6 +46,7 @@ export const ProviderProfile = () => {
     const userId = cookies.get('userId');
     const [selectTime, setSelectTime] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([]);
     const navigate = useNavigate();
+    const { authenticated } = useContext(AuthContext);
 
     const handleTimeChange = (value: RangeValue<dayjs.Dayjs>) => {
         setSelectTime(value as [dayjs.Dayjs, dayjs.Dayjs]);
@@ -60,8 +62,10 @@ export const ProviderProfile = () => {
                 const selectedTimeValues = selectTime?.length === 2
                     ? selectTime.map(e => e && e.add(7, "hours").toISOString())
                     : [null, null];
-    
-                const response = await axios.post('http://localhost:3000/api/req-service', {
+                if(authenticated === false){
+                    navigate('/login')
+                }
+                const response = await httpClient.post('user/api/req-service', {
                     pet_id: petId,
                     district_id: districtId,
                     service_id: serviceId,
@@ -89,7 +93,7 @@ export const ProviderProfile = () => {
     useEffect(() => {
         const fetchProviderData = async () => {
             try {
-                const response = await axios.post('http://localhost:3000/api/provider-data', {
+                const response = await httpClient.post('public/api/provider-data', {
                     pet_id: petId,
                     district_id: districtId,
                     service_id: serviceId,
@@ -108,7 +112,7 @@ export const ProviderProfile = () => {
     }, [providerId, petId, districtId, serviceId]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/get-review?provider_id=${providerId}`)
+        httpClient.get(`public/api/get-review?provider_id=${providerId}`)
             .then(response => {
                 setReviewData(response.data.data);
             })

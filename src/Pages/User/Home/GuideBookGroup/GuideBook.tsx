@@ -7,7 +7,7 @@ const GuideBook = () => {
             <section className="bg-[#8A8178] h-auto">
                 <div className="container grid md:justify-center md:items-center md:grid-cols-2 gap-7 min-[1040px]:grid-cols-4 py-[75px] ">
                     <div className="">
-                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full z-10">
+                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full z-10 shadow-md">
                             <div className="absolute h-20 w-20 bg-[#7B6161] rounded-full pl-[30px] pt-[20px] text-3xl text-white">1</div>
                             <div className="flex justify-center pt-16">
                                 <img src='/src/assets/image/serach.png' className='h-28' alt='' />
@@ -19,7 +19,7 @@ const GuideBook = () => {
                         </div>
                     </div>
                     <div className="">
-                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full">
+                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full shadow-md">
                             <div className="absolute h-20 w-20 bg-[#7B6161] rounded-full pl-[30px] pt-[20px] text-3xl text-white">2</div>
                             <div className="flex justify-center pt-16 ">
                                 <img src='/src/assets/image/people.png' className='h-28' alt='' />
@@ -31,7 +31,7 @@ const GuideBook = () => {
                         </div>
                     </div>
                     <div className="">
-                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full">
+                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full shadow-md">
                             <div className="absolute h-20 w-20 bg-[#7B6161] rounded-full pl-[30px] pt-[20px] text-3xl text-white">3</div>
                             <div className="flex justify-center pt-16 ">
                                 <img src='/src/assets/image/calendar.png' className='h-28' alt='' />
@@ -43,7 +43,7 @@ const GuideBook = () => {
                         </div>
                     </div>
                     <div className="">
-                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full">
+                        <div className="bg-[#D9D9D9] max-w-[245px] h-[245px] rounded-full shadow-md">
                             <div className="absolute h-20 w-20 bg-[#7B6161] rounded-full pl-[30px] pt-[20px] text-3xl text-white">4</div>
                             <div className="flex justify-center pt-16 ">
                                 <img src='/src/assets/image/check-mark.png' className='h-28' alt='' />
