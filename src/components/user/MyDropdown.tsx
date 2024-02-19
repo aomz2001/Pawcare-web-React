@@ -15,9 +15,9 @@ export const MyDropdown = () => {
         const cookies = new Cookies();
         cookies.remove('token');
         cookies.remove('userId');
+        cookies.remove('role');
         setAuthenticated(false);
         navigate('/');
-        
     };
 
     const items: MenuProps['items'] = [
@@ -52,7 +52,7 @@ export const MyDropdown = () => {
             <Space direction="vertical">
                 <Space wrap>
                     <Dropdown menu={{ items }} placement="top"  arrow={{ pointAtCenter: true }} >
-                        <div className="bg-white flex items-center justify-center h-11 w-11 rounded-full cursor-pointer ">
+                        <div className="bg-white flex items-center justify-center h-11 w-11 rounded-full cursor-pointer shadow-md">
                             <Avatar size={44} icon={<UserOutlined />} />
                         </div>
                     </Dropdown>

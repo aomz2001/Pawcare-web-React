@@ -14,7 +14,7 @@ const LoginProvider = () => {
                             <Buttons
                                 label='สมัครเป็นผู้ให้บริการ'
                                 buttonType='primary'
-                                className='max-w-24 p-2 rounded-full'
+                                className='max-w-24 p-2 px-5 rounded-full shadow-md'
                                 onClick={() => { }}
                             />
                         </Link>

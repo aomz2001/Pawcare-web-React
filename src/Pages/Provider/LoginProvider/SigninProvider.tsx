@@ -2,8 +2,9 @@ import { Link, useNavigate } from "react-router-dom"
 import InputForm from "../../../components/ItemsGroup/InputForm"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import { useContext, useState } from "react";
-import axios from "axios";
 import { AuthContext } from "../../../context/AuthContext";
+import httpClient from "../../../utils/httpClient";
+import { Alert, Space } from "antd";
 
 interface SignInProps {
   status: string;
@@ -12,38 +13,41 @@ interface SignInProps {
   provider_id?: number;
 }
 
-const Signin = () => {
+const SigninProvider = () => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [showFail, setShowFail] = useState<boolean>(false);
   const { setAuthenProvider } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const LoginProvider = async () => {
     try {
-      const { data } = await axios.post<SignInProps>(
-        'http://localhost:3000/login-provider',
+      if (!email || !password) {
+        setShowFail(false);
+        setShowWarning(true);
+        return
+    }
+      const { data } = await httpClient.post<SignInProps>(
+        'public/login-provider',
         { provider_email: email, provider_password: password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
       );
       if (data.status === "ok" && data.token) {
-        alert("Sign in Success");
+        setShowWarning(false);
+        setShowFail(false);
+        setShowSuccess(true);
         localStorage.setItem('providerId', String(data.provider_id));
         localStorage.setItem('token', data.token);
         setAuthenProvider(true)
-        navigate('/provider')
         setTimeout(() => {
-          localStorage.removeItem('token');
-          window.location.reload()
-        }, 12 * 60 * 60 * 1000);
+          navigate('/provider')
+      }, 300);
       } else {
-        alert("Sign in Failed");
+        setShowFail(true);
+        setShowWarning(false);
       }
-      setEmail('')
       setPassword('')
     } catch (error) {
       console.error("Error:", error);
@@ -66,7 +70,6 @@ const Signin = () => {
             </h1>
             <div className="flex flex-col space-y-4 md:space-y-6">
               <InputForm
-                id="example"
                 label="อีเมล"
                 name="email"
                 placeholder="xxx@email.com"
@@ -75,7 +78,6 @@ const Signin = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <InputForm
-                id="example"
                 label="รหัสผ่าน"
                 type="password"
                 placeholder="••••••••"
@@ -83,6 +85,40 @@ const Signin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {showSuccess && (
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Alert
+                    message="เข้าสู่ระบบสำเร็จ"
+                    type="success"
+                    showIcon
+                    className="font-kanit"
+                  />
+                </Space>
+              )}
+              {showWarning && (
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Alert
+                    message="โปรดกรอกข้อมูลให้ครบ !!"
+                    type="warning"
+                    showIcon
+                    closable
+                    onClose={() => setShowWarning(false)}
+                    className="font-kanit"
+                  />
+                </Space>
+              )}
+              {showFail && (
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Alert
+                    message="เข้าสู่ระบบล้มเหลว"
+                    type="error"
+                    showIcon
+                    closable
+                    onClose={() => setShowFail(false)}
+                    className="font-kanit"
+                  />
+                </Space>
+              )}
               <div className="flex justify-center pt-3">
                 <Buttons
                   label="ลงทะเบียน"
@@ -102,4 +138,4 @@ const Signin = () => {
   )
 }
 
-export default Signin
+export default SigninProvider

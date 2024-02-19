@@ -1,8 +1,8 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Space, Rate } from 'antd';
+import httpClient from "../../../../utils/httpClient";
 
 interface ReviewProps {
   users_id: number;
@@ -34,7 +34,7 @@ export const Review = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/api/show-accept-service`, { params: { users_id: +usersId! } })
+    httpClient.get(`user/api/show-accept-service`, { params: { users_id: +usersId! } })
       .then(response => {
         const filteredData = response.data.data.filter((item: ReviewProps) =>
           item.users_id === parseInt(usersId!) &&
@@ -58,7 +58,7 @@ export const Review = () => {
       }
       const item = reportProvider[0];
   
-      const response = await axios.post("http://localhost:3000/api/review-job", {
+      const response = await httpClient.post("user/api/review-job", {
         providerId: item.provider_id,
         usersId: item.users_id,
         districtId: item.district_id,

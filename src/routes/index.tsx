@@ -25,12 +25,16 @@ import { ContactPawcare } from "../Pages/User/Page/ContactPawcare";
 import PrivateRoute from "./PrivateRoute";
 import PrivateProviderRoute from "./PrivateProviderRoute";
 import ProviderSearch from "../Pages/User/Search/ProviderSearch";
+import PrivateAdminRoute from "./PrivateAdminRoute";
+import AccessRights from "../Pages/User/Page/AccessRights";
+import ErrorPage from "../Pages/User/Page/ErrorPage";
 
 const router = createBrowserRouter([
   //===============================================path user
   {
     path: '/',
     element: <LandingPage />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
@@ -46,15 +50,15 @@ const router = createBrowserRouter([
       },
       {
         path: '/search-service',
-        element: <PrivateRoute ><Search /></PrivateRoute>,
+        element: <Search />,
       },
       {
         path: '/search-provider-service',
-        element: <PrivateRoute ><ProviderSearch /></PrivateRoute>,
+        element: <ProviderSearch />,
       },
       {
         path: '/provider-profile',
-        element: <PrivateRoute ><ProviderProfile /></PrivateRoute>,
+        element: <ProviderProfile />,
       },
       {
         path: '/notifications',
@@ -81,6 +85,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />,
+  },
+  {
+    path: '/error-404',
+    element: <AccessRights />,
   },
   //===============================================path provider
   {
@@ -116,19 +124,19 @@ const router = createBrowserRouter([
   //===============================================path admin
   {
     path: '/for-admin-only',
-    element: <PrivateProviderRoute><AdminPage /></PrivateProviderRoute>,
+    element: <PrivateAdminRoute ><AdminPage /></PrivateAdminRoute >,
     children: [
       {
         index: true,
-        element: <PrivateProviderRoute><HomeAdmin /></PrivateProviderRoute>,
+        element: <PrivateAdminRoute ><HomeAdmin /></PrivateAdminRoute >,
       },
       {
         path: 'system-information',
-        element: <PrivateProviderRoute><SysInfo /></PrivateProviderRoute>,
+        element: <PrivateAdminRoute ><SysInfo /></PrivateAdminRoute >,
       },
       {
         path: 'work-admin',
-        element: <PrivateProviderRoute><AdminWork /></PrivateProviderRoute>,
+        element: <PrivateAdminRoute ><AdminWork /></PrivateAdminRoute >,
       },
     ]
   },

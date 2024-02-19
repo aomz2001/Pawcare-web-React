@@ -4,6 +4,7 @@ import EditModal from "../../../../components/ItemsGroup/Modals/EditModal";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import InputForm from "../../../../components/ItemsGroup/InputForm";
+import httpClient from "../../../../utils/httpClient";
 
 type PriceProps = {
     price_name: string;
@@ -33,16 +34,7 @@ export const PriceInfor = () => {
     const handleSaveEdit = async (): Promise<void> => {
         if (priceData && editId) {
             try {
-                const { data, status } = await axios.put<PriceProps>(
-                    `http://localhost:3000/price/${editId}`,
-                    { price_name: editName },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Accept: "application/json",
-                        },
-                    }
-                );
+                const { data, status } = await httpClient.put<PriceProps>(`admin/price/${editId}`,{ price_name: editName });
 
                 console.log(JSON.stringify(data, null, 4));
                 console.log(status);
@@ -68,8 +60,8 @@ export const PriceInfor = () => {
     const handleDelete = async (price_id: number): Promise<void> => {
         if (priceData) {
             try {
-                const { status } = await axios.delete(
-                    `http://localhost:3000/price/${price_id}`
+                const { status } = await httpClient.delete(
+                    `admin/price/${price_id}`
                 );
 
                 console.log(status);
@@ -90,15 +82,9 @@ export const PriceInfor = () => {
 
     const createprice = async () => {
         try {
-            const { data, status } = await axios.post<PriceProps>(
-                'http://localhost:3000/price',
-                { price_name: price }, // เปลี่ยน key เป็น price_name
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                },
+            const { data, status } = await httpClient.post<PriceProps>(
+                'admin/price',
+                { price_name: price },
             );
 
             console.log(JSON.stringify(data, null, 4));
@@ -121,7 +107,7 @@ export const PriceInfor = () => {
         // ใช้ useEffect เพื่อดึงข้อมูลเมื่อคอมโพเนนต์โหลด
         const fetchData = async () => {
             try {
-                const response = await axios.get<PriceProps[]>('http://localhost:3000/price');
+                const response = await httpClient.get<PriceProps[]>('admin/price');
                 setpriceData(response.data);
                 setError(null);
             } catch (error) {
