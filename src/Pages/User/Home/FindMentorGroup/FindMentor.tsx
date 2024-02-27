@@ -3,6 +3,9 @@ import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import httpClient from "../../../../utils/httpClient";
+import './FindMentor.style.css'
+import { Select } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 type FindMentorProps = {
     pet_id: number;
@@ -51,7 +54,7 @@ const FindMentor = () => {
                     districtId: districtId.toString(),
                     serviceId: serviceId.toString()
                 });
-    
+
                 navigate(`/search-service?${searchParams.toString()}`);
             } catch (error) {
                 console.error("Error in handleSearch:", error);
@@ -72,46 +75,43 @@ const FindMentor = () => {
                         </div>
                         <p className='text-white pb-[33px] '>ให้เราช่วยคุณหาผู้ช่วยใกล้ๆคุณสิ</p>
                         <div className="max-w-[335px]">
-                            <div className='flex flex-col '>
-                                <select
-                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
-                                    onChange={(e) => setPetId(Number(e.target.value))}
-                                >
-                                    <option value="pet" className='' hidden>สัตว์เลี้ยง</option>
-                                    {petData?.map((pet) => (
-                                        <option key={pet.pet_id} value={pet.pet_id}>
-                                            {pet.pet_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select
-                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
-                                    onChange={(e) => setDistrictId(Number(e.target.value))}
-                                >
-                                    <option value="district" className='' hidden>อำเภอ</option>
-                                    {districtData?.map((district) => (
-                                        <option key={district.district_id} value={district.district_id}>
-                                            {district.district_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select
-                                    className='mb-5 pl-6 h-[43px] rounded-full cursor-pointer'
-                                    onChange={(e) => setServiceId(Number(e.target.value))}
-                                >
-                                    <option value="service" className='' hidden>บริการ</option>
-                                    {serviceData?.map((service) => (
-                                        <option key={service.service_id} value={service.service_id}>
-                                            {service.service_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <Buttons
-                                    label="ค้นหา"
-                                    buttonType="primary"
-                                    className="w-20 p-2 rounded-full mb-14"
-                                    onClick={handleSearch}
+                            <div className='flex flex-col gap-y-5 mb-14'>
+                                <Select
+                                    className="find-mentor"
+                                    placeholder='สัตว์เลี้ยง'
+                                    onChange={(value) => setPetId(Number(value))}
+                                    options={petData?.map((pet) => ({
+                                        value: pet.pet_id,
+                                        label: pet.pet_name
+                                    }))}
                                 />
+                                <Select
+                                    className="find-mentor"
+                                    placeholder='อำเภอ'
+                                    onChange={(value) => setDistrictId(Number(value))}
+                                    options={districtData?.map((district) => ({
+                                        value: district.district_id,
+                                        label: district.district_name
+                                    }))}
+                                />
+                                <Select
+                                    className="find-mentor"
+                                    placeholder='บริการ'
+                                    onChange={(value) => setServiceId(Number(value))}
+                                    options={serviceData?.map((service) => ({
+                                        value: service.service_id,
+                                        label: service.service_name
+                                    }))}
+                                />
+                                <div className="flex justify-end">
+                                    <Buttons
+                                        label="ค้นหา"
+                                        buttonType="primary"
+                                        className=" w-32 p-2 rounded-full flex justify-center items-center gap-x-1"
+                                        onClick={handleSearch}
+                                        icon={<><SearchOutlined className="text-white cursor-pointer" onClick={handleSearch} /></>}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

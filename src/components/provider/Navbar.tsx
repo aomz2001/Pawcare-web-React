@@ -8,13 +8,13 @@ const Navbar = () => {
   const { setAuthenProvider } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const handleOpen = () => {
     setIsModalOpen(true);
-};
-const handleCloes = () => {
+  };
+  const handleCloes = () => {
     setIsModalOpen(false);
-};
+  };
 
   const handleSignOut = () => {
     localStorage.clear();
@@ -70,16 +70,16 @@ const handleCloes = () => {
         <div className="flex flex-col justify-center items-center gap-2 p-5">
           <div className="w-full flex justify-center gap-3">
             <Buttons
+              label="ยกเลิก"
+              color="#ffffff"
+              className="text-[#815B5B] mt-6 w-1/4 p-2 rounded-full border border-[#815B5B] hover:bg-[#e0d8d8]"
+              onClick={handleCloes}
+            />
+            <Buttons
               label="ตกลง"
               buttonType="secondary"
               className="mt-5 w-1/4 p-2 rounded-full"
               onClick={handleSignOut}
-            />
-            <Buttons
-              label="ยกเลิก"
-              buttonType="primary"
-              className="mt-5 w-1/4 p-2 rounded-full"
-              onClick={handleCloes}
             />
           </div>
         </div>

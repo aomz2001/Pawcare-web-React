@@ -2,6 +2,7 @@ import { Modal } from "antd"
 import Buttons from "../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import httpClient from "../../../utils/httpClient";
+import { AdminWorkDetails } from "./AdminWorkDetails";
 
 interface AdminWorkProps {
     users_id: number;
@@ -31,15 +32,16 @@ export const AdminWork = () => {
     const [imageData, setImageData] = useState<string | null>(null);
     const [statusText, setStatusText] = useState<string>("");
     const [clickedPaymentItem, setClickedPaymentItem] = useState<AdminWorkProps | null>(null);
-    console.log('statusText', statusText)
 
-    const isCommentOpen = () => {
-        setIsComment(true);
+    const isCommentOpen = () => setIsComment(true);
+    const isCommentCloes = () => setIsComment(false);
+    const handleCancel = () => setIsModalOpen(false);
+    const handleOpenWork = (clickedPaymentItem: AdminWorkProps) => {
+        setClickedPaymentItem(clickedPaymentItem);
+        setStatusWork(true);
     };
+    const handleCloesWork = () => setStatusWork(false);
 
-    const isCommentCloes = () => {
-        setIsComment(false);
-    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -51,7 +53,6 @@ export const AdminWork = () => {
         };
         fetchData();
     }, []);
-    console.log('paymentData', paymentData)
 
     const handleOk = async (clickedPaymentItem: AdminWorkProps) => {
         const paymentFilename = clickedPaymentItem.payment;
@@ -65,16 +66,6 @@ export const AdminWork = () => {
             console.error("Error fetching data:", error);
         }
     };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleOpenWork = (clickedPaymentItem: AdminWorkProps) => {
-        setClickedPaymentItem(clickedPaymentItem);
-        setStatusWork(true);
-    };
-
 
     const sendStatus = async () => {
         try {
@@ -93,18 +84,12 @@ export const AdminWork = () => {
                 status_work: statusText,
             };
 
-            console.log('requestData', requestData);
-
             await httpClient.put("admin/api/update-status-work", requestData);
             setStatusText("");
             setStatusWork(false);
         } catch (error) {
             console.error("Error updating status_work:", error);
         }
-    };
-
-    const handleCloesWork = () => {
-        setStatusWork(false);
     };
 
     const updateJobCompletionStatus = async (item: AdminWorkProps) => {
@@ -131,46 +116,44 @@ export const AdminWork = () => {
     return (
         <>
             <div className="text-3xl font-semibold pb-10">งานของคุณ</div>
-            <div className=" h-48 mb-4 rounded text-lg">
+            <div className="flex flex-col mb-4 rounded text-lg max-[1120px]:items-center">
                 {paymentData.length === 0 ? (
                     <div className="flex justify-center">!!! ยินดีด้วยคุณยังไม่มีงาน !!!</div>
                 ) : (
                     paymentData.map((paymentItem, index) => (
-                        <div key={index} className="flex justify-evenly items-center border-2 mb-5 p-10 rounded-lg">
-                            <div className="flex flex-col gap-y-2">
-                                <div className="">
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">ผู้ให้บริการ :</p>
-                                        <p>{`${paymentItem.users_firstname} ${paymentItem.users_lastname}`}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">ใช้บริการ :</p>
-                                        <p>{paymentItem.service_name}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">ราคาที่ชำระ :</p>
-                                        <p>{paymentItem.service_price}</p>
-                                    </div>
+                        <div key={index} className="flex bg-slate-50 border-2 mb-5 p-10 rounded-lg max-w-3xl max-[1120px]:max-w-[460px] max-[1120px]:flex-col ">
+                            <div className="flex flex-col justify-between border-r-2 max-[1120px]:border-r-0 max-[1120px]:items-center">
+                                <div className="max-[1120px]:pb-5">
+                                    <AdminWorkDetails title='ผู้ใช้บริการ :' subtitle={`${paymentItem.users_firstname} ${paymentItem.users_lastname}`} />
+                                    <AdminWorkDetails title='ใช้บริการ :' subtitle={paymentItem.service_name} />
+                                    <AdminWorkDetails title='ราคาที่ชำระ :' subtitle={paymentItem.service_price} />
                                 </div>
-                                <div className="flex flex-col gap-3 mr-8">
+                                <div className="flex gap-3 mr-8 max-[1120px]:mr-0 max-[1120px]:pb-5 max-[1120px]:border-b-2">
                                     <Buttons
-                                        label="ตรวจสอบสลีปชำระเงิน"
+                                        label="สถานะชำระเงิน"
                                         color="#3498DB"
-                                        className="p-2 rounded-xl hover:bg-[#5DADE2]"
+                                        className="p-2 w-36 rounded-xl hover:bg-[#5DADE2]"
                                         onClick={() => handleOk(paymentItem)}
                                     />
                                     <Buttons
-                                        label="แจ้งผู้ใช้งานรอรับบริการและคอมเม้น"
+                                        label="แจ้งผู้ใช้งาน"
                                         buttonType="success"
-                                        className="p-2 rounded-xl"
+                                        className="p-2 w-36 rounded-xl"
                                         onClick={isCommentOpen}
                                     />
                                     <Modal
                                         title="แจ้งผู้ใช้งานรอรับบริการและคอมเม้น"
                                         open={isComment}
                                         footer={false}
-                                        className="font-kanit">
+                                        className="font-kanit ">
+                                        <p className="pt-3 text-base">กดตกลงเพื่อแจ้งผู้ใช้งานเพื่อให้รอรับบริการ และแสดงความคิดเห็นหรือรีวิว</p>
                                         <div className="flex justify-center items-center gap-2">
+                                            <Buttons
+                                                label="ยกเลิก"
+                                                buttonType="primary"
+                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                onClick={isCommentCloes}
+                                            />
                                             <Buttons
                                                 label="ตกลง"
                                                 buttonType="secondary"
@@ -180,45 +163,23 @@ export const AdminWork = () => {
                                                     isCommentCloes()
                                                 }}
                                             />
-                                            <Buttons
-                                                label="ยกเลิก"
-                                                buttonType="primary"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
-                                                onClick={isCommentCloes}
-                                            />
                                         </div>
                                     </Modal>
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-y-2">
-                                <div className="">
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">ผู้ให้บริการ :</p>
-                                        <p>{`${paymentItem.provider_firstname} ${paymentItem.provider_lastname}`}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">ให้บริการ :</p>
-                                        <p>{paymentItem.service_name}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">เบอร์โทรศัพท์ / หมายเลข PromptPay :</p>
-                                        <p>{paymentItem.provider_phone}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold">สถานะการเสร็จงาน:</p>
-                                        <p>{paymentItem.job_complete}</p>
-                                    </div>
-                                    <div className="flex gap-x-1">
-                                        <p className="font-semibold text-red-800">รายงานจากผู้ใช้งาน :</p>
-                                        <p>{paymentItem.report}</p>
-                                        <p>{!paymentItem.report && "ไม่มี"}</p>
-                                    </div>
+                            <div className="flex flex-col gap-y-2 pl-10 max-[1120px]:pl-0 max-[1120px]:items-center">
+                                <div className="max-[1120px]:pb-3 max-[1120px]:pt-5">
+                                    <AdminWorkDetails title='ผู้ให้บริการ :' subtitle={`${paymentItem.provider_firstname} ${paymentItem.provider_lastname}`} />
+                                    <AdminWorkDetails title='ให้บริการ :' subtitle={paymentItem.service_name} />
+                                    <AdminWorkDetails title='หมายเลข PromptPay :' subtitle={paymentItem.provider_phone} />
+                                    <AdminWorkDetails title='สถานะการเสร็จงาน :' subtitle={paymentItem.job_complete} />
+                                    <AdminWorkDetails title='รายงานจากผู้ใช้งาน :' subtitle={paymentItem.report || 'ไม่มี'} />
                                 </div>
-                                <div className="flex flex-col gap-3">
+                                <div className="flex flex-col gap-3 ">
                                     <Buttons
-                                        label="แจ้งเริ่มงานให้ผู้บริการ"
+                                        label="แจ้งให้ผู้บริการ"
                                         buttonType="success"
-                                        className="p-2 rounded-xl"
+                                        className="p-2 w-36 rounded-xl"
                                         onClick={() => handleOpenWork(paymentItem)}
                                     />
                                 </div>
@@ -267,16 +228,16 @@ export const AdminWork = () => {
                                         </textarea>
                                         <div className="w-full flex justify-center gap-3">
                                             <Buttons
-                                                label="ส่งข้อความ"
-                                                buttonType="success"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
-                                                onClick={sendStatus}
-                                            />
-                                            <Buttons
                                                 label="ปิด"
                                                 buttonType="danger"
                                                 className="mt-5 w-1/4 p-2 rounded-full"
                                                 onClick={handleCloesWork}
+                                            />
+                                            <Buttons
+                                                label="ส่งข้อความ"
+                                                buttonType="success"
+                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                onClick={sendStatus}
                                             />
                                         </div>
                                     </div>
@@ -285,7 +246,6 @@ export const AdminWork = () => {
                         </div>
                     ))
                 )}
-
             </div>
         </>
     )

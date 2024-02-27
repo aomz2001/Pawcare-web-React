@@ -47,7 +47,7 @@ export const ProviderAccount = () => {
     const [districtData, setDistrictData] = useState<ProviderData | null>(null);
     const [petData, setPetData] = useState<ProviderData | null>(null);
     const [serviceData, setServiceData] = useState<ProviderData>();
-    
+
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -117,7 +117,7 @@ export const ProviderAccount = () => {
                 provider_address: editAddress || providerData?.provider[0]?.provider_address || '',
             };
 
-            const response = await httpClient.put(`provider/provider-data/${providerData?.provider[0]?.provider_id}`, updatedData );
+            const response = await httpClient.put(`provider/provider-data/${providerData?.provider[0]?.provider_id}`, updatedData);
 
             if (response.data) {
                 console.log("Provider data updated successfully!");
@@ -218,6 +218,12 @@ export const ProviderAccount = () => {
             >
                 <div className="flex justify-center gap-3">
                     <Buttons
+                        label="ไม่ใช่"
+                        buttonType="danger"
+                        className="mt-5 w-1/4 p-2 rounded-full"
+                        onClick={() => setOpenDelete(false)}
+                    />
+                    <Buttons
                         label="ใช่"
                         buttonType="success"
                         className="mt-5 w-1/4 p-2 rounded-full"
@@ -225,12 +231,6 @@ export const ProviderAccount = () => {
                             deleteProvider(providerData?.provider[0]?.provider_id || 0);
                             setOpenDelete(false);
                         }}
-                    />
-                    <Buttons
-                        label="ไม่ใช่"
-                        buttonType="danger"
-                        className="mt-5 w-1/4 p-2 rounded-full"
-                        onClick={() => setOpenDelete(false)}
                     />
                 </div>
             </Modal>
@@ -286,6 +286,12 @@ export const ProviderAccount = () => {
                 </div>
                 <div className="flex justify-center gap-3">
                     <Buttons
+                        label="ไม่ใช่"
+                        buttonType="danger"
+                        className="mt-5 w-1/4 p-2 rounded-full"
+                        onClick={() => setOpenEdit(false)}
+                    />
+                    <Buttons
                         label="ใช่"
                         buttonType="success"
                         className="mt-5 w-1/4 p-2 rounded-full"
@@ -293,12 +299,6 @@ export const ProviderAccount = () => {
                             updateProviderData();
                             setOpenEdit(false);
                         }}
-                    />
-                    <Buttons
-                        label="ไม่ใช่"
-                        buttonType="danger"
-                        className="mt-5 w-1/4 p-2 rounded-full"
-                        onClick={() => setOpenEdit(false)}
                     />
                 </div>
             </Modal>

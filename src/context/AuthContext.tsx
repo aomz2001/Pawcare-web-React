@@ -28,13 +28,13 @@ const AuthContext = createContext<AuthContextProps>(initialValue);
 const AuthProvider = ({ children }: ContextProps) => {
     const [authenticated, setAuthenticated] = useState(() => {
         const token = new Cookies().get('token');
-        return !!token; 
+        return !!token;
     });
 
     const [role, setRole] = useState(() => {
         const encodedRole = new Cookies().get('role');
         const role = encodedRole ? parseInt(atob(encodedRole)) : null;
-        return !!role ; 
+        return !!role;
     });
 
     const [authenProvider, setAuthenProvider] = useState(() => {
@@ -46,6 +46,15 @@ const AuthProvider = ({ children }: ContextProps) => {
         const token = new Cookies().get('token');
         if (token) {
             setAuthenticated(true);
+            const TIME = 60 * 60 * 1000;
+            setTimeout(() => {
+                const cookies = new Cookies();
+                cookies.remove('token');
+                cookies.remove('userId');
+                cookies.remove('role');
+                setAuthenticated(false);
+                window.location.reload()
+            }, TIME);
         }
     }, []);
 
@@ -63,14 +72,15 @@ const AuthProvider = ({ children }: ContextProps) => {
         const token = localStorage.getItem('token');
         if (token) {
             setAuthenProvider(true);
-            const TIME =  60 * 60 * 1000;
+            const TIME = 60 * 60 * 1000;
             setTimeout(() => {
                 localStorage.clear();
                 setAuthenProvider(false);
+                window.location.reload()
             }, TIME);
         }
     }, []);
-    
+
     const value = {
         authenticated,
         authenProvider,
@@ -79,7 +89,7 @@ const AuthProvider = ({ children }: ContextProps) => {
         setAuthenProvider,
         setRole,
     };
-    
+
     return (
         <AuthContext.Provider value={value} >
             {children}
@@ -87,4 +97,4 @@ const AuthProvider = ({ children }: ContextProps) => {
     );
 };
 
-export { AuthContext,  AuthProvider }
+export { AuthContext, AuthProvider }

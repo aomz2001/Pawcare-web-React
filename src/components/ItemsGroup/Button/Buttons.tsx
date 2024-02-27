@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface ButtonProps {
   label: string;
@@ -7,6 +7,7 @@ interface ButtonProps {
   buttonType?: 'primary' | 'secondary' | 'success' | 'danger' | 'edit';
   color?: string;
   disabled?: boolean;
+  icon?: ReactNode;
 }
 
 const Colors: Record<string, string> = {
@@ -17,7 +18,7 @@ const Colors: Record<string, string> = {
   edit: '#F1C40F',
 };
 
-const Buttons = ({ label, onClick, className, buttonType, color }: ButtonProps) => {
+const Buttons = ({ label, onClick, className, buttonType, color, icon }: ButtonProps) => {
   const [hovered, setHovered] = useState(false);
   const buttonColor = color || (buttonType ? Colors[buttonType] : '');
 
@@ -44,6 +45,7 @@ const Buttons = ({ label, onClick, className, buttonType, color }: ButtonProps) 
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
     >
+      {icon}
       {label}
     </button>
   );
