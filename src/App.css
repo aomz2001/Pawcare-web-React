@@ -1,0 +1,11 @@
+.breadcrumb .ant-breadcrumb-link{
+    font-family: kanit;
+    font-size: 16px;
+}
+.ant-input{
+    font-family: kanit;
+}
+.ant-checkbox-wrapper{
+    font-family: kanit;
+    font-weight: normal;
+}

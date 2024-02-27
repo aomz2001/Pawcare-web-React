@@ -1,0 +1,36 @@
+.ant-dropdown-menu-item {
+    height: 50px;
+    width: 180px;
+    font-family: kanit;
+}
+.ant-dropdown-menu-title-content{
+    margin-left: 20px;
+}
+
+.ant-dropdown-menu-title-content {
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    color: #815B5B;
+}
+
+.anticon.anticon-bell{
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #815B5B;
+}
+
+.anticon.anticon-logout{
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.anticon.anticon-setting{
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

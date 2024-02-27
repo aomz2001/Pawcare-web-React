@@ -1,8 +1,9 @@
 import { Modal } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import Buttons from "../../../components/ItemsGroup/Button/Buttons";
-import httpClient from "../../../utils/httpClient";
+import Buttons from "../../../../components/ItemsGroup/Button/Buttons";
+import httpClient from "../../../../utils/httpClient";
+import { PaymentChoice } from "./PaymentChoice";
 
 interface PaymentServiceDataItem {
     users_id: number;
@@ -98,9 +99,7 @@ export const Payment = () => {
             console.error("Invalid or null values for parameters");
         }
     };
-    console.log('file', file)
-
-    console.log('paymentServiceData', paymentServiceData)
+    
     return (
         <>
             <div className="bg-[#FFF8EA]">
@@ -108,10 +107,7 @@ export const Payment = () => {
                     <h2 className="text-3xl mb-10 md:mb-16">เลือกวิธีการชำระเงิน</h2>
                     <div className="w-full flex flex-col gap-5 justify-between items-center lg:flex-row">
                         <div className="flex flex-col gap-5">
-                            <div className="bg-white text-xl py-8 px-16 cursor-pointer shadow-md hover:bg-slate-50"
-                                onClick={handleOk}>
-                                QR Payment
-                            </div>
+                            <PaymentChoice payment='QR Payment' onClick={handleOk}/>
                         </div>
                         <Modal
                             title="แสกนจ่ายโดยแอพธนาคาร"
@@ -176,7 +172,7 @@ export const Payment = () => {
                         </div>
                     </div>
                     <div className="flex justify-end pt-16 underline">
-                        <Link to='/notifications' className="" >กลับไปหน้าก่อนหน้านี้</Link>
+                        <Link to='/notifications' className="">กลับไปหน้าก่อนหน้านี้</Link>
                     </div>
                 </div>
             </div>

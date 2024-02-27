@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/th";
 import { Modal } from "antd";
 import httpClient from "../../../utils/httpClient";
+import { WorkDetails } from "./WorkDetails";
 
 dayjs.locale("th");
 
@@ -32,28 +33,13 @@ export function WorkforPet() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isJobSucess, seIsJobSucess] = useState<boolean>(false);
     const [statusText, setStatusText] = useState<string>("");
-
-    const JobSucessOpen = () => {
-        seIsJobSucess(true);
-    };
-
-    const JobSucessCloes = () => {
-        seIsJobSucess(false);
-    };
-    const handleOpen = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloes = () => {
-        setIsModalOpen(false);
-    };
-    const JobAcceptedOpen = () => {
-        setIsJobAccepted(true);
-    };
-
-    const JobAcceptedCloes = () => {
-        setIsJobAccepted(false);
-    };
+    
+    const JobSucessOpen = () => seIsJobSucess(true);
+    const JobSucessCloes = () => seIsJobSucess(false);
+    const handleOpen = () => setIsModalOpen(true);
+    const handleCloes = () => setIsModalOpen(false);
+    const JobAcceptedOpen = () => setIsJobAccepted(true);
+    const JobAcceptedCloes = () => setIsJobAccepted(false);
 
     useEffect(() => {
         const providerId = localStorage.getItem("providerId");
@@ -137,47 +123,24 @@ export function WorkforPet() {
                     reqServiceData.map((item: ReqServiceDataItem) => (
                         <div key={item.users_id} className="flex flex-col md:flex-row items-center justify-between p-10 h-auto rounded-xl bg-gray-100 mb-5">
                             <div className="flex flex-col gap-2">
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">ผู้ใช้งาน : </p>
-                                    <p className="text-gray-500">{item.users_firstname} {item.users_lastname}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">ขอใช้บริการ : </p>
-                                    <p className="text-gray-500">{item.service_name}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">ประเภทสัตว์เลี้ยง : </p>
-                                    <p className="text-gray-500">{item.pet_name}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">ราคาที่ขอใช้บริการ : </p>
-                                    <p className="text-gray-500">{item.service_price}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">พื้นที่ใช้บริการ : </p>
-                                    <p className="text-gray-500">{item.district_name}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">ที่อยู่ที่คุณต้องไปรับงาน : </p>
-                                    <p className="text-gray-500">{item.users_address}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">เบอร์โทรศัพท์ติดต่อ : </p>
-                                    <p className="text-gray-500">{item.users_phone}</p>
-                                </div>
-                                <div className="text-lg flex gap-x-1">
-                                    <p className="font-semibold">วันและเวลาที่สนใจเป็นพิเศษ : </p>
-                                    <p className="text-gray-500">
-                                        {item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}
-                                        {item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}`}
-                                        {!item.booking_first && !item.booking_second && "ไม่มี"}
-                                    </p>
-                                </div>
+                                <WorkDetails title="ผู้ใช้งาน :" value={`${item.users_firstname} ${item.users_lastname}`} />
+                                <WorkDetails title="ขอใช้บริการ :" value={item.service_name} />
+                                <WorkDetails title="ประเภทสัตว์เลี้ยง :" value={item.pet_name} />
+                                <WorkDetails title="ราคาที่ขอใช้บริการ :" value={item.service_price} />
+                                <WorkDetails title="พื้นที่ใช้บริการ :" value={item.district_name} />
+                                <WorkDetails title="ที่อยู่ที่คุณต้องไปรับงาน :" value={item.users_address} />
+                                <WorkDetails title="เบอร์โทรศัพท์ติดต่อ :" value={item.users_phone} />
+                                <WorkDetails
+                                    title="วันและเวลาที่สนใจเป็นพิเศษ :"
+                                    values={[
+                                        (item.booking_first && item.booking_second) ?
+                                            (item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm"))
+                                            + (item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}`)
+                                            : "ไม่มี"
+                                    ]}
+                                />
                                 {item.status_work !== "" && (
-                                    <div className="text-lg flex gap-x-1">
-                                        <p className="font-semibold">สถานะงานจากแอดมิน : </p>
-                                        <p className="text-gray-500">{item.status_work}</p>
-                                    </div>
+                                    <WorkDetails title="สถานะงานจากแอดมิน :" value={item.status_work} />
                                 )}
                             </div>
                             {item.status_work === "เริ่มงานได้" && (
@@ -203,6 +166,12 @@ export function WorkforPet() {
                                         <div className="flex flex-col justify-center items-center gap-2 p-5">
                                             <div className="w-full flex justify-center gap-3">
                                                 <Buttons
+                                                    label="ยกเลิก"
+                                                    buttonType="primary"
+                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                    onClick={JobSucessCloes}
+                                                />
+                                                <Buttons
                                                     label="ตกลง"
                                                     buttonType="secondary"
                                                     className="mt-5 w-1/4 p-2 rounded-full"
@@ -211,12 +180,6 @@ export function WorkforPet() {
                                                         alert("ขอบคุณที่ร่วมงานกับเรา และ แอดมินจะโอนเงินไปให้คุณผ่านหมายเลย PromptPay");
                                                         handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
                                                     }}
-                                                />
-                                                <Buttons
-                                                    label="ยกเลิก"
-                                                    buttonType="primary"
-                                                    className="mt-5 w-1/4 p-2 rounded-full"
-                                                    onClick={JobSucessCloes}
                                                 />
                                             </div>
                                         </div>
@@ -277,6 +240,12 @@ export function WorkforPet() {
                                                     <div className="flex flex-col justify-center items-center gap-2 p-5">
                                                         <div className="w-full flex justify-center gap-x-3">
                                                             <Buttons
+                                                                label="ยกเลิก"
+                                                                buttonType="primary"
+                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                onClick={JobAcceptedCloes}
+                                                            />
+                                                            <Buttons
                                                                 label="ตกลง"
                                                                 buttonType="secondary"
                                                                 className="mt-5 w-1/4 p-2 rounded-full"
@@ -285,12 +254,6 @@ export function WorkforPet() {
                                                                     alert(`คุณได้รับงานงานของคุณ ${item.users_firstname} ${item.users_lastname} โปรดรอแอดมินตรวจสอบและติดต่อกลับ`);
                                                                     JobAcceptedCloes()
                                                                 }}
-                                                            />
-                                                            <Buttons
-                                                                label="ยกเลิก"
-                                                                buttonType="primary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
-                                                                onClick={JobAcceptedCloes}
                                                             />
                                                         </div>
                                                     </div>
@@ -318,6 +281,12 @@ export function WorkforPet() {
                                                         </textarea>
                                                         <div className="w-full flex justify-center gap-x-3">
                                                             <Buttons
+                                                                label="ยกเลิก"
+                                                                buttonType="primary"
+                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                onClick={handleCloes}
+                                                            />
+                                                            <Buttons
                                                                 label="ตกลง"
                                                                 buttonType="secondary"
                                                                 className="mt-5 w-1/4 p-2 rounded-full"
@@ -330,12 +299,6 @@ export function WorkforPet() {
                                                                     }
                                                                 }}
                                                                 disabled={!statusText}
-                                                            />
-                                                            <Buttons
-                                                                label="ยกเลิก"
-                                                                buttonType="primary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
-                                                                onClick={handleCloes}
                                                             />
                                                         </div>
                                                     </div>

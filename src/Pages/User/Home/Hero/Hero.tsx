@@ -14,10 +14,12 @@ const Hero = () => {
       const response = await httpClient.post('public/api/search-provider', {
         firstname: value,
         lastname: value,
+        id: value
       });
 
       const searchResults = response.data.data;
 
+      console.log('searchResults', searchResults)
       if (searchResults.length > 0) {
         navigate('/search-provider-service', { state: { searchResults } });
       } else {
@@ -42,7 +44,8 @@ const Hero = () => {
                 <h3 className='text-white text-lg'>ค้นหาพี่เลี้ยงได้ที่นี่</h3>
                 <Space direction="vertical">
                   <Search
-                    name='providerName'
+                    name='providername'
+                    type='providername'
                     placeholder="Search Provider"
                     onSearch={onSearch}
                     enterButton

@@ -1,6 +1,27 @@
-import { Link } from "react-router-dom"
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"
+import Cookies from "universal-cookie";
+import { AuthContext } from "../../context/AuthContext";
+import Buttons from "../ItemsGroup/Button/Buttons";
+import { Modal } from "antd";
 
 export const NavbarAdmin = () => {
+  const { setAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSignOut = () => {
+    const cookies = new Cookies();
+    cookies.remove('token');
+    cookies.remove('userId');
+    cookies.remove('role');
+    setAuthenticated(false);
+    navigate('/');
+  };
+
+  const handleOpen = () => setIsModalOpen(true);
+  const handleCloes = () => setIsModalOpen(false);
+
   return (
     <>
       <nav id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full md:translate-x-0 mt-[80px]" aria-label="Sidebar">
@@ -24,16 +45,38 @@ export const NavbarAdmin = () => {
               </Link>
             </li>
             <li>
-              <Link to="/for-admin-only" className="flex items-center p-2 text-white rounded-lg  hover:bg-[#d28e8e]">
+              <div onClick={handleOpen} className="flex items-center p-2 text-white rounded-lg  hover:bg-[#d28e8e]">
                 <svg className="w-5 h-5 text-[#584E4E] " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
                   <path stroke="currentColor" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">ออกจากระบบ</span>
-              </Link>
+              </div>
             </li>
           </ul>
         </div>
       </nav>
+      <Modal
+        title="ออกจากระบบ"
+        open={isModalOpen}
+        footer={false}
+        className="font-kanit">
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="w-full flex justify-end items-center gap-3 ">
+            <Buttons
+              label="ยกเลิก"
+              color="#996767"
+              className=" mt-6 w-1/4 p-2 rounded-full border border-[#822f2f] hover:bg-[#bb7f7f]"
+              onClick={handleCloes}
+            />
+            <Buttons
+              label="ตกลง"
+              color="#822f2f"
+              className="mt-6 w-1/4 p-2 rounded-full hover:bg-[#b34242]"
+              onClick={handleSignOut}
+            />
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

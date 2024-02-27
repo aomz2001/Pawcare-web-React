@@ -1,0 +1,18 @@
+.find-mentor.ant-select-single{
+    height: 43px;
+}
+
+.find-mentor.ant-select-single .ant-select-selector{
+    border-radius: 100px;
+    padding-left: 20px;
+}
+.find-mentor .ant-select-selection-placeholder{
+    color: #000;
+    font-family: kanit;
+}
+.find-mentor .ant-select-selection-item{
+    font-family: kanit;
+}
+.ant-select-item-option-content{
+    font-family: kanit;
+}

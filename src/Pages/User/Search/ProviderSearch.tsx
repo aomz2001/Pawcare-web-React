@@ -1,9 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import dayjs from "dayjs"
-import "dayjs/locale/th"
 import { useState } from "react";
-
-dayjs.locale("th")
+import { SearchInfo } from "./SearchInfo";
+import { Breadcrumb, Select } from "antd";
 
 type SearchResults = {
   provider_id: number;
@@ -33,6 +31,7 @@ const ProviderSearch = () => {
           districtId: district_id.toString(),
           serviceId: service_id.toString(),
           providerId: provider_id.toString(),
+          thisProviderId: provider_id.toString(),
         });
 
         navigate(`/provider-profile?${searchParams.toString()}`);
@@ -51,22 +50,36 @@ const ProviderSearch = () => {
         <div className="container">
           <div className="container pt-20 pb-20 flex flex-col items-center">
             <div className="border-b-2 border-stone-200 w-full mb-10 flex justify-between">
-              <div className="pb-2 flex gap-x-2 pl-10">
-                <div className="bg-stone-200 p-2 rounded-3xl px-4">บริการที่แนะนำสำหรับคุณ</div>
+              <div className="flex items-center">
+                <Breadcrumb
+                  className="breadcrumb pb-2"
+                  separator=">"
+                  items={[
+                    {
+                      title: <Link to='/'>หน้าหลัก</Link>
+                    },
+                    {
+                      title: 'ผู้ให้บริการ(พี่เลี้ยง)',
+                    },
+                  ]}
+                />
               </div>
-              <div className="pb-2 flex gap-x-2 px-10">
-                <select
-                  className='px-6 rounded-full cursor-pointer mx-10'
-                  onChange={(e) => setPriceFilter(e.target.value)}
-                  value={priceFilter || ""}
-                >
-                  <option value="" hidden>เลือกราคา</option>
-                  <option value="300">น้อยกว่า 300 บาท</option>
-                  <option value="500">น้อยกว่า 500 บาท</option>
-                  <option value="501">500 บาทขึ้นไป</option>
-                  <option value="0">ทุกราคา</option>
-                </select>
-              </div>
+              {/* <div className="pb-2 flex gap-x-2 px-10">
+                <Select
+                  defaultValue="ทุกราคา"
+                  className="find-mentor"
+                  style={{ width: 180 }}
+                  placeholder="เลือกราคา"
+                  onChange={(value) => setPriceFilter(value.toString())}
+                  value={priceFilter}
+                  options={[
+                    { value: '300', label: 'น้อยกว่า 300 บาท' },
+                    { value: '500', label: 'น้อยกว่า 500 บาท' },
+                    { value: '501', label: '500 บาทขึ้นไป' },
+                    { value: '0', label: 'ทุกราคา' },
+                  ]}
+                />
+              </div> */}
             </div>
             {searchResults.map((result) => {
               const isPriceInRange =
@@ -76,32 +89,20 @@ const ProviderSearch = () => {
                   (priceFilter === "501" && result.service_price >= 500) ||
                   (priceFilter === "0" && result.service_price > 0)
                 );
-                console.log('result.service_price', result.service_price)
+              console.log('result.service_price', result.service_price)
 
               return (
                 isPriceInRange && (
                   <div
                     key={result.provider_id}
-                    className="text-lg h-auto bg-[#2D2D2D] w-4/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer"
+                    className="text-lg h-auto bg-[#2D2D2D] w-3/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer lg:w-4/5 max-[799px]:flex-col"
                     onClick={() => handleSearch(result.provider_id, result.pet_id, result.district_id, result.service_id)}
                   >
-                    <div className="md:flex">
-                      <div className=" gap-2 flex flex-col justify-center">
-                        <h3 className="text-[#F0C163]">ชื่อผู้ให้บริการ : {result.provider_firstname} {result.provider_lastname}</h3>
-                        <p className="text-white">บริการ : {result.service_name}</p>
-                        <p className="text-white">อำเภอ : {result.district_name}</p>
-                        <p className="text-white">สัตว์เลี้ยงที่ให้บริการ : {result.pet_name}</p>
-                        <p className="text-white">ให้บริการ : {dayjs(result.booking_start).format("DD MMMM YYYY [เวลา:] HH:mm")} ถึง {dayjs(result.booking_end).format("DD MMMM YYYY [เวลา:] HH:mm")}</p>
-                      </div>
-                    </div>
-                    <div className="text-[#F0C163]  flex items-center">{result.service_price} บาท / บริการ</div>
+                    <SearchInfo key={result.provider_id} detail={result} />
                   </div>
                 )
               );
             })}
-          </div>
-          <div className="flex justify-end pr-28 pb-12 underline">
-            <Link to="/">กลับไปหน้าหลัก</Link>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import httpClient from "../../../utils/httpClient";
 
 interface UserData {
     users: any;
-    users_id: number; 
+    users_id: number;
     users_email: string;
     users_firstname: string;
     users_lastname: string;
@@ -28,7 +28,7 @@ const MyAccount = () => {
 
     const [userData, setUserData] = useState<UserData>({
         users: [],
-        users_id: 0, 
+        users_id: 0,
         users_email: "",
         users_firstname: "",
         users_lastname: "",
@@ -133,7 +133,7 @@ const MyAccount = () => {
             }
         }
     };
-    
+
     return (
         <>
             <div className="bg-[#FFF8EA]">
@@ -141,20 +141,18 @@ const MyAccount = () => {
                     <div className="w-[700px] h-auto bg-white my-24 rounded-3xl">
                         <div className="p-12">
                             <h3 className="text-lg">โปรไฟล์ของคุณ</h3>
-                            <div>
-                                {/* <div className="h-auto flex justify-center items-center mb-16">
+                            {/* <div className="h-auto flex justify-center items-center mb-16">
                                     <div className="flex flex-col justify-center items-center">
                                         <img src={previewImage || '#'} alt="" className="bg-slate-200 h-40 w-40 rounded-full mb-5" />
                                         <input type="file" id="upload" name="upload" accept="image/*" className="w-[100px]" onChange={handleImageChange} />
                                     </div>
                                 </div> */}
-                                <div className="flex flex-col gap-10 text-lg pl-16 my-16">
-                                    <p>อีเมล : {userData.users[0]?.users_email}</p>
-                                    <p>ชื่อ : {userData.users[0]?.users_firstname}</p>
-                                    <p>นามสกุล : {userData.users[0]?.users_lastname}</p>
-                                    <p>เบอร์โทรศัพท์ : {userData.users[0]?.users_phone}</p>
-                                    <p>ที่อยู่ : {userData.users[0]?.users_address}</p>
-                                </div>
+                            <div className="flex flex-col gap-10 text-lg pl-16 my-16">
+                                <p>อีเมล : {userData.users[0]?.users_email}</p>
+                                <p>ชื่อ : {userData.users[0]?.users_firstname}</p>
+                                <p>นามสกุล : {userData.users[0]?.users_lastname}</p>
+                                <p>เบอร์โทรศัพท์ : {userData.users[0]?.users_phone}</p>
+                                <p>ที่อยู่ : {userData.users[0]?.users_address}</p>
                             </div>
                             <div className="flex justify-center gap-3">
                                 <Buttons
@@ -225,16 +223,16 @@ const MyAccount = () => {
                     </div>
                     <div className="flex justify-center gap-3">
                         <Buttons
-                            label="ใช่"
-                            buttonType="success"
-                            className="mt-5 w-1/4 p-2 rounded-full"
-                            onClick={handleSaveEdit}
-                        />
-                        <Buttons
                             label="ไม่ใช่"
                             buttonType="danger"
                             className="mt-5 w-1/4 p-2 rounded-full"
                             onClick={() => setOpenEdit(false)}
+                        />
+                        <Buttons
+                            label="ใช่"
+                            buttonType="success"
+                            className="mt-5 w-1/4 p-2 rounded-full"
+                            onClick={handleSaveEdit}
                         />
                     </div>
                 </Modal>
@@ -248,6 +246,12 @@ const MyAccount = () => {
                 >
                     <div className="flex justify-center gap-3">
                         <Buttons
+                            label="ไม่ใช่"
+                            buttonType="danger"
+                            className="mt-5 w-1/4 p-2 rounded-full"
+                            onClick={() => setOpenDelete(false)}
+                        />
+                        <Buttons
                             label="ใช่"
                             buttonType="success"
                             className="mt-5 w-1/4 p-2 rounded-full"
@@ -255,12 +259,6 @@ const MyAccount = () => {
                                 handleDelete(userData.users[0]?.users_id);
                                 setOpenDelete(false);
                             }}
-                        />
-                        <Buttons
-                            label="ไม่ใช่"
-                            buttonType="danger"
-                            className="mt-5 w-1/4 p-2 rounded-full"
-                            onClick={() => setOpenDelete(false)}
                         />
                     </div>
                 </Modal>

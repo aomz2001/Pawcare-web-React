@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom"
-import Buttons from "../../../components/ItemsGroup/Button/Buttons"
+import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { Modal } from "antd";
-import httpClient from "../../../utils/httpClient";
+import httpClient from "../../../../utils/httpClient";
+import { NotifitionCard } from "./NotifitionCard";
 
 interface AcceptServiceDataItem {
     users_id: number;
@@ -30,19 +31,10 @@ export const Notifications = () => {
     const [isCancelJob, setCancelJob] = useState(false);
     const [statusText, setStatusText] = useState<string>("");
     const [cancelText, setCancelText] = useState<string>("");
-    const handleOpen = () => {
-        setIsModalOpen(true);
-    };
-    const handleCloes = () => {
-        setIsModalOpen(false);
-    };
-
-    const cancelOpen = () => {
-        setCancelJob(true);
-    };
-    const cancelCloes = () => {
-        setCancelJob(false);
-    };
+    const handleOpen = () => setIsModalOpen(true);
+    const handleCloes = () => setIsModalOpen(false);
+    const cancelOpen = () => setCancelJob(true);
+    const cancelCloes = () => setCancelJob(false);
 
     useEffect(() => {
         const cookies = new Cookies();
@@ -147,7 +139,7 @@ export const Notifications = () => {
         }
 
     };
-    console.log('acceptServiceData', acceptServiceData)
+    // console.log('acceptServiceData', acceptServiceData)
 
     return (
         <>
@@ -160,31 +152,13 @@ export const Notifications = () => {
                                 acceptServiceData.map((item, index) => (
                                     <div key={index} className="bg-stone-200 w-full max-w-3xl h-auto rounded-3xl mb-2 p-8 flex flex-col sm:flex-row sm:justify-between sm:items-center">
                                         <div className="flex flex-col gap-2 pb-5 sm:pb-0">
-                                            <div className="flex gap-x-1">
-                                                <p className="font-semibold">ผู้ให้บริการ :</p>
-                                                <p>{item.provider_firstname} {item.provider_lastname}</p>
-                                            </div>
-                                            <div className="flex gap-x-1">
-                                                <p className="font-semibold">บริการ :</p>
-                                                <p>{item.service_name}</p>
-                                            </div>
-                                            <div className="flex gap-x-1">
-                                                <p className="font-semibold">พื้นที่ให้บริการ :</p>
-                                                <p>{item.district_name}</p>
-                                            </div>
-                                            <div className="flex gap-x-1">
-                                                <p className="font-semibold">ประเภทสัตว์เลี้ยง :</p>
-                                                <p>{item.pet_name}</p>
-                                            </div>
-                                            <div className="flex gap-x-1">
-                                                <p className="font-semibold">ราคา :</p>
-                                                <p>{item.service_price} บาท</p>
-                                            </div>
+                                            <NotifitionCard title="ผู้ให้บริการ :" subtitle={`${item.provider_firstname} ${item.provider_lastname}`} />
+                                            <NotifitionCard title="บริการ :" subtitle={item.service_name} />
+                                            <NotifitionCard title="พื้นที่ให้บริการ :" subtitle={item.district_name} />
+                                            <NotifitionCard title="ประเภทสัตว์เลี้ยง :" subtitle={item.pet_name} />
+                                            <NotifitionCard title="ราคา :" subtitle={`${item.service_price} บาท`} />
                                             {item.payment_status !== "" && (
-                                                <div className="flex gap-x-1">
-                                                    <p className="font-semibold">สถานะการชำระเงิน : </p>
-                                                    <p>{item.payment_status}</p>
-                                                </div>
+                                                <NotifitionCard title="สถานะการชำระเงิน :" subtitle={item.payment_status} />
                                             )}
                                         </div>
                                         <div className="flex flex-col">
@@ -235,6 +209,12 @@ export const Notifications = () => {
                                                                     <div className="w-full flex justify-center gap-3">
                                                                         <div className="mt-5 flex gap-x-3">
                                                                             <Buttons
+                                                                                label="ยกเลิก"
+                                                                                buttonType="primary"
+                                                                                className="p-2 w-24 rounded-full"
+                                                                                onClick={cancelCloes}
+                                                                            />
+                                                                            <Buttons
                                                                                 label="ตกลง"
                                                                                 className="p-2 w-24 rounded-full"
                                                                                 buttonType="secondary"
@@ -247,12 +227,6 @@ export const Notifications = () => {
                                                                                     }
                                                                                 }}
                                                                                 disabled={!cancelText}
-                                                                            />
-                                                                            <Buttons
-                                                                                label="ยกเลิก"
-                                                                                buttonType="primary"
-                                                                                className="p-2 w-24 rounded-full"
-                                                                                onClick={cancelCloes}
                                                                             />
                                                                         </div>
                                                                     </div>
@@ -294,6 +268,12 @@ export const Notifications = () => {
                                                             </textarea>
                                                             <div className="w-full flex justify-center gap-3">
                                                                 <Buttons
+                                                                    label="ยกเลิก"
+                                                                    buttonType="danger"
+                                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                                    onClick={handleCloes}
+                                                                />
+                                                                <Buttons
                                                                     label="รายงาน"
                                                                     buttonType="edit"
                                                                     className="mt-5 w-1/4 p-2 rounded-full"
@@ -307,18 +287,11 @@ export const Notifications = () => {
                                                                     }}
                                                                     disabled={!statusText}
                                                                 />
-                                                                <Buttons
-                                                                    label="ยกเลิก"
-                                                                    buttonType="danger"
-                                                                    className="mt-5 w-1/4 p-2 rounded-full"
-                                                                    onClick={handleCloes}
-                                                                />
                                                             </div>
                                                         </div>
                                                     </Modal>
                                                 </>
                                             )}
-
                                         </div>
                                     </div>
                                 ))
