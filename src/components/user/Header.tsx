@@ -51,7 +51,7 @@ const Header = () => {
             <nav className="border-gray-200 bg-[#8A8178] fixed w-full z-20 shadow-md">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-[30px] ">
                     <HashLink smooth to="/#Home" className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <img src="src/assets/image/Logo.png" className="h-28 absolute z-40 mt-24" alt="" />
+                        <img src="/src/assets/image/Logo.png" className="h-28 absolute z-40 mt-24" alt="" />
                     </HashLink>
                     <div className="items-center justify-between hidden w-full min-[900px]:flex md:w-auto min-[900px]:order-1" id="navbar-cta">
                         <ul className="flex flex-col font-medium p-4 min-[900px]:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 min-[900px]:space-x-8 rtl:space-x-reverse min-[900px]:flex-row min-[900px]:mt-0 min-[900px]:border-0 py-2 px-3 text-lg text-white min-[900px]:bg-transparent cursor-pointer ">
