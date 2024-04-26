@@ -141,7 +141,7 @@ export const ServiceInfor = () => {
           <Buttons
             label="เพิ่มข้อมูล"
             buttonType="success"
-            className="p-2 rounded-xl"
+            className="text-white p-2 rounded-xl"
             onClick={createservice}
           />
           <div className="bg-white p-5 ">
@@ -154,13 +154,13 @@ export const ServiceInfor = () => {
                     <Buttons
                       label="แก้ไขข้อมูล"
                       buttonType="edit"
-                      className="p-2 rounded-xl"
+                      className="text-white p-2 rounded-xl"
                       onClick={() => openEditModal(service.service_id, service.service_name)}
                     />
                     <Buttons
                       label="ลบข้อมูล"
                       buttonType="danger"
-                      className="p-2 rounded-xl"
+                      className="text-white p-2 rounded-xl"
                       onClick={() => handleDelete(service.service_id)}
                     />
                   </div>

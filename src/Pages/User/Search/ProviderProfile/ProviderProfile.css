@@ -1,0 +1,18 @@
+.select-time.ant-select-single{
+    height: 43px;
+}
+
+.select-time .ant-select-single .ant-select-selector{
+    border-radius: 50px;
+    padding-left: 20px;
+}
+.select-time .ant-select-selection-placeholder{
+    color: #000;
+    font-family: kanit;
+}
+.select-time .ant-select-selection-item{
+    font-family: kanit;
+}
+.ant-select-item-option-content{
+    font-family: kanit;
+}

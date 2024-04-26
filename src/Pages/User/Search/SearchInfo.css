@@ -1,0 +1,17 @@
+.tag-recommend{
+    padding: 0 10px 0 10px;
+    font-family: kanit;
+    font-size: 14px;
+}
+
+.rate-review .ant-rate-star.ant-rate-star-full {
+    cursor: pointer;
+}
+
+.rate-review .ant-rate-star-first{
+    cursor: pointer;
+}
+
+.rate-review .ant-rate-star-second{
+    cursor: pointer;
+}

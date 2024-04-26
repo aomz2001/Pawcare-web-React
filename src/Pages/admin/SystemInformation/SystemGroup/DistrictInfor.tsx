@@ -147,7 +147,7 @@ export const DistrictInfor = () => {
           <Buttons
             label="เพิ่มข้อมูล"
             buttonType="success"
-            className="p-2 rounded-xl"
+            className="text-white p-2 rounded-xl"
             onClick={createDistrict}
           />
           <div className="bg-white p-5 ">
@@ -160,13 +160,13 @@ export const DistrictInfor = () => {
                     <Buttons
                       label="แก้ไขข้อมูล"
                       buttonType="edit"
-                      className="p-2 rounded-xl"
+                      className="text-white p-2 rounded-xl"
                       onClick={() => openEditModal(district.district_id, district.district_name)}
                     />
                     <Buttons
                       label="ลบข้อมูล"
                       buttonType="danger"
-                      className="p-2 rounded-xl"
+                      className="text-white p-2 rounded-xl"
                       onClick={() => handleDelete(district.district_id)}
                     />
                   </div>

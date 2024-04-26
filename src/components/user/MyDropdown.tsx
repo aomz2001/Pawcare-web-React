@@ -19,6 +19,7 @@ export const MyDropdown = () => {
         cookies.remove('role');
         setAuthenticated(false);
         navigate('/');
+        window.location.reload()
     };
 
     const items: MenuProps['items'] = [

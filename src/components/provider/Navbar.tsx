@@ -78,7 +78,7 @@ const Navbar = () => {
             <Buttons
               label="ตกลง"
               buttonType="secondary"
-              className="mt-5 w-1/4 p-2 rounded-full"
+              className="text-white mt-5 w-1/4 p-2 rounded-full"
               onClick={handleSignOut}
             />
           </div>

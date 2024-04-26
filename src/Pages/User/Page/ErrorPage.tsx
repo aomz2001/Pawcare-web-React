@@ -27,7 +27,7 @@ const ErrorPage = (): ReactElement => {
                                 <Buttons
                                     label={"Go back to home page"}
                                     buttonType="secondary"
-                                    className="mt-5 w-60 p-2 rounded-full text-lg"
+                                    className="text-white mt-5 w-60 p-2 rounded-full text-lg"
                                     onClick={() => { }}
                                 />
                             </Link>

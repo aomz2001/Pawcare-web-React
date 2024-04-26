@@ -98,7 +98,7 @@ const ProviderSearch = () => {
                     className="text-lg h-auto bg-[#2D2D2D] w-3/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer lg:w-4/5 max-[799px]:flex-col"
                     onClick={() => handleSearch(result.provider_id, result.pet_id, result.district_id, result.service_id)}
                   >
-                    <SearchInfo key={result.provider_id} detail={result} />
+                    <SearchInfo key={result.provider_id} detail={result} providerId={result.provider_id} />
                   </div>
                 )
               );

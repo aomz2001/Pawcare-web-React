@@ -139,7 +139,7 @@ export const Notifications = () => {
         }
 
     };
-    // console.log('acceptServiceData', acceptServiceData)
+    console.log('acceptServiceData', acceptServiceData)
 
     return (
         <>
@@ -171,7 +171,7 @@ export const Notifications = () => {
                                                     <Buttons
                                                         label="รับทราบ"
                                                         buttonType="primary"
-                                                        className="mt-5 w-28 p-2 rounded-full"
+                                                        className="text-white mt-5 w-28 p-2 rounded-full"
                                                         onClick={() => understandJobCancel(item.provider_id, item.district_id, item.pet_id, item.service_id, item.service_price, item.users_id, item.provider_cancel)}
                                                     />
                                                 </div>
@@ -182,13 +182,13 @@ export const Notifications = () => {
                                                         <>
                                                             <Buttons
                                                                 label="ชำระเงิน"
-                                                                className="p-2 mb-3 rounded-xl w-32"
+                                                                className="text-white p-2 mb-3 rounded-xl w-32"
                                                                 buttonType="success"
                                                                 onClick={() => handlePayment(item)}
                                                             />
                                                             <Buttons
                                                                 label="ยกเลิก"
-                                                                className="p-2 rounded-xl"
+                                                                className="text-white p-2 rounded-xl"
                                                                 buttonType="danger"
                                                                 onClick={cancelOpen}
                                                             />
@@ -211,12 +211,12 @@ export const Notifications = () => {
                                                                             <Buttons
                                                                                 label="ยกเลิก"
                                                                                 buttonType="primary"
-                                                                                className="p-2 w-24 rounded-full"
+                                                                                className="text-white p-2 w-24 rounded-full"
                                                                                 onClick={cancelCloes}
                                                                             />
                                                                             <Buttons
                                                                                 label="ตกลง"
-                                                                                className="p-2 w-24 rounded-full"
+                                                                                className="text-white p-2 w-24 rounded-full"
                                                                                 buttonType="secondary"
                                                                                 onClick={() => {
                                                                                     if (cancelText) {
@@ -240,13 +240,13 @@ export const Notifications = () => {
                                                             <p>หลังรับบริการแล้วคุณสามารถรีวิวได้ที่นี่!</p>
                                                             <Buttons
                                                                 label="รีวิวพี่เลี้ยงที่นี่"
-                                                                className="p-2 rounded-xl w-36"
+                                                                className="text-white p-2 rounded-xl w-36"
                                                                 buttonType="primary"
                                                                 onClick={() => handleReview(item)}
                                                             />
                                                             <Buttons
                                                                 label="รายงานพี่เลี้ยง"
-                                                                className="p-2 rounded-xl w-36"
+                                                                className="text-white p-2 rounded-xl w-36"
                                                                 buttonType="danger"
                                                                 onClick={handleOpen}
                                                             />
@@ -270,13 +270,13 @@ export const Notifications = () => {
                                                                 <Buttons
                                                                     label="ยกเลิก"
                                                                     buttonType="danger"
-                                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                                    className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                     onClick={handleCloes}
                                                                 />
                                                                 <Buttons
                                                                     label="รายงาน"
                                                                     buttonType="edit"
-                                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                                    className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                     onClick={() => {
                                                                         if (statusText) {
                                                                             handleOpen();

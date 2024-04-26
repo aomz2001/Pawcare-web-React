@@ -24,6 +24,8 @@ interface ReqServiceDataItem {
     status_work: string;
     booking_first: string;
     booking_second: string;
+    time_first: string;
+    time_second: string;
     users_cancel: string;
 }
 
@@ -131,11 +133,11 @@ export function WorkforPet() {
                                 <WorkDetails title="ที่อยู่ที่คุณต้องไปรับงาน :" value={item.users_address} />
                                 <WorkDetails title="เบอร์โทรศัพท์ติดต่อ :" value={item.users_phone} />
                                 <WorkDetails
-                                    title="วันและเวลาที่สนใจเป็นพิเศษ :"
+                                    title="วันและเวลาที่เลือกใช้บริการ:"
                                     values={[
                                         (item.booking_first && item.booking_second) ?
-                                            (item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm"))
-                                            + (item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY [เวลา:] HH:mm")}`)
+                                            (item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY ")) + (item.time_first) + " น" 
+                                            + (item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY ")}`) + (item.time_second)+ " น" 
                                             : "ไม่มี"
                                     ]}
                                 />
@@ -152,7 +154,7 @@ export function WorkforPet() {
                                     <div className="flex justify-center">
                                         <Buttons
                                             label="เสร็จงาน"
-                                            className="p-2 w-36 rounded-xl"
+                                            className="text-white p-2 w-36 rounded-xl"
                                             buttonType="primary"
                                             onClick={JobSucessOpen}
                                         />
@@ -168,13 +170,13 @@ export function WorkforPet() {
                                                 <Buttons
                                                     label="ยกเลิก"
                                                     buttonType="primary"
-                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                    className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                     onClick={JobSucessCloes}
                                                 />
                                                 <Buttons
                                                     label="ตกลง"
                                                     buttonType="secondary"
-                                                    className="mt-5 w-1/4 p-2 rounded-full"
+                                                    className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                     onClick={() => {
                                                         updateJobCompletionStatus(item);
                                                         alert("ขอบคุณที่ร่วมงานกับเรา และ แอดมินจะโอนเงินไปให้คุณผ่านหมายเลย PromptPay");
@@ -195,7 +197,7 @@ export function WorkforPet() {
                                     <div className="flex justify-center">
                                         <Buttons
                                             label="รับทราบ"
-                                            className="p-2 w-36 rounded-xl"
+                                            className="text-white p-2 w-36 rounded-xl"
                                             buttonType="primary"
                                             onClick={() => {
                                                 alert("ลบรายการเสร็จสิ้น");
@@ -214,7 +216,7 @@ export function WorkforPet() {
                                         <Buttons
                                             label="รับทราบ"
                                             buttonType="primary"
-                                            className="mt-5 w-28 p-2 rounded-full"
+                                            className="text-white mt-5 w-28 p-2 rounded-full"
                                             onClick={() => {
                                                 understandWork(item.users_id, item.district_id, item.service_id, item.pet_id)
                                             }}
@@ -227,7 +229,7 @@ export function WorkforPet() {
                                             <div className="flex flex-col text-white gap-4 w-40">
                                                 <Buttons
                                                     label="รับงาน"
-                                                    className="p-2 rounded-xl"
+                                                    className="text-white p-2 rounded-xl"
                                                     buttonType="success"
                                                     onClick={JobAcceptedOpen}
                                                 />
@@ -242,13 +244,13 @@ export function WorkforPet() {
                                                             <Buttons
                                                                 label="ยกเลิก"
                                                                 buttonType="primary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={JobAcceptedCloes}
                                                             />
                                                             <Buttons
                                                                 label="ตกลง"
                                                                 buttonType="secondary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={() => {
                                                                     handleAcceptJob(item)
                                                                     alert(`คุณได้รับงานงานของคุณ ${item.users_firstname} ${item.users_lastname} โปรดรอแอดมินตรวจสอบและติดต่อกลับ`);
@@ -260,7 +262,7 @@ export function WorkforPet() {
                                                 </Modal>
                                                 <Buttons
                                                     label="ไม่รับงาน"
-                                                    className="p-2 rounded-xl"
+                                                    className="text-white p-2 rounded-xl"
                                                     buttonType="danger"
                                                     onClick={handleOpen}
                                                 />
@@ -283,13 +285,13 @@ export function WorkforPet() {
                                                             <Buttons
                                                                 label="ยกเลิก"
                                                                 buttonType="primary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={handleCloes}
                                                             />
                                                             <Buttons
                                                                 label="ตกลง"
                                                                 buttonType="secondary"
-                                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={() => {
                                                                     if (statusText) {
                                                                         handleAcceptJob(item)

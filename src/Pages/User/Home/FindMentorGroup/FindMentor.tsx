@@ -107,7 +107,7 @@ const FindMentor = () => {
                                     <Buttons
                                         label="ค้นหา"
                                         buttonType="primary"
-                                        className=" w-32 p-2 rounded-full flex justify-center items-center gap-x-1"
+                                        className="text-white w-32 p-2 rounded-full flex justify-center items-center gap-x-1"
                                         onClick={handleSearch}
                                         icon={<><SearchOutlined className="text-white cursor-pointer" onClick={handleSearch} /></>}
                                     />

@@ -197,7 +197,7 @@ const ServiceCard = () => {
       </div>
       <Buttons
         label="ยืนยัน"
-        className="w-20 p-2 rounded-xl mb-6 text-base"
+        className="text-white w-20 p-2 rounded-xl mb-6 text-base"
         buttonType="secondary"
         onClick={handleConfirmation}
       />

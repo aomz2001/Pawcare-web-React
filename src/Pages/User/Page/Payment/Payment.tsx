@@ -131,7 +131,7 @@ export const Payment = () => {
                                 <Buttons
                                     label="อัพโหลดรูปภาพ"
                                     color="#3498DB"
-                                    className="mt-5 w-1/3 p-2 rounded-full hover:bg-[#5DADE2]"
+                                    className="text-white mt-5 w-1/3 p-2 rounded-full hover:bg-[#5DADE2]"
                                     onClick={handleUpload}
                                 />
                             </div>
@@ -139,7 +139,7 @@ export const Payment = () => {
                                 <Buttons
                                     label="ยกเลิก"
                                     buttonType="danger"
-                                    className="mt-5 w-1/3 p-2 rounded-full"
+                                    className="text-white mt-5 w-1/3 p-2 rounded-full"
                                     onClick={handleCancel}
                                 />
                             </div>

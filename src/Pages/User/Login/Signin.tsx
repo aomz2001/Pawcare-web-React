@@ -130,7 +130,7 @@ const Signin = () => {
                             <div className="flex justify-center pt-3">
                                 <Buttons
                                     label="เข้าสู่ระบบ"
-                                    className="px-6 py-2 rounded-full"
+                                    className="text-white px-6 py-2 rounded-full"
                                     onClick={LoginUsers}
                                     buttonType="secondary"
                                 />

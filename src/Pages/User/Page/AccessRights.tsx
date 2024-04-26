@@ -15,7 +15,7 @@ const AccessRights = () => {
                                 <Buttons
                                     label={"กลับไปยังหน้าหลัก"}
                                     buttonType="secondary"
-                                    className="mt-5 w-60 p-2 rounded-full text-lg"
+                                    className="text-white mt-5 w-60 p-2 rounded-full text-lg"
                                     onClick={() => { }}
                                 />
                             </Link>

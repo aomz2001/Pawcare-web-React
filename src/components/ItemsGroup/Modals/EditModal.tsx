@@ -24,13 +24,13 @@ const EditModal = ({ editName, setEditName, handleSaveEdit, closeEditModal }: Ed
                     <Buttons
                         label="ยกเลิก"
                         buttonType="danger"
-                        className="px-5 rounded-xl"
+                        className="text-white px-5 rounded-xl"
                         onClick={closeEditModal}
                     />
                     <Buttons
                         label="ยืนยัน"
                         buttonType="success"
-                        className="px-5 py-2 rounded-xl"
+                        className="text-white px-5 py-2 rounded-xl"
                         onClick={handleSaveEdit}
                     />
                 </div>

@@ -24,6 +24,7 @@ export const Search = () => {
     const [searchResults, setSearchResults] = useState<SearchResults>([]);
     const [priceFilter, setPriceFilter] = useState<string | null>(null);
     const navigate = useNavigate();
+    console.log('searchResults',searchResults)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -113,10 +114,10 @@ export const Search = () => {
                                 isPriceInRange && (
                                     <div
                                         key={result.provider_id}
-                                        className="text-lg h-auto bg-[#2D2D2D] w-3/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer lg:w-4/5 max-[799px]:flex-col"
+                                        className="text-lg h-auto bg-[#2D2D2D] w-3/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer lg:w-4/5 max-[1020px]:flex-col "
                                         onClick={() => handleSearch(result.provider_id)}
                                     >
-                                        <SearchInfo key={result.provider_id} detail={result} />
+                                        <SearchInfo key={result.provider_id} detail={result} providerId={result.provider_id} />
                                     </div>
                                 )
                             );

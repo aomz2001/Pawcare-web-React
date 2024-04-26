@@ -2,6 +2,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/th";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Avatar, Rate, Space, Tag } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import httpClient from "../../../utils/httpClient";
+import './SearchInfo.css'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -9,6 +14,10 @@ dayjs.locale("th");
 
 interface SearchInfoGroupProps {
     detail: SearchInfoGroup;
+}
+interface ReviewData {
+    avg_rating: number;
+    provider_id: number;
 }
 
 export interface SearchInfoGroup {
@@ -23,24 +32,58 @@ export interface SearchInfoGroup {
     booking_end: string | null;
 }
 
-export const SearchInfo = ({ detail }: SearchInfoGroupProps) => {
+export const SearchInfo = ({ detail, providerId }: SearchInfoGroupProps & { providerId: number }) => {
+
+    const [reviewData, setReviewData] = useState<ReviewData[] | null>(null);
+
+    useEffect(() => {
+        httpClient.get(`/public/api/get-avg-ratings?provider_id=${providerId}`)
+            .then(response => {
+                setReviewData(response.data.data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }, [providerId]);
+    console.log('SearchInfoGroup', detail)
+    console.log('reviewData', reviewData)
+
+
     return (
         <>
-            <div className="">
+            <div className="flex gap-x-6 max-[1020px]:flex-col max-[1020px]:gap-y-4 max-[1020px]:items-center">
+                <Space >
+                    <Avatar size={150} style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
+                </Space>
                 <div className="gap-2 flex flex-col justify-center">
                     <h3 className="text-[#F0C163]">ชื่อผู้ให้บริการ : {detail.provider_firstname} {detail.provider_lastname}</h3>
                     <div className="text-white">
-                    <p>บริการ : {detail.service_name}</p>
-                    <p>อำเภอ : {detail.district_name}</p>
-                    <p>สัตว์เลี้ยงที่ให้บริการ : {detail.pet_name}</p>
-                    <p>
-                        ให้บริการ : {`${dayjs(detail.booking_start).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
-                        ถึง {`${dayjs(detail.booking_end).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
-                    </p>
+                        <p>บริการ : {detail.service_name}</p>
+                        <p>อำเภอ : {detail.district_name}</p>
+                        <p>สัตว์เลี้ยงที่ให้บริการ : {detail.pet_name}</p>
+                        <p>
+                            เริ่มให้บริการ : {`${dayjs(detail.booking_start).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
+                        </p>
+                        <p>
+                            ให้บริการถึง : {`${dayjs(detail.booking_end).format("DD MMMM YYYY [เวลา:] HH:mm")}`}
+                        </p>
+                        {reviewData ? (
+                            reviewData.map((item) => (
+                                <div key={item.provider_id} className="flex items-center gap-x-3">
+                                    <div className="">คะแนนรีวิว : {item.avg_rating} <Rate allowHalf disabled defaultValue={item.avg_rating} className="rate-review" /></div>
+                                    {item.avg_rating >= 4 ?
+                                            <Tag color="gold" className="tag-recommend">แนะนำ</Tag>
+                                        : null
+                                    }
+                                </div>
+                            ))
+                        ) : (
+                            <><div className="">ยังไม่มีรีวิวจากผู้ใช้งาน</div></>
+                        )}
                     </div>
                 </div>
             </div>
-            <div className="text-[#F0C163] flex items-center">{detail.service_price} บาท / บริการ</div>
+            <div className="text-[#F0C163] flex items-center max-[1020px]:px-14">{detail.service_price} บาท / บริการ</div>
         </>
     )
 }

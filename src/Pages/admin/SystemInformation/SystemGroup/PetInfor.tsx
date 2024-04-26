@@ -141,7 +141,7 @@ export const PetInfor = () => {
                     <Buttons
                         label="เพิ่มข้อมูล"
                         buttonType="success"
-                        className="p-2 rounded-xl"
+                        className="text-white p-2 rounded-xl"
                         onClick={createPet}
                     />
                     <div className="bg-white p-5 ">
@@ -154,13 +154,13 @@ export const PetInfor = () => {
                                         <Buttons
                                             label="แก้ไขข้อมูล"
                                             buttonType="edit"
-                                            className="p-2 rounded-xl"
+                                            className="text-white p-2 rounded-xl"
                                             onClick={() => openEditModal(pet.pet_id, pet.pet_name)}
                                         />
                                         <Buttons
                                             label="ลบข้อมูล"
                                             buttonType="danger"
-                                            className="p-2 rounded-xl"
+                                            className="text-white p-2 rounded-xl"
                                             onClick={() => handleDelete(pet.pet_id)}
                                         />
                                     </div>

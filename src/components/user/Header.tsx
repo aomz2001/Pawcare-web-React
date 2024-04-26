@@ -98,7 +98,7 @@ const Header = () => {
                             <Link to='/login'>
                                 <Buttons
                                     label='เข้าสู่ระบบ'
-                                    className='rounded-xl px-4 py-3 shadow-md'
+                                    className='text-white rounded-xl px-4 py-3 shadow-md'
                                     buttonType='primary'
                                     onClick={() => { }}
                                 />

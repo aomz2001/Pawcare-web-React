@@ -17,6 +17,7 @@ export const NavbarAdmin = () => {
     cookies.remove('role');
     setAuthenticated(false);
     navigate('/');
+    window.location.reload()
   };
 
   const handleOpen = () => setIsModalOpen(true);
@@ -65,13 +66,13 @@ export const NavbarAdmin = () => {
             <Buttons
               label="ยกเลิก"
               color="#996767"
-              className=" mt-6 w-1/4 p-2 rounded-full border border-[#822f2f] hover:bg-[#bb7f7f]"
+              className="text-white mt-6 w-1/4 p-2 rounded-full border border-[#822f2f] hover:bg-[#bb7f7f]"
               onClick={handleCloes}
             />
             <Buttons
               label="ตกลง"
               color="#822f2f"
-              className="mt-6 w-1/4 p-2 rounded-full hover:bg-[#b34242]"
+              className="text-white mt-6 w-1/4 p-2 rounded-full hover:bg-[#b34242]"
               onClick={handleSignOut}
             />
           </div>

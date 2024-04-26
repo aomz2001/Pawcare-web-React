@@ -32,7 +32,7 @@ const Buttons = ({ label, onClick, className, buttonType, color, icon }: ButtonP
 
   return (
     <button
-      className={`${className} text-white font-kanit`}
+      className={`${className} font-kanit`}
       style={{
         backgroundColor: hovered ? (buttonType === 'primary' ? '#a57777' :
                              buttonType === 'secondary' ? '#a89e94' :

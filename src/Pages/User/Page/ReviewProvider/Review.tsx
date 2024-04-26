@@ -108,7 +108,7 @@ export const Review = () => {
             </textarea>
             <Buttons
               label="ตกลง"
-              className="p-2 w-32 rounded-xl mt-3"
+              className="text-white p-2 w-32 rounded-xl mt-3"
               buttonType="primary"
               onClick={handleOk}
             />

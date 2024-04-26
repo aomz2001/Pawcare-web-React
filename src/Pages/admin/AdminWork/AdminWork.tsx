@@ -132,13 +132,13 @@ export const AdminWork = () => {
                                     <Buttons
                                         label="สถานะชำระเงิน"
                                         color="#3498DB"
-                                        className="p-2 w-36 rounded-xl hover:bg-[#5DADE2]"
+                                        className="text-white p-2 w-36 rounded-xl hover:bg-[#5DADE2]"
                                         onClick={() => handleOk(paymentItem)}
                                     />
                                     <Buttons
                                         label="แจ้งผู้ใช้งาน"
                                         buttonType="success"
-                                        className="p-2 w-36 rounded-xl"
+                                        className="text-white p-2 w-36 rounded-xl"
                                         onClick={isCommentOpen}
                                     />
                                     <Modal
@@ -151,13 +151,13 @@ export const AdminWork = () => {
                                             <Buttons
                                                 label="ยกเลิก"
                                                 buttonType="primary"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                 onClick={isCommentCloes}
                                             />
                                             <Buttons
                                                 label="ตกลง"
                                                 buttonType="secondary"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                 onClick={() => {
                                                     updateJobCompletionStatus(paymentItem)
                                                     isCommentCloes()
@@ -179,7 +179,7 @@ export const AdminWork = () => {
                                     <Buttons
                                         label="แจ้งให้ผู้บริการ"
                                         buttonType="success"
-                                        className="p-2 w-36 rounded-xl"
+                                        className="text-white p-2 w-36 rounded-xl"
                                         onClick={() => handleOpenWork(paymentItem)}
                                     />
                                 </div>
@@ -199,7 +199,7 @@ export const AdminWork = () => {
                                         <Buttons
                                             label="ปิด"
                                             buttonType="danger"
-                                            className="mt-5 w-1/4 p-2 rounded-full"
+                                            className="text-white mt-5 w-1/4 p-2 rounded-full"
                                             onClick={handleCancel}
                                         />
                                     </div>
@@ -230,13 +230,13 @@ export const AdminWork = () => {
                                             <Buttons
                                                 label="ปิด"
                                                 buttonType="danger"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                 onClick={handleCloesWork}
                                             />
                                             <Buttons
                                                 label="ส่งข้อความ"
                                                 buttonType="success"
-                                                className="mt-5 w-1/4 p-2 rounded-full"
+                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                 onClick={sendStatus}
                                             />
                                         </div>

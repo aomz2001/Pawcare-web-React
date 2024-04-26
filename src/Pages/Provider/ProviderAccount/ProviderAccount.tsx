@@ -199,13 +199,13 @@ export const ProviderAccount = () => {
                 <Buttons
                     label="แก้ไขข้อมูล"
                     buttonType="edit"
-                    className="w-28 p-2 rounded-xl"
+                    className="text-white w-28 p-2 rounded-xl"
                     onClick={() => setOpenEdit(true)}
                 />
                 <Buttons
                     label="ลบบัญชี"
                     buttonType="danger"
-                    className="w-28 p-2 rounded-xl"
+                    className="text-white w-28 p-2 rounded-xl"
                     onClick={() => setOpenDelete(true)}
                 />
             </div>
@@ -220,13 +220,13 @@ export const ProviderAccount = () => {
                     <Buttons
                         label="ไม่ใช่"
                         buttonType="danger"
-                        className="mt-5 w-1/4 p-2 rounded-full"
+                        className="text-white mt-5 w-1/4 p-2 rounded-full"
                         onClick={() => setOpenDelete(false)}
                     />
                     <Buttons
                         label="ใช่"
                         buttonType="success"
-                        className="mt-5 w-1/4 p-2 rounded-full"
+                        className="text-white mt-5 w-1/4 p-2 rounded-full"
                         onClick={() => {
                             deleteProvider(providerData?.provider[0]?.provider_id || 0);
                             setOpenDelete(false);
@@ -288,13 +288,13 @@ export const ProviderAccount = () => {
                     <Buttons
                         label="ไม่ใช่"
                         buttonType="danger"
-                        className="mt-5 w-1/4 p-2 rounded-full"
+                        className="text-white mt-5 w-1/4 p-2 rounded-full"
                         onClick={() => setOpenEdit(false)}
                     />
                     <Buttons
                         label="ใช่"
                         buttonType="success"
-                        className="mt-5 w-1/4 p-2 rounded-full"
+                        className="text-white mt-5 w-1/4 p-2 rounded-full"
                         onClick={() => {
                             updateProviderData();
                             setOpenEdit(false);

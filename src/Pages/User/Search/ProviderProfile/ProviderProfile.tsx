@@ -1,14 +1,15 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Modal, Space, DatePicker, Breadcrumb } from 'antd';
+import { Modal, Space, DatePicker, Breadcrumb, Select } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons";
 import Cookies from "universal-cookie";
 import { RangeValue } from "rc-picker/lib/interface"
+import './ProviderProfile.css'
 
 const { RangePicker } = DatePicker;
 import dayjs from "dayjs"
 import "dayjs/locale/th"
-import { UserOutlined } from "@ant-design/icons";
+import { SwapOutlined, UserOutlined } from "@ant-design/icons";
 import httpClient from "../../../../utils/httpClient";
 import { AuthContext } from "../../../../context/AuthContext";
 import { ProviderProfileInfo } from "./ProviderProfileInfo";
@@ -28,6 +29,7 @@ type ProviderProfileData = {
     service_price: number;
     pet_name: string;
     review_text: string;
+    review_time: string;
     ratings: number;
     report: number;
     booking_start: string;
@@ -39,6 +41,8 @@ export const ProviderProfile = () => {
     const [providerProfileData, setProviderProfileData] = useState<ProviderProfileData[] | null>(null);
     const [reviewData, setReviewData] = useState<ProviderProfileData[] | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [firstTime, setFirstTime] = useState<string | null>(null);
+    const [secondTime, setSecondTime] = useState<string | null>(null);
     const petId = searchParams.get("petId");
     const districtId = searchParams.get("districtId");
     const serviceId = searchParams.get("serviceId");
@@ -59,12 +63,37 @@ export const ProviderProfile = () => {
     };
     const handleOk = async () => {
         try {
+            if (!selectTime) {
+                alert("** โปรดระบุวันที่ต้องการใช้บริการ **");
+                return;
+            }
             if (providerProfileData && providerProfileData.length > 0) {
                 const selectedTimeValues = selectTime?.length === 2
                     ? selectTime.map(e => e && e.add(7, "hours").toISOString())
                     : [null, null];
+
+                // ดึงวันที่ปัจจุบัน
+                const today = dayjs();
+
+                // ตรวจสอบว่าวันที่ที่ผู้ใช้เลือกมากกว่าวันปัจจุบันหรือไม่
+                const isFutureDate = selectTime && selectTime[0].isAfter(today);
+
+                if (!isFutureDate) {
+                    // ถ้าวันที่เลือกไม่ใช่วันถัดไป
+                    alert("** หมายเหตุ โปรดเลือกวันหรือเวลาการจองอย่างน้อยก่อน 1 วัน **");
+                    setSelectTime(null);
+                    setFirstTime(null);
+                    setSecondTime(null);
+                    return; // ออกจาก function เพื่อไม่ให้ทำการส่งคำขอ
+                }
+
                 if (authenticated === false) {
                     navigate('/login')
+                }
+                if (!firstTime || !secondTime) {
+                    // ถ้าวันที่เลือกไม่ใช่วันถัดไป
+                    alert("** หมายเหตุ โปรดเลือกระบุเวลาที่ต้องการใช้บริการ **");
+                    return; // ออกจาก function เพื่อไม่ให้ทำการส่งคำขอ
                 }
                 const response = await httpClient.post('user/api/req-service', {
                     pet_id: petId,
@@ -74,7 +103,9 @@ export const ProviderProfile = () => {
                     service_price: providerProfileData[0]?.service_price,
                     users_id: String(userId),
                     booking_first: selectedTimeValues[0],
-                    booking_second: selectedTimeValues[1]
+                    booking_second: selectedTimeValues[1],
+                    time_first: firstTime,
+                    time_second: secondTime
                 });
                 console.log(response);
                 setIsModalOpen(false);
@@ -87,8 +118,12 @@ export const ProviderProfile = () => {
             console.error("Error handling request:", error);
         }
     };
+
     const handleCancel = () => {
         setIsModalOpen(false);
+        setSelectTime(null);
+        setFirstTime(null);
+        setSecondTime(null);
     };
 
     useEffect(() => {
@@ -161,6 +196,34 @@ export const ProviderProfile = () => {
             console.log("Please select values for all options");
         }
     };
+
+    const bookingTime = [
+        { value: '00:00', label: '00:00 น.' },
+        { value: '01:00', label: '01:00 น.' },
+        { value: '02:00', label: '02:00 น.' },
+        { value: '03:00', label: '03:00 น.' },
+        { value: '04:00', label: '04:00 น.' },
+        { value: '05:00', label: '05:00 น.' },
+        { value: '06:00', label: '06:00 น.' },
+        { value: '07:00', label: '07:00 น.' },
+        { value: '08:00', label: '08:00 น.' },
+        { value: '09:00', label: '09:00 น.' },
+        { value: '10:00', label: '10:00 น.' },
+        { value: '11:00', label: '11:00 น.' },
+        { value: '12:00', label: '12:00 น.' },
+        { value: '13:00', label: '13:00 น.' },
+        { value: '14:00', label: '14:00 น.' },
+        { value: '15:00', label: '15:00 น.' },
+        { value: '16:00', label: '16:00 น.' },
+        { value: '17:00', label: '17:00 น.' },
+        { value: '18:00', label: '18:00 น.' },
+        { value: '19:00', label: '19:00 น.' },
+        { value: '20:00', label: '20:00 น.' },
+        { value: '21:00', label: '21:00 น.' },
+        { value: '22:00', label: '22:00 น.' },
+        { value: '23:00', label: '23:00 น.' },
+    ]
+
     return (
         <div className="bg-[#FFF8EA] ">
             {providerProfileData ? (
@@ -201,7 +264,7 @@ export const ProviderProfile = () => {
                                             <Buttons
                                                 label="ส่งคำขอใช้บริการ"
                                                 buttonType="success"
-                                                className=" w-1/2 p-2 rounded-full"
+                                                className="text-white w-1/2 p-2 rounded-full"
                                                 onClick={showModal}
                                             />
                                             <Modal title="ส่งคำขอใช้บริการ" open={isModalOpen} footer={false} className="font-kanit">
@@ -210,27 +273,53 @@ export const ProviderProfile = () => {
                                                     <p>- {providerProfileData[0].service_name} ราคา {providerProfileData[0].service_price} บาท</p>
                                                     <p>- {providerProfileData[0].pet_name}</p>
                                                     <p>- {providerProfileData[0].district_name}</p>
-                                                    <p className="pt-3 font-semibold">คุณสามสารถเลือกจองเวลาที่คุณสนใจได้</p>
+                                                    <p className="pt-3 font-semibold">คุณสามารถเลือกจองวันที่คุณสนใจได้</p>
                                                     <Space direction="vertical" size={12}>
                                                         <RangePicker
-                                                            showTime={{ format: 'HH:mm' }}
-                                                            format="YYYY-MM-DD HH:mm"
                                                             value={selectTime}
                                                             onChange={handleTimeChange}
                                                         />
                                                     </Space>
+                                                    {selectTime && (
+                                                        <>
+                                                            <p className="pt-3 font-semibold ">เลือกเวลาที่คุณต้องการใช้บริการ</p>
+                                                            <div className="flex justify-between ">
+                                                                <div className="">
+                                                                    <Select
+                                                                        className="select-time"
+                                                                        style={{ width: 180 }}
+                                                                        placeholder="เวลาเริ่มใช้บริการ"
+                                                                        onChange={(value) => setFirstTime(value.toString())}
+                                                                        value={firstTime}
+                                                                        options={bookingTime}
+                                                                    />
+                                                                </div>
+                                                                <SwapOutlined />
+                                                                <div className="">
+                                                                    <Select
+                                                                        className="select-time"
+                                                                        style={{ width: 180 }}
+                                                                        placeholder="เวลาสิ้นสุดการใช้บริการ"
+                                                                        onChange={(value) => setSecondTime(value.toString())}
+                                                                        value={secondTime}
+                                                                        options={bookingTime}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
                                                 <div className="flex justify-center items-center gap-2">
                                                     <Buttons
                                                         label="ยกเลิก"
                                                         buttonType="danger"
-                                                        className="mt-5 w-1/3 p-2 rounded-full"
+                                                        className="text-white mt-5 w-1/3 p-2 rounded-full"
                                                         onClick={handleCancel}
                                                     />
                                                     <Buttons
                                                         label="ตกลง"
                                                         buttonType="success"
-                                                        className="mt-5 w-1/3 p-2 rounded-full"
+                                                        className="text-white mt-5 w-1/3 p-2 rounded-full"
                                                         onClick={handleOk}
                                                     />
                                                 </div>
@@ -258,10 +347,13 @@ export const ProviderProfile = () => {
                                             <>
                                                 {reviewData ? (
                                                     reviewData.map((item) => (
-                                                        <div className="bg-stone-100 rounded-3xl p-5 mb-3">
-                                                            <div className="">ผู้ใช้งาน : {item.users_firstname} {item.users_lastname} </div>
-                                                            <div className="">ให้คะแนน : {item.ratings} คะแนน</div>
-                                                            <div className="">แสดงความคิดเห็น : {item.review_text}</div>
+                                                        <div className="bg-stone-100 rounded-3xl p-5 mb-3 flex justify-between">
+                                                            <div className="">
+                                                                <div className="">ผู้ใช้งาน : {item.users_firstname} {item.users_lastname} </div>
+                                                                <div className="">ให้คะแนน : {item.ratings} คะแนน</div>
+                                                                <div className="">แสดงความคิดเห็น : {item.review_text}</div>
+                                                            </div>
+                                                            <div className="text-stone-400">แสดงความคิดเห็นเมื่อ {item.review_time}</div>
                                                         </div>
                                                     ))
                                                 ) : (
