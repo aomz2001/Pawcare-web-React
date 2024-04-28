@@ -55,7 +55,7 @@ const ServiceCard = () => {
   const onServiceDateTimeChange = (value: RangeValue<dayjs.Dayjs>, serviceId: number) => {
     const data = value as [Dayjs, Dayjs]
     console.log("onServiceDateTimeChange", new Date(data[0]?.toISOString()));
-    
+
     setServiceDateTime((prevServiceDateTime) => ({
       ...prevServiceDateTime,
       [serviceId]: data,
@@ -99,8 +99,8 @@ const ServiceCard = () => {
       const servicePayload = selectedServices.map((serviceId: CheckboxValueType) => ({
         service_id: serviceId as number,
         service_price: servicePrices[serviceId as number] || 0,
-        booking_start: serviceDateTime[serviceId as number][0].add(7,"hours").toISOString(),
-        booking_end: serviceDateTime[serviceId as number][1].add(7,"hours").toISOString(),
+        booking_start: serviceDateTime[serviceId as number][0].add(7, "hours").toISOString(),
+        booking_end: serviceDateTime[serviceId as number][1].add(7, "hours").toISOString(),
       }));
 
       await httpClient.put(`provider/provider-data-district/${provider_id}`, {
@@ -181,13 +181,24 @@ const ServiceCard = () => {
                   key={`price_service_${serviceId}`}
                   id={`price_service_${serviceId}`}
                   label={`กรอกราคาสำหรับ ${serviceData.find(s => s.service_id === (serviceId as number))?.service_name}`}
-                  placeholder="กรอกราคาที่คุณให้บริการ เช่น 200 ..."
+                  placeholder="กรอกราคาที่คุณให้บริการได้ 0 - 500 บาทเท่านั้น"
                   onChange={(e) => {
-                    const price = parseFloat(e.target.value);
-                    setServicePrices((prevPrices) => ({
-                      ...prevPrices,
-                      [serviceId as number]: price,
-                    }));
+                    const newValue = e.target.value;
+                    // ถ้า newValue ไม่ใช่ตัวเลข ให้ reset เป็นค่าว่าง
+                    if (!/^\d+$/.test(newValue)) {
+                      e.target.value = "";
+                    } else {
+                      const price = parseFloat(newValue);
+                      if (!isNaN(price) && price >= 0 && price <= 500) {
+                        setServicePrices((prevPrices) => ({
+                          ...prevPrices,
+                          [serviceId as number]: price,
+                        }));
+                      } else {
+                        alert('** ทางระบบจำกัดราคาให้บริการเพียง 0 - 500 บาท เท่านั้น!! **');
+                        e.target.value = "";
+                      }
+                    }
                   }}
                 />
               </div>
