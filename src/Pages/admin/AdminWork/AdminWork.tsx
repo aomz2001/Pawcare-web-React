@@ -8,6 +8,7 @@ interface AdminWorkProps {
     users_id: number;
     users_firstname: string;
     users_lastname: string;
+    users_phone: string;
     district_id: number;
     district_name: string;
     pet_id: number;
@@ -22,6 +23,7 @@ interface AdminWorkProps {
     provider_phone: string;
     job_complete: string;
     report: string;
+    cash_back: string;
 }
 
 export const AdminWork = () => {
@@ -59,6 +61,7 @@ export const AdminWork = () => {
         const apiUrl = `http://localhost:3000/public${paymentFilename}`;
         console.log('paymentFilename', paymentFilename)
         console.log('apiUrl', apiUrl)
+        console.log('clickedPaymentItem.payment', clickedPaymentItem.payment)
         try {
             setImageData(apiUrl)
             setIsModalOpen(true);
@@ -66,6 +69,7 @@ export const AdminWork = () => {
             console.error("Error fetching data:", error);
         }
     };
+    console.log('paymentData', paymentData)
 
     const sendStatus = async () => {
         try {
@@ -113,6 +117,19 @@ export const AdminWork = () => {
         }
     };
 
+    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number , service_price: number) => {
+        httpClient.delete("admin/api/clear-work-list", {
+            data: { usersId, districtId, serviceId, petId, service_price },
+        })
+            .then((response) => {
+                console.log("Service request deleted successfully");
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("Error deleting service request:", error);
+            });
+    };
+
     return (
         <>
             <div className="text-3xl font-semibold pb-10">งานของคุณ</div>
@@ -121,12 +138,37 @@ export const AdminWork = () => {
                     <div className="flex justify-center">!!! ยินดีด้วยคุณยังไม่มีงาน !!!</div>
                 ) : (
                     paymentData.map((paymentItem, index) => (
-                        <div key={index} className="flex bg-slate-50 border-2 mb-5 p-10 rounded-lg max-w-3xl max-[1120px]:max-w-[460px] max-[1120px]:flex-col ">
-                            <div className="flex flex-col justify-between border-r-2 max-[1120px]:border-r-0 max-[1120px]:items-center">
+                        <div key={index} className="flex bg-slate-50 border-2 mb-5 p-10 rounded-lg max-w-5xl max-[1120px]:max-w-[460px] max-[1120px]:flex-col ">
+                            <div className="flex flex-col justify-between pr-5 border-r-2 max-[1120px]:border-r-0 max-[1120px]:items-center">
                                 <div className="max-[1120px]:pb-5">
                                     <AdminWorkDetails title='ผู้ใช้บริการ :' subtitle={`${paymentItem.users_firstname} ${paymentItem.users_lastname}`} />
                                     <AdminWorkDetails title='ใช้บริการ :' subtitle={paymentItem.service_name} />
                                     <AdminWorkDetails title='ราคาที่ชำระ :' subtitle={paymentItem.service_price} />
+                                    {paymentItem.cash_back !== '' && (
+                                        <div className=" bg-[#f36464] p-3 rounded-xl mb-3">
+                                            <div className="bg-white p-3 rounded-xl">
+                                                <AdminWorkDetails title='คำร้องยกเลิกงานและขอเงินคืน :' subtitle={paymentItem.cash_back} />
+                                                <AdminWorkDetails title='หมายเลข PromptPay :' subtitle={paymentItem.users_phone} />
+                                                <p className="w-[455px] text-[#f36464]">โอนเงินคืนผู้ใช้งานตามหมายเลข PromptPay และแจ้งผู้ให้บริการเพื่อยกเลิกงาน</p>
+                                                <div className="flex justify-center">
+                                                    <Buttons
+                                                        label="เคลียร์รายการ"
+                                                        buttonType="danger"
+                                                        className="text-white p-2 w-36 rounded-xl"
+                                                        onClick={() => {
+                                                            handleDeclineJob(
+                                                                paymentItem.users_id,
+                                                                paymentItem.district_id, 
+                                                                paymentItem.service_id, 
+                                                                paymentItem.pet_id,
+                                                                paymentItem.service_price
+                                                            ); 
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex gap-3 mr-8 max-[1120px]:mr-0 max-[1120px]:pb-5 max-[1120px]:border-b-2">
                                     <Buttons

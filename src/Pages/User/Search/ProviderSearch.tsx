@@ -16,6 +16,7 @@ type SearchResults = {
   service_price: number;
   booking_start: string;
   booking_end: string;
+  provider_profile: string;
 }[];
 
 const ProviderSearch = () => {
@@ -42,7 +43,6 @@ const ProviderSearch = () => {
       console.log("Please select values for all options");
     }
   };
-  console.log('priceFilter', priceFilter)
   console.log('searchResults', searchResults)
   return (
     <>
@@ -90,12 +90,17 @@ const ProviderSearch = () => {
                   (priceFilter === "0" && result.service_price > 0)
                 );
               console.log('result.service_price', result.service_price)
-
+              const backgroundImage = result.pet_name === 'สุนัข' ? 'url("https://cdn.pixabay.com/photo/2022/12/22/02/56/dog-7671355_640.jpg")' : result.pet_name === 'แมว' ? 'url("https://cdn.pixabay.com/photo/2022/03/24/14/42/animal-7089224_640.jpg")' : 'none';
               return (
                 isPriceInRange && (
                   <div
                     key={result.provider_id}
                     className="text-lg h-auto bg-[#2D2D2D] w-3/5 mb-5 rounded-3xl p-10 flex justify-between hover:bg-[#4f4f4f] cursor-pointer lg:w-4/5 max-[799px]:flex-col"
+                    style={{ 
+                      backgroundImage,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center' // เพิ่มคุณสมบัติ CSS background-size
+                    }}
                     onClick={() => handleSearch(result.provider_id, result.pet_id, result.district_id, result.service_id)}
                   >
                     <SearchInfo key={result.provider_id} detail={result} providerId={result.provider_id} />

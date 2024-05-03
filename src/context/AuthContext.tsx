@@ -46,7 +46,7 @@ const AuthProvider = ({ children }: ContextProps) => {
         const token = new Cookies().get('token');
         if (token) {
             setAuthenticated(true);
-            const TIME = 60 * 60 * 1000;
+            const TIME = 6 * 60 * 60 * 1000;
             setTimeout(() => {
                 const cookies = new Cookies();
                 cookies.remove('token');
@@ -72,7 +72,7 @@ const AuthProvider = ({ children }: ContextProps) => {
         const token = localStorage.getItem('token');
         if (token) {
             setAuthenProvider(true);
-            const TIME = 60 * 60 * 1000;
+            const TIME = 6 * 60 * 60 * 1000;
             setTimeout(() => {
                 localStorage.clear();
                 setAuthenProvider(false);

@@ -14,6 +14,7 @@ type SearchResults = {
     service_price: number;
     booking_start: string;
     booking_end: string;
+    provider_profile: string;
 }[];
 
 export const Search = () => {
@@ -94,9 +95,9 @@ export const Search = () => {
                                     onChange={(value) => setPriceFilter(value.toString())}
                                     value={priceFilter}
                                     options={[
+                                        { value: '200', label: 'น้อยกว่า 200 บาท' },
                                         { value: '300', label: 'น้อยกว่า 300 บาท' },
-                                        { value: '500', label: 'น้อยกว่า 500 บาท' },
-                                        { value: '501', label: '500 บาทขึ้นไป' },
+                                        { value: '301', label: '300 บาทขึ้นไป' },
                                         { value: '0', label: 'ทุกราคา' },
                                     ]}
                                 />
@@ -105,9 +106,9 @@ export const Search = () => {
                         {searchResults.map((result) => {
                             const isPriceInRange =
                                 (!priceFilter ||
+                                    (priceFilter === "200" && result.service_price < 200) ||
                                     (priceFilter === "300" && result.service_price < 300) ||
-                                    (priceFilter === "500" && result.service_price < 500) ||
-                                    (priceFilter === "501" && result.service_price >= 500) ||
+                                    (priceFilter === "301" && result.service_price >= 301) ||
                                     (priceFilter === "0" && result.service_price > 0)
                                 );
                             return (

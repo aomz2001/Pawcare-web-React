@@ -30,11 +30,13 @@ export interface SearchInfoGroup {
     service_price: number;
     booking_start: string | null;
     booking_end: string | null;
+    provider_profile: string;
 }
 
 export const SearchInfo = ({ detail, providerId }: SearchInfoGroupProps & { providerId: number }) => {
 
     const [reviewData, setReviewData] = useState<ReviewData[] | null>(null);
+    const [imageProfile, setImageProfile] = useState<string | null>(null);
 
     useEffect(() => {
         httpClient.get(`/public/api/get-avg-ratings?provider_id=${providerId}`)
@@ -47,13 +49,35 @@ export const SearchInfo = ({ detail, providerId }: SearchInfoGroupProps & { prov
     }, [providerId]);
     console.log('SearchInfoGroup', detail)
     console.log('reviewData', reviewData)
-
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const providerFilename = detail.provider_profile;
+                const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${providerFilename}`;
+                console.log('apiUrl', apiUrl)
+                console.log('providerFilename', providerFilename)
+                try {
+                    setImageProfile(apiUrl)
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            } catch (error) {
+                console.error("Error fetching payment data:", error);
+            }
+        };
+        fetchData();
+    }, []);
 
     return (
         <>
             <div className="flex gap-x-6 max-[1020px]:flex-col max-[1020px]:gap-y-4 max-[1020px]:items-center">
-                <Space >
-                    <Avatar size={150} style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
+                <Space>
+                    {imageProfile ? (
+                        <img src={imageProfile} className="rounded-full object-cover" style={{ width: 150, height: 150, backgroundColor: '#D5D3D4' }} />
+                    ) : (
+                        <Avatar size={150} style={{ backgroundColor: '#D5D3D4' }} icon={<UserOutlined />} />
+                    )}
                 </Space>
                 <div className="gap-2 flex flex-col justify-center">
                     <h3 className="text-[#F0C163]">ชื่อผู้ให้บริการ : {detail.provider_firstname} {detail.provider_lastname}</h3>
@@ -70,9 +94,9 @@ export const SearchInfo = ({ detail, providerId }: SearchInfoGroupProps & { prov
                         {reviewData ? (
                             reviewData.map((item) => (
                                 <div key={item.provider_id} className="flex items-center gap-x-3">
-                                    <div className="">คะแนนรีวิว : {item.avg_rating} <Rate allowHalf disabled defaultValue={item.avg_rating} className="rate-review" /></div>
+                                    <div className="">คะแนนรีวิว : {item.avg_rating.toFixed(1)} <Rate allowHalf disabled defaultValue={item.avg_rating} className="rate-review" /></div>
                                     {item.avg_rating >= 4 ?
-                                            <Tag color="gold" className="tag-recommend">แนะนำ</Tag>
+                                        <Tag color="gold" className="tag-recommend">แนะนำ</Tag>
                                         : null
                                     }
                                 </div>

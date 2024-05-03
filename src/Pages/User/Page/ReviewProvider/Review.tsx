@@ -84,8 +84,8 @@ export const Review = () => {
         <div className="container p-24 ">
           <h3 className="text-3xl mb-10">ให้คะแนน / รีวิว</h3>
           <div className="h-56 flex justify-center items-center ">
-            <div className="flex flex-col ">
-              <img src="" alt="" className="bg-slate-500 h-40 w-40 rounded-full mb-10" />
+            <div className="flex flex-col justify-center items-center">
+              <img src="" alt="" className="bg-slate-500 h-40 w-40 rounded-full mb-10 " />
               <h3 className="text-lg">ผู้ให้บริการ : {reportProvider && reportProvider[0]?.provider_firstname} {reportProvider && reportProvider[0]?.provider_lastname}</h3>
             </div>
           </div>

@@ -23,6 +23,7 @@ type ProviderProfileData = {
     providerId: number;
     provider_firstname: string;
     provider_lastname: string;
+    provider_profile: string;
     service_id: string;
     service_name: string;
     district_name: string;
@@ -43,6 +44,7 @@ export const ProviderProfile = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [firstTime, setFirstTime] = useState<string | null>(null);
     const [secondTime, setSecondTime] = useState<string | null>(null);
+    const [imageProfile, setImageProfile] = useState<string | null>(null);
     const petId = searchParams.get("petId");
     const districtId = searchParams.get("districtId");
     const serviceId = searchParams.get("serviceId");
@@ -197,6 +199,28 @@ export const ProviderProfile = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const providerFilename = providerProfileData && providerProfileData[0] && providerProfileData[0].provider_profile;
+                const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${providerFilename}`;
+                console.log('apiUrl', apiUrl)
+                console.log('providerFilename', providerFilename)
+                try {
+                    setImageProfile(apiUrl)
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            } catch (error) {
+                console.error("Error fetching payment data:", error);
+            }
+        };
+        fetchData();
+    }, [providerProfileData]);
+    console.log('imageProfile', imageProfile)
+    console.log('providerProfileData', providerProfileData && providerProfileData[0] && providerProfileData[0].provider_profile);
+
+
     const bookingTime = [
         { value: '00:00', label: '00:00 น.' },
         { value: '01:00', label: '01:00 น.' },
@@ -253,7 +277,15 @@ export const ProviderProfile = () => {
                                 <div className="">
                                     <div className="bg-white h-[360px] w-72 border-stone-200 border-[1px] rounded-3xl ">
                                         <div className="bg-violet-50 h-36 w-36 rounded-full mt-6 ml-[72px] mr-[72px] border-[1px] border-stone-200">
-                                            <div className="flex justify-center items-center h-full"><UserOutlined style={{ fontSize: '60px', color: '#000' }} /></div>
+                                            <div className="flex justify-center items-center h-full">
+                                                {imageProfile && (
+                                                    <img
+                                                        src={imageProfile}
+                                                        className="rounded-full object-cover"
+                                                        style={{ width: 150, height: 150, backgroundColor: '#D5D3D4' }}
+                                                    />
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="h-28 border-stone-500 flex flex-col justify-center items-center text-lg gap-2">
                                             <span className="text-lg">

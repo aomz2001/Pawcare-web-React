@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
-import { Modal } from "antd";
+import { Avatar, Modal } from "antd";
 import httpClient from "../../../utils/httpClient";
 import { WorkDetails } from "./WorkDetails";
+import { UserOutlined } from "@ant-design/icons";
 
 dayjs.locale("th");
 
@@ -14,6 +15,7 @@ interface ReqServiceDataItem {
     users_lastname: string;
     users_address: string;
     users_phone: string;
+    users_profile: string;
     district_id: number;
     district_name: string;
     pet_id: number;
@@ -35,7 +37,8 @@ export function WorkforPet() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isJobSucess, seIsJobSucess] = useState<boolean>(false);
     const [statusText, setStatusText] = useState<string>("");
-    
+    const [imageProfile, setImageProfile] = useState<(string | null)[]>([]);
+
     const JobSucessOpen = () => seIsJobSucess(true);
     const JobSucessCloes = () => seIsJobSucess(false);
     const handleOpen = () => setIsModalOpen(true);
@@ -64,7 +67,7 @@ export function WorkforPet() {
                 provider_id: providerId,
                 service_price: item.service_price,
                 users_id: item.users_id,
-                provider_cancel: statusText
+                confirm_work: 'รับงาน'
             });
             console.log(response.data);
         } catch (error) {
@@ -117,33 +120,91 @@ export function WorkforPet() {
             console.error("Error updating job completion status:", error);
         }
     };
+    console.log('reqServiceData', reqServiceData)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (reqServiceData) {
+                    await Promise.all(reqServiceData.map(async (item) => {
+                        try {
+                            const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${item.users_profile}`;
+                            const response = await httpClient.get(apiUrl);
+                            setImageProfile(prevState => [...prevState, apiUrl]); // เปลี่ยนไปใช้ setState แบบ function
+                            return response.data; // Assuming this contains the profile data
+
+                        } catch (error) {
+                            console.error("Error fetching data for user:", error);
+                            return null;
+                        }
+                    }));
+
+                }
+            } catch (error) {
+                console.error("Error fetching profiles:", error);
+            }
+        };
+        fetchData();
+    }, [reqServiceData]);
+
+    const handleCancelJob = async (item: ReqServiceDataItem) => {
+        try {
+            const providerId = localStorage.getItem("providerId");
+            const response = await httpClient.put("provider/api/cancel-job-status", {
+                pet_id: item.pet_id,
+                district_id: item.district_id,
+                service_id: item.service_id,
+                provider_id: providerId,
+                service_price: item.service_price,
+                users_id: item.users_id,
+                provider_cancel: statusText
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error handling request:", error);
+        }
+    };
+
+
     return (
         <>
             <div className="flex flex-col  mb-4 rounded ">
                 <h3 className="text-3xl font-semibold pb-5">งานของคุณ</h3>
                 {reqServiceData ? (
-                    reqServiceData.map((item: ReqServiceDataItem) => (
+                    reqServiceData.map((item: ReqServiceDataItem, index: number) => (
                         <div key={item.users_id} className="flex flex-col md:flex-row items-center justify-between p-10 h-auto rounded-xl bg-gray-100 mb-5">
                             <div className="flex flex-col gap-2">
-                                <WorkDetails title="ผู้ใช้งาน :" value={`${item.users_firstname} ${item.users_lastname}`} />
-                                <WorkDetails title="ขอใช้บริการ :" value={item.service_name} />
-                                <WorkDetails title="ประเภทสัตว์เลี้ยง :" value={item.pet_name} />
-                                <WorkDetails title="ราคาที่ขอใช้บริการ :" value={item.service_price} />
-                                <WorkDetails title="พื้นที่ใช้บริการ :" value={item.district_name} />
-                                <WorkDetails title="ที่อยู่ที่คุณต้องไปรับงาน :" value={item.users_address} />
-                                <WorkDetails title="เบอร์โทรศัพท์ติดต่อ :" value={item.users_phone} />
-                                <WorkDetails
-                                    title="วันและเวลาที่เลือกใช้บริการ:"
-                                    values={[
-                                        (item.booking_first && item.booking_second) ?
-                                            (item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY ")) + (item.time_first) + " น" 
-                                            + (item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY ")}`) + (item.time_second)+ " น" 
-                                            : "ไม่มี"
-                                    ]}
-                                />
-                                {item.status_work !== "" && (
-                                    <WorkDetails title="สถานะงานจากแอดมิน :" value={item.status_work} />
-                                )}
+                                <div className="flex items-center gap-5">
+                                    <div className="">
+                                        {imageProfile[index] ? (
+                                            <img src={imageProfile[index] as string} className="rounded-full object-cover" style={{ width: 150, height: 150, backgroundColor: '#D5D3D4' }} />
+                                        ) : (
+                                            <Avatar size={150} style={{ backgroundColor: '#D5D3D4' }} icon={<UserOutlined />} />
+                                        )}
+
+                                    </div>
+                                    <div className="">
+                                        <WorkDetails title="ผู้ใช้งาน :" value={`${item.users_firstname} ${item.users_lastname}`} />
+                                        <WorkDetails title="ขอใช้บริการ :" value={item.service_name} />
+                                        <WorkDetails title="ประเภทสัตว์เลี้ยง :" value={item.pet_name} />
+                                        <WorkDetails title="ราคาที่ขอใช้บริการ :" value={item.service_price} />
+                                        <WorkDetails title="พื้นที่ใช้บริการ :" value={item.district_name} />
+                                        <WorkDetails title="ที่อยู่ที่คุณต้องไปรับงาน :" value={item.users_address} />
+                                        <WorkDetails title="เบอร์โทรศัพท์ติดต่อ :" value={item.users_phone} />
+                                        <WorkDetails
+                                            title="วันและเวลาที่เลือกใช้บริการ:"
+                                            values={[
+                                                (item.booking_first && item.booking_second) ?
+                                                    (item.booking_first && dayjs(item.booking_first).locale("th").format("DD MMMM YYYY ")) + (item.time_first) + " น"
+                                                    + (item.booking_second && ` ถึง ${dayjs(item.booking_second).locale("th").format("DD MMMM YYYY ")}`) + (item.time_second) + " น"
+                                                    : "ไม่มี"
+                                            ]}
+                                        />
+                                        {item.status_work !== "" && (
+                                            <WorkDetails title="สถานะงานจากแอดมิน :" value={item.status_work} />
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                             {item.status_work === "เริ่มงานได้" && (
                                 <div className=" flex flex-col justify-end gap-3">
@@ -252,9 +313,9 @@ export function WorkforPet() {
                                                                 buttonType="secondary"
                                                                 className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={() => {
-                                                                    handleAcceptJob(item)
-                                                                    alert(`คุณได้รับงานงานของคุณ ${item.users_firstname} ${item.users_lastname} โปรดรอแอดมินตรวจสอบและติดต่อกลับ`);
-                                                                    JobAcceptedCloes()
+                                                                    handleAcceptJob(item);
+                                                                    alert(`คุณได้รับงานของคุณ ${item.users_firstname} ${item.users_lastname} โปรดรอแอดมินตรวจสอบและติดต่อกลับ`);
+                                                                    JobAcceptedCloes();
                                                                 }}
                                                             />
                                                         </div>
@@ -294,7 +355,7 @@ export function WorkforPet() {
                                                                 className="text-white mt-5 w-1/4 p-2 rounded-full"
                                                                 onClick={() => {
                                                                     if (statusText) {
-                                                                        handleAcceptJob(item)
+                                                                        handleCancelJob(item)
                                                                         handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
                                                                     } else {
                                                                         alert(`กรุณาแจ้งสาเหตุที่ไม่รับงาน`);

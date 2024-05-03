@@ -19,6 +19,7 @@ interface ProviderData {
     provider_lastname: string;
     provider_phone: string;
     provider_address: string;
+    provider_profile: string;
     district_id: number;
     district_name: string;
     district?: string;
@@ -36,7 +37,6 @@ interface ProviderData {
 
 export const ProviderAccount = () => {
     const [providerData, setProviderData] = useState<ProviderData | null>(null);
-    const [previewImage, setPreviewImage] = useState('');
     const [openDelete, setOpenDelete] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [editEmail, setEditEmail] = useState("");
@@ -47,21 +47,9 @@ export const ProviderAccount = () => {
     const [districtData, setDistrictData] = useState<ProviderData | null>(null);
     const [petData, setPetData] = useState<ProviderData | null>(null);
     const [serviceData, setServiceData] = useState<ProviderData>();
-
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setPreviewImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setPreviewImage('');
-        }
-    };
+    const [file, setFile] = useState<File | undefined>(undefined);
+    const [providerProfile, setProviderProfile] = useState<string>("");
+    const [imageProfile, setImageProfile] = useState<string | null>(null);
 
     const fetchProviderData = async () => {
         try {
@@ -157,6 +145,52 @@ export const ProviderAccount = () => {
         }
     };
 
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files && e.target.files[0];
+        setFile(selectedFile || undefined);
+    }
+
+    const handleUpload = async () => {
+        const providerId = localStorage.getItem('providerId');
+        if (file && providerId !== null) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('providerId', providerId);
+    
+                const response = await httpClient.put("provider/api/upload-provider-profile", formData);
+                console.log(response.data);
+                alert("อัพโหลดรูปภาพโปร์ไฟล์เสร็จสิ้น");
+                window.location.reload()
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+        } else {
+            alert("โปรดเลือกรูปภาพของคุณ");
+        }
+    };    
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await httpClient.get("public/api/read-provider-profile");
+                setProviderProfile(response.data.data);
+                const providerFilename = providerData?.provider[0]?.provider_profile;
+                const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${providerFilename}`;
+                console.log('apiUrl', apiUrl)
+                try {
+                    setImageProfile(apiUrl)
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            } catch (error) {
+                console.error("Error fetching payment data:", error);
+            }
+        };
+        fetchData();
+    }, [providerData]);
+    console.log('providerProfile', providerProfile)
+
     const serviceItems = serviceData?.service?.map((serviceItem, index) => (
         <div key={serviceItem?.service_id || index}>
             {serviceItem && serviceItem.service_name && serviceItem.service_price && (
@@ -172,7 +206,7 @@ export const ProviderAccount = () => {
     const items = [
         { label: 'อีเมล', value: providerData?.provider[0]?.provider_email || '' },
         { label: 'ชื่อ-นามสกุล', value: `${providerData?.provider[0]?.provider_firstname} ${providerData?.provider[0]?.provider_lastname}` || '' },
-        { label: 'เบอร์โทรศัพท์ (หมายเลย PromptPay)', value: providerData?.provider[0]?.provider_phone || '' },
+        { label: 'เบอร์โทรศัพท์ (หมายเลข PromptPay)', value: providerData?.provider[0]?.provider_phone || '' },
         { label: 'ที่อยู่', value: providerData?.provider[0]?.provider_address || '' },
         { label: 'อำเภอที่ให้บริการ', value: districtData?.district || '' },
         { label: 'สัตว์เลี้ยงที่ให้บริการ', value: petData?.pet || '' },
@@ -180,13 +214,23 @@ export const ProviderAccount = () => {
     ];
     return (
         <>
-            {/* <div className="h-56 flex justify-start items-center ">
+            <div className="h-56 flex justify-start items-center ">
                 <div className="flex flex-col ">
-                    <img src={previewImage || '#'} alt="" className="bg-slate-200 h-40 w-40 rounded-full mb-5" />
-                    <input type="file" id="upload" name="upload" accept="image/*" onChange={handleImageChange} />
+                    {imageProfile && (
+                        <img src={imageProfile} alt="ยังไม่มีรูปโปร์ไฟล์" className="bg-slate-200 h-40 w-40 rounded-full mb-5 object-cover" />
+                    )}
+                    <div className="flex justify-center">
+                        <input type="file" className=" pb-4 " onChange={handleFile} />
+                    </div>
+                    <Buttons
+                        label="อัพโหลดรูปโปร์ไฟล์"
+                        color="#3498DB"
+                        className="text-white w-40 p-2  rounded-full hover:bg-[#5DADE2]"
+                        onClick={handleUpload}
+                    />
                 </div>
-            </div> */}
-            <Descriptions title={<h3 className='text-3xl font-kanit '>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
+            </div>
+            <Descriptions title={<h3 className='text-3xl font-kanit mt-10'>ข้อมูลบัญชีของคุณ</h3>} items={items.map(item => ({
                 key: item.label,
                 label: <h4 className='text-xl font-kanit'>{item.label}</h4>,
                 children: <p className='text-xl font-kanit '>{item.value}</p>,

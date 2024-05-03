@@ -37,6 +37,7 @@ export const Payment = () => {
 
     const handleOk = async () => {
         // เรียก API สร้าง QR Code
+        // alert('** หมายเหตุ เมื่อคุณชำระเงินแล้วทางระบบจะไม่สามารถคืนเงินให้คุณได้ **')
         try {
             const response = await httpClient.post("user/api/generate-qr", {
                 mobileNumber: "0982676425",

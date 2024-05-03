@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Buttons from "../../../../components/ItemsGroup/Button/Buttons"
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { Modal } from "antd";
+import { Avatar, Modal } from "antd";
 import httpClient from "../../../../utils/httpClient";
 import { NotifitionCard } from "./NotifitionCard";
+import { UserOutlined } from "@ant-design/icons";
 
 interface AcceptServiceDataItem {
     users_id: number;
@@ -21,7 +22,10 @@ interface AcceptServiceDataItem {
     provider_firstname: string;
     provider_lastname: string;
     payment_status: string;
+    payment: string;
     provider_cancel: string;
+    provider_profile: string;
+    cash_back: string;
 }
 
 export const Notifications = () => {
@@ -29,12 +33,17 @@ export const Notifications = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCancelJob, setCancelJob] = useState(false);
+    const [isCancelService, cancelService] = useState(false);
     const [statusText, setStatusText] = useState<string>("");
     const [cancelText, setCancelText] = useState<string>("");
+    const [cancelservice, setCancelService] = useState<string>("");
     const handleOpen = () => setIsModalOpen(true);
     const handleCloes = () => setIsModalOpen(false);
     const cancelOpen = () => setCancelJob(true);
     const cancelCloes = () => setCancelJob(false);
+    const cancelServiceOpen = () => cancelService(true);
+    const cancelServiceCloes = () => cancelService(false);
+    const [imageProfile, setImageProfile] = useState<{ [key: number]: string } | null>(null);
 
     useEffect(() => {
         const cookies = new Cookies();
@@ -139,6 +148,61 @@ export const Notifications = () => {
         }
 
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (acceptServiceData) {
+                    await Promise.all(acceptServiceData.map(async (item) => {
+                        try {
+                            const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${item.provider_profile}`;
+                            // เซ็ต URL ของรูปภาพให้กับ imageProfile โดยใช้ provider_id
+                            setImageProfile(prevState => ({
+                                ...prevState,
+                                [item.provider_id]: apiUrl
+                            }));
+                        } catch (error) {
+                            console.error("Error fetching data for provider:", error);
+                        }
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching provider profiles:", error);
+            }
+        };
+        fetchData();
+    }, [acceptServiceData]);
+
+    const userCancelJobCashback = async (index: number) => {
+        try {
+            if (!acceptServiceData || acceptServiceData.length === 0 || index < 0 || index >= acceptServiceData.length) {
+                console.error("Invalid reportProvider data or index");
+                return;
+            }
+
+            const item = acceptServiceData[index];
+
+            const response = await httpClient.put('user/api/users-cash-back', {
+                cash_back: cancelservice,
+                providerId: item.provider_id,
+                districtId: item.district_id,
+                petId: item.pet_id,
+                serviceId: item.service_id,
+                service_price: item.service_price,
+                usersId: item.users_id,
+            });
+
+            if (response.status === 200) {
+                console.log(response.data);
+                alert("ยกเลิกงานเสร็จสิ้น")
+                navigate("/")
+            }
+        } catch (error) {
+            console.error("Error updating job completion status:", error);
+        }
+
+    };
+
     console.log('acceptServiceData', acceptServiceData)
 
     return (
@@ -150,16 +214,31 @@ export const Notifications = () => {
                         <div className="flex flex-col justify-center items-center">
                             {acceptServiceData ? (
                                 acceptServiceData.map((item, index) => (
-                                    <div key={index} className="bg-stone-200 w-full max-w-3xl h-auto rounded-3xl mb-2 p-8 flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                                    <div key={index} className="bg-stone-200 w-full max-w-4xl h-auto rounded-3xl mb-2 p-8 flex flex-col sm:flex-row sm:justify-between sm:items-center">
                                         <div className="flex flex-col gap-2 pb-5 sm:pb-0">
-                                            <NotifitionCard title="ผู้ให้บริการ :" subtitle={`${item.provider_firstname} ${item.provider_lastname}`} />
-                                            <NotifitionCard title="บริการ :" subtitle={item.service_name} />
-                                            <NotifitionCard title="พื้นที่ให้บริการ :" subtitle={item.district_name} />
-                                            <NotifitionCard title="ประเภทสัตว์เลี้ยง :" subtitle={item.pet_name} />
-                                            <NotifitionCard title="ราคา :" subtitle={`${item.service_price} บาท`} />
-                                            {item.payment_status !== "" && (
-                                                <NotifitionCard title="สถานะการชำระเงิน :" subtitle={item.payment_status} />
-                                            )}
+                                            <div className="flex items-center gap-6">
+                                                <div className="">
+                                                    {imageProfile && item.provider_id && imageProfile[item.provider_id] ? (
+                                                        <img
+                                                            src={imageProfile[item.provider_id]}
+                                                            className="rounded-full object-cover"
+                                                            style={{ width: 150, height: 150 }}
+                                                        />
+                                                    ) : (
+                                                        <Avatar size={150} style={{ backgroundColor: '#D5D3D4' }} icon={<UserOutlined />} />
+                                                    )}
+                                                </div>
+                                                <div className="">
+                                                    <NotifitionCard title="ผู้ให้บริการ :" subtitle={`${item.provider_firstname} ${item.provider_lastname}`} />
+                                                    <NotifitionCard title="บริการ :" subtitle={item.service_name} />
+                                                    <NotifitionCard title="พื้นที่ให้บริการ :" subtitle={item.district_name} />
+                                                    <NotifitionCard title="ประเภทสัตว์เลี้ยง :" subtitle={item.pet_name} />
+                                                    <NotifitionCard title="ราคา :" subtitle={`${item.service_price} บาท`} />
+                                                    {item.payment_status !== "" && (
+                                                        <NotifitionCard title="สถานะการชำระเงิน :" subtitle={item.payment_status} />
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="flex flex-col">
                                             {item.provider_cancel !== "" && (
@@ -178,7 +257,7 @@ export const Notifications = () => {
                                             )}
                                             {item.provider_cancel === "" && (
                                                 <>
-                                                    {item.payment_status !== "ชำระเงินเรียบร้อยแล้ว" && (
+                                                    {item.payment_status !== "ชำระเงินเรียบร้อยแล้ว" && item.payment === "" &&(
                                                         <>
                                                             <Buttons
                                                                 label="ชำระเงิน"
@@ -188,7 +267,7 @@ export const Notifications = () => {
                                                             />
                                                             <Buttons
                                                                 label="ยกเลิก"
-                                                                className="text-white p-2 rounded-xl"
+                                                                className="text-white p-2 rounded-xl w-32"
                                                                 buttonType="danger"
                                                                 onClick={cancelOpen}
                                                             />
@@ -291,6 +370,67 @@ export const Notifications = () => {
                                                         </div>
                                                     </Modal>
                                                 </>
+                                            )}
+                                            {item.payment !== "" && item.cash_back === "" && item.payment_status === "" && (
+                                                <div className="flex flex-col items-center justify-center gap-y-4">
+                                                    <p className="font-semibold text-red-700">
+                                                        ** โปรดรอแอดมินกำลังตรวจสอบสถานะการชำระเงิน **
+                                                    </p>
+                                                    <Buttons
+                                                        label="ยกเลิก"
+                                                        className="text-white p-2 w-[120px] rounded-xl"
+                                                        buttonType="danger"
+                                                        onClick={cancelServiceOpen}
+                                                    />
+                                                    <Modal
+                                                        title="ระบุเหตุผลเพื่อยกเลิกรายการและขอเงินคืน"
+                                                        open={isCancelService}
+                                                        footer={false}
+                                                        className="font-kanit">
+                                                        <div className="flex flex-col justify-center items-center gap-2 p-5">
+                                                            <textarea
+                                                                rows={4}
+                                                                className="block p-2.5 w-full text-lg rounded-xl text-black bg-slate-100"
+                                                                placeholder="Write your thoughts here..."
+                                                                value={cancelservice}
+                                                                onChange={(e) => setCancelService(e.target.value)}
+                                                            >
+                                                            </textarea>
+                                                            <div className="w-full flex justify-center gap-3">
+                                                                <div className="mt-5 flex gap-x-3">
+                                                                    <Buttons
+                                                                        label="ยกเลิก"
+                                                                        buttonType="primary"
+                                                                        className="text-white p-2 w-24 rounded-full"
+                                                                        onClick={cancelServiceCloes}
+                                                                    />
+                                                                    <Buttons
+                                                                        label="ตกลง"
+                                                                        className="text-white p-2 w-24 rounded-full"
+                                                                        buttonType="secondary"
+                                                                        onClick={() => {
+                                                                            if (cancelservice) {
+                                                                                userCancelJobCashback(index);
+                                                                            } else {
+                                                                                alert("กรุณาแจ้งสาเหตุยกเลิกงานและขอเงินคืน");
+                                                                            }
+                                                                        }}
+                                                                        disabled={!cancelservice}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </Modal>
+                                                </div>
+                                            )}
+                                            {item.cash_back !== "" && (
+                                                <div className=" flex flex-col items-center">
+                                                    <p className="font-semibold text-red-700 w-[310px]">
+                                                        รอรับเงินคืนจากระบบภายใน 5 - 7 วัน<br/>
+                                                        ** หมายเหตุ ระบบจะโอนเงินกลับคืนตามหมายเลข PromptPay ของท่านโปรดตรวจสอบหมายเลข PromptPay ของท่านที่
+                                                        <Link to='/my-account' className="underline"> เมนูตั้งค่าบัญชี</Link> **
+                                                    </p>
+                                                </div>
                                             )}
                                         </div>
                                     </div>

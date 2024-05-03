@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from 'antd';
+import { Avatar, Modal } from 'antd';
 import InputForm from "../../../components/ItemsGroup/InputForm";
 import Buttons from "../../../components/ItemsGroup/Button/Buttons";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import httpClient from "../../../utils/httpClient";
+import { UserOutlined } from "@ant-design/icons";
 
 interface UserData {
     users: any;
@@ -17,7 +18,6 @@ interface UserData {
 }
 
 const MyAccount = () => {
-    const [previewImage, setPreviewImage] = useState('');
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [editEmail, setEditEmail] = useState("");
@@ -25,6 +25,8 @@ const MyAccount = () => {
     const [editLastname, setEditLastname] = useState("");
     const [editPhone, setEditPhone] = useState("");
     const [editAddress, setEditAddress] = useState("");
+    const [file, setFile] = useState<File | undefined>(undefined);
+    const [imageProfile, setImageProfile] = useState<string | null>(null);
 
     const [userData, setUserData] = useState<UserData>({
         users: [],
@@ -37,20 +39,6 @@ const MyAccount = () => {
     });
 
     const cookies = new Cookies();
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setPreviewImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setPreviewImage('');
-        }
-    };
 
     const fetchUserData = async () => {
         try {
@@ -134,6 +122,50 @@ const MyAccount = () => {
         }
     };
 
+    const handleUpload = async () => {
+        const usersId = cookies.get('userId');
+        if (file && usersId !== null) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('usersId', usersId);
+
+                const response = await httpClient.put("user/api/upload-users-profile", formData);
+                console.log(response.data);
+                alert("อัพโหลดรูปภาพโปร์ไฟล์เสร็จสิ้น");
+                window.location.reload()
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+        } else {
+            alert("โปรดเลือกรูปภาพของคุณ");
+        }
+    };
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files && e.target.files[0];
+        setFile(selectedFile || undefined);
+    }
+    console.log('userData', userData)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const usersFilename = userData?.users[0]?.users_profile;
+                const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${usersFilename}`;
+                console.log('apiUrl', apiUrl)
+                try {
+                    setImageProfile(apiUrl)
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            } catch (error) {
+                console.error("Error fetching payment data:", error);
+            }
+        };
+        fetchData();
+    }, [userData]);
+    console.log('users_profile', userData?.users[0]?.users_profile)
+
     return (
         <>
             <div className="bg-[#FFF8EA]">
@@ -141,17 +173,27 @@ const MyAccount = () => {
                     <div className="w-[700px] h-auto bg-white my-24 rounded-3xl">
                         <div className="p-12">
                             <h3 className="text-xl font-bold pl-16 text-[#2f2f2f]">โปรไฟล์ของคุณ</h3>
-                            {/* <div className="h-auto flex justify-center items-center mb-16">
-                                    <div className="flex flex-col justify-center items-center">
-                                        <img src={previewImage || '#'} alt="" className="bg-slate-200 h-40 w-40 rounded-full mb-5" />
-                                        <input type="file" id="upload" name="upload" accept="image/*" className="w-[100px]" onChange={handleImageChange} />
-                                    </div>
-                                </div> */}
+                            <div className="h-auto flex justify-center items-center mb-16">
+                                <div className="flex flex-col justify-center items-center">
+                                    {imageProfile ? (
+                                        <img src={imageProfile} className="rounded-full object-cover" style={{ width: 150, height: 150, backgroundColor: '#D5D3D4' }} />
+                                    ) : (
+                                        <Avatar size={150} style={{ backgroundColor: '#D5D3D4' }} icon={<UserOutlined />} />
+                                    )}
+                                    <input type="file" className="ml-36 py-4 " onChange={handleFile} />
+                                    <Buttons
+                                        label="อัพโหลดรูปโปร์ไฟล์"
+                                        color="#3498DB"
+                                        className="text-white w-40 p-2  rounded-full hover:bg-[#5DADE2]"
+                                        onClick={handleUpload}
+                                    />
+                                </div>
+                            </div>
                             <div className="flex flex-col gap-10 text-lg pl-16 my-16 text-[#2D2D2D]">
                                 <p>อีเมล : {userData.users[0]?.users_email}</p>
                                 <p>ชื่อ : {userData.users[0]?.users_firstname}</p>
                                 <p>นามสกุล : {userData.users[0]?.users_lastname}</p>
-                                <p>เบอร์โทรศัพท์ : {userData.users[0]?.users_phone}</p>
+                                <p>เบอร์โทรศัพท์ (หมายเลข PromptPay) : {userData.users[0]?.users_phone}</p>
                                 <p>ที่อยู่ : {userData.users[0]?.users_address}</p>
                             </div>
                             <div className="flex justify-center gap-3">
