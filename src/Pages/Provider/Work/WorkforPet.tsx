@@ -6,6 +6,7 @@ import { Avatar, Modal } from "antd";
 import httpClient from "../../../utils/httpClient";
 import { WorkDetails } from "./WorkDetails";
 import { UserOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 dayjs.locale("th");
 
@@ -29,6 +30,7 @@ interface ReqServiceDataItem {
     time_first: string;
     time_second: string;
     users_cancel: string;
+    payment_admin: string;
 }
 
 export function WorkforPet() {
@@ -38,6 +40,8 @@ export function WorkforPet() {
     const [isJobSucess, seIsJobSucess] = useState<boolean>(false);
     const [statusText, setStatusText] = useState<string>("");
     const [imageProfile, setImageProfile] = useState<(string | null)[]>([]);
+    const [imageData, setImageData] = useState<string | null>(null);
+    const [isPaymentOpen, setIsPaymentOpen] = useState<boolean>(false);
 
     const JobSucessOpen = () => seIsJobSucess(true);
     const JobSucessCloes = () => seIsJobSucess(false);
@@ -165,6 +169,19 @@ export function WorkforPet() {
         }
     };
 
+    const handleShowPayment = async (item: ReqServiceDataItem) => {
+        const paymentFilename = item.payment_admin;
+        const paymentUrl = `http://localhost:3000/public/api/get-payment-file-admin?filename=${paymentFilename}`;
+        console.log('paymentFilename', paymentFilename)
+        console.log('paymentUrl', paymentUrl)
+        console.log('clickedPaymentItem.payment', item.payment_admin)
+        try {
+            setImageData(paymentUrl)
+            setIsPaymentOpen(true);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     return (
         <>
@@ -209,17 +226,65 @@ export function WorkforPet() {
                             {item.status_work === "เริ่มงานได้" && (
                                 <div className=" flex flex-col justify-end gap-3">
                                     <div className="flex flex-col items-center text-lg">
-                                        <p>!!! เริ่มงานได้ !!!</p>
-                                        <p>กดเสร็จงานเมื่อส่งงานลูกค้าแล้วเพื่อรับเงินผ่านPromptPay</p>
+                                        {item.payment_admin === "" && (
+                                            <>
+                                                <p>!!! เริ่มงานได้ !!!</p>
+                                                <p>กดเสร็จงานเมื่อส่งงานลูกค้าแล้วเพื่อรับเงินผ่านPromptPay</p>
+                                            </>
+                                        )
+                                        }
+                                        {item.payment_admin !== "" && (
+                                            <>
+                                                <p>ตรวจรายได้ค่าให้บริการของคุณได้ที่นี่ !!!</p>
+                                            </>
+                                        )
+                                        }
                                     </div>
-                                    <div className="flex justify-center">
-                                        <Buttons
-                                            label="เสร็จงาน"
-                                            className="text-white p-2 w-36 rounded-xl"
-                                            buttonType="primary"
-                                            onClick={JobSucessOpen}
-                                        />
+                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                        {item.payment_admin === "" && (
+                                            <Buttons
+                                                label="เสร็จงาน"
+                                                className="text-white p-2 w-36 rounded-xl"
+                                                buttonType="primary"
+                                                onClick={JobSucessOpen}
+                                            />
+                                        )
+                                        }
+                                        {item.payment_admin !== "" && (
+                                            <>
+                                                <Buttons
+                                                    label="ตรวจสอบเงินเข้าแล้วที่นี่"
+                                                    className="text-white p-2 w-48 rounded-xl"
+                                                    buttonType="success"
+                                                    onClick={() => { handleShowPayment(item) }}
+                                                />
+                                            </>
+                                        )}
                                     </div>
+                                    <Modal
+                                        title="ใบเสร็จรับเงินจากระบบ"
+                                        open={isPaymentOpen}
+                                        footer={false}
+                                        className="font-kanit">
+                                        <div className="font-bold">ระบบหักจำนวนเงิน 10% ราคาสุทธิแล้ว {`${Number(item.service_price) - Number(item.service_price) * 0.10} บาท`}</div>
+                                        <div className="font-bold underline"><Link to='/condition'>ตามเงื่อนไขในข้อตกลงการใช้งานของแพลตฟอร์ม</Link></div>
+                                        <div className="font-bold flex justify-center my-6">------ ขอบคุณที่ร่วมงานกับเรา ------</div>
+                                        <div className="flex flex-col justify-center items-center gap-2 mt-4">
+                                            {imageData && (
+                                                <img
+                                                    src={imageData}
+                                                    alt="Payment Receipt"
+                                                    style={{ maxWidth: '100%' }}
+                                                />
+                                            )}
+                                            <Buttons
+                                                label="ปิด"
+                                                buttonType="danger"
+                                                className="text-white mt-5 w-1/4 p-2 rounded-full"
+                                                onClick={() => { setIsPaymentOpen(false) }}
+                                            />
+                                        </div>
+                                    </Modal>
                                     <Modal
                                         title="ให้บริการเสร็จสิ้นแล้วกดตกตลงเพื่อแจ้งแอดมิน"
                                         open={isJobSucess}
@@ -241,7 +306,7 @@ export function WorkforPet() {
                                                     onClick={() => {
                                                         updateJobCompletionStatus(item);
                                                         alert("ขอบคุณที่ร่วมงานกับเรา และ แอดมินจะโอนเงินไปให้คุณผ่านหมายเลย PromptPay");
-                                                        handleDeclineJob(item.users_id, item.district_id, item.service_id, item.pet_id);
+                                                        window.location.reload()
                                                     }}
                                                 />
                                             </div>

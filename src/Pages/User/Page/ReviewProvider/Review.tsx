@@ -18,6 +18,7 @@ interface ReviewProps {
   provider_id: number;
   provider_firstname: string;
   provider_lastname: string;
+  provider_profile: string;
 }
 
 export const Review = () => {
@@ -31,6 +32,7 @@ export const Review = () => {
   const districtId = searchParams.get("districtId");
   const serviceId = searchParams.get("serviceId");
   const providerId = searchParams.get("providerId");
+  const [imageProfile, setImageProfile] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export const Review = () => {
         return;
       }
       const item = reportProvider[0];
-  
+
       const response = await httpClient.post("user/api/review-job", {
         providerId: item.provider_id,
         usersId: item.users_id,
@@ -68,7 +70,7 @@ export const Review = () => {
         review_text: comment,
         ratings: value
       });
-  
+
       console.log(response);
       alert("ขอบคุณสำหรับการแสดงความคิดเห็น")
       navigate("/");
@@ -76,7 +78,27 @@ export const Review = () => {
       console.error("Error Review:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const providerFilename = reportProvider && reportProvider[0]?.provider_profile;
+        const apiUrl = `http://localhost:3000/public/api/get-provider-profile?filename=${providerFilename}`;
+        console.log('apiUrl', apiUrl)
+        console.log('providerFilename', providerFilename)
+        try {
+          setImageProfile(apiUrl)
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
+    };
+    fetchData();
+  }, [reportProvider]);
   console.log('reportProvider', reportProvider)
+  console.log('providerProfileData', reportProvider && reportProvider[0]?.provider_profile);
 
   return (
     <>
@@ -85,7 +107,13 @@ export const Review = () => {
           <h3 className="text-3xl mb-10">ให้คะแนน / รีวิว</h3>
           <div className="h-56 flex justify-center items-center ">
             <div className="flex flex-col justify-center items-center">
-              <img src="" alt="" className="bg-slate-500 h-40 w-40 rounded-full mb-10 " />
+              {imageProfile && (
+                <img
+                  src={imageProfile}
+                  className="h-40 w-40 rounded-full mb-10 object-cover"
+                  style={{ width: 150, height: 150, backgroundColor: '#D5D3D4' }}
+                />
+              )}
               <h3 className="text-lg">ผู้ให้บริการ : {reportProvider && reportProvider[0]?.provider_firstname} {reportProvider && reportProvider[0]?.provider_lastname}</h3>
             </div>
           </div>

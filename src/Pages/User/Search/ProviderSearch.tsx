@@ -2,6 +2,8 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { SearchInfo } from "./SearchInfo";
 import { Breadcrumb, Select } from "antd";
+import dogImage from '../../../assets/image/bg-dog.jpeg'
+import catImage from '../../../assets/image/bg-cat.jpeg'
 
 type SearchResults = {
   provider_id: number;
@@ -90,7 +92,7 @@ const ProviderSearch = () => {
                   (priceFilter === "0" && result.service_price > 0)
                 );
               console.log('result.service_price', result.service_price)
-              const backgroundImage = result.pet_name === 'สุนัข' ? 'url("https://cdn.pixabay.com/photo/2022/12/22/02/56/dog-7671355_640.jpg")' : result.pet_name === 'แมว' ? 'url("https://cdn.pixabay.com/photo/2022/03/24/14/42/animal-7089224_640.jpg")' : 'none';
+              const backgroundImage = result.pet_name === 'สุนัข' ? `url(${dogImage})` : result.pet_name === 'แมว' ? `url(${catImage})` : 'none';
               return (
                 isPriceInRange && (
                   <div
@@ -99,7 +101,7 @@ const ProviderSearch = () => {
                     style={{ 
                       backgroundImage,
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center' // เพิ่มคุณสมบัติ CSS background-size
+                      backgroundPosition: 'center top', // เพิ่มคุณสมบัติ CSS background-size
                     }}
                     onClick={() => handleSearch(result.provider_id, result.pet_id, result.district_id, result.service_id)}
                   >

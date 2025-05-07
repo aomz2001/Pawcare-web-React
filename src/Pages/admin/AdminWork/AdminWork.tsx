@@ -29,15 +29,69 @@ interface AdminWorkProps {
 export const AdminWork = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isComment, setIsComment] = useState<boolean>(false);
+    const [paymentOpen, setPaymentOpen] = useState<boolean>(false);
     const [statusWork, setStatusWork] = useState<boolean>(false);
     const [paymentData, setPaymentData] = useState<AdminWorkProps[]>([]);
     const [imageData, setImageData] = useState<string | null>(null);
     const [statusText, setStatusText] = useState<string>("");
+    const [qrCode, setQrCode] = useState<string | null>(null);
+    const [showQRCode, setShowQRCode] = useState(false);
     const [clickedPaymentItem, setClickedPaymentItem] = useState<AdminWorkProps | null>(null);
+    const [file, setFile] = useState<File | undefined>(undefined);
 
     const isCommentOpen = () => setIsComment(true);
     const isCommentCloes = () => setIsComment(false);
     const handleCancel = () => setIsModalOpen(false);
+
+    const handlePayment = async (item: AdminWorkProps) => {
+        // เรียก API สร้าง QR Code
+        // alert('** หมายเหตุ เมื่อคุณชำระเงินแล้วทางระบบจะไม่สามารถคืนเงินให้คุณได้ **')
+        try {
+            const providerNetprice = Number(item.service_price);
+            const Netprice = providerNetprice - (providerNetprice * 0.10);
+            const response = await httpClient.post("admin/api/generate-qr-admin", {
+                mobileNumber: item.provider_phone,
+                amount: Netprice,
+            });
+            const svg = response.data.svg;
+            // แสดง QR Code ใน Modal
+            setQrCode(svg);
+            setShowQRCode(true);
+            setPaymentOpen(true);
+        } catch (error) {
+            console.error("Error generating QR Code:", error);
+        }
+    };
+
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files && e.target.files[0];
+        setFile(selectedFile || undefined);
+    }
+
+    const handleUpload = async (item: AdminWorkProps) => {
+        if (file && item.provider_id !== null && item.district_id !== null && item.pet_id !== null && item.service_id !== null && item.users_id !== null) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('providerId', item.provider_id.toString());
+                formData.append('districtId', item.district_id.toString());
+                formData.append('petId', item.pet_id.toString());
+                formData.append('serviceId', item.service_id.toString());
+                formData.append('usersId', item.users_id.toString());
+
+                const response = await httpClient.put("admin/api/upload-payment-admin", formData);
+                console.log(response.data);
+                setPaymentOpen(false);
+                alert("อัพโหลดรูปภาพสำเร็จและรอแอดมินตรวจสอบหากชำระเงินสำเร็จพี่เลี้ยงจะติดต่อคุณกลับไป");
+                window.location.reload()
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+        } else {
+            console.error("Invalid or null values for parameters");
+        }
+    };
+
     const handleOpenWork = (clickedPaymentItem: AdminWorkProps) => {
         setClickedPaymentItem(clickedPaymentItem);
         setStatusWork(true);
@@ -117,7 +171,7 @@ export const AdminWork = () => {
         }
     };
 
-    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number , service_price: number) => {
+    const handleDeclineJob = (usersId: number, districtId: number, serviceId: number, petId: number, service_price: number) => {
         httpClient.delete("admin/api/clear-work-list", {
             data: { usersId, districtId, serviceId, petId, service_price },
         })
@@ -143,7 +197,7 @@ export const AdminWork = () => {
                                 <div className="max-[1120px]:pb-5">
                                     <AdminWorkDetails title='ผู้ใช้บริการ :' subtitle={`${paymentItem.users_firstname} ${paymentItem.users_lastname}`} />
                                     <AdminWorkDetails title='ใช้บริการ :' subtitle={paymentItem.service_name} />
-                                    <AdminWorkDetails title='ราคาที่ชำระ :' subtitle={paymentItem.service_price} />
+                                    <AdminWorkDetails title='ราคาที่ชำระ :' subtitle={`${paymentItem.service_price} บาท`} />
                                     {paymentItem.cash_back !== '' && (
                                         <div className=" bg-[#f36464] p-3 rounded-xl mb-3">
                                             <div className="bg-white p-3 rounded-xl">
@@ -158,11 +212,11 @@ export const AdminWork = () => {
                                                         onClick={() => {
                                                             handleDeclineJob(
                                                                 paymentItem.users_id,
-                                                                paymentItem.district_id, 
-                                                                paymentItem.service_id, 
+                                                                paymentItem.district_id,
+                                                                paymentItem.service_id,
                                                                 paymentItem.pet_id,
                                                                 paymentItem.service_price
-                                                            ); 
+                                                            );
                                                         }}
                                                     />
                                                 </div>
@@ -215,16 +269,62 @@ export const AdminWork = () => {
                                     <AdminWorkDetails title='ให้บริการ :' subtitle={paymentItem.service_name} />
                                     <AdminWorkDetails title='หมายเลข PromptPay :' subtitle={paymentItem.provider_phone} />
                                     <AdminWorkDetails title='สถานะการเสร็จงาน :' subtitle={paymentItem.job_complete} />
+                                    <AdminWorkDetails title="ราคาสุทธิ (หัก 10%) :" subtitle={`${Number(paymentItem.service_price) - Number(paymentItem.service_price) * 0.10} บาท`} />
                                     <AdminWorkDetails title='รายงานจากผู้ใช้งาน :' subtitle={paymentItem.report || 'ไม่มี'} />
                                 </div>
-                                <div className="flex flex-col gap-3 ">
+                                <div className="flex gap-3">
                                     <Buttons
                                         label="แจ้งให้ผู้บริการ"
                                         buttonType="success"
                                         className="text-white p-2 w-36 rounded-xl"
                                         onClick={() => handleOpenWork(paymentItem)}
                                     />
+                                    {
+                                        paymentItem.job_complete !== '' && (
+                                            <Buttons
+                                                label="โอนเงินให้พี่เลี้ยง"
+                                                color="#3498DB"
+                                                className="text-white p-2 w-36 rounded-xl hover:bg-[#5DADE2]"
+                                                onClick={() => handlePayment(paymentItem)}
+                                            />
+                                        )
+                                    }
                                 </div>
+                                <Modal
+                                    title="แสกนจ่ายโดยแอพธนาคาร"
+                                    open={paymentOpen}
+                                    footer={false}
+                                    className="font-kanit">
+                                    <div className="flex justify-center items-center gap-2">
+                                        {showQRCode && qrCode && (
+                                            <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrCode)}`} alt="QR Code" />
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col justify-center items-center py-4 text-red-500">
+                                        <div>
+                                            !!! เมื่อแสกนจ่ายแล้วโปรดแนบสลีปเพื่อให้พี่เลี้ยงรับทราบด้านล่างนี้ !!!
+                                        </div>
+                                    </div>
+                                    <div className="pl-36 ">
+                                        <input type="file" onChange={handleFile} />
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <Buttons
+                                            label="อัพโหลดรูปภาพ"
+                                            color="#3498DB"
+                                            className="text-white mt-5 w-1/3 p-2 rounded-full hover:bg-[#5DADE2]"
+                                            onClick={() => handleUpload(paymentItem)}
+                                        />
+                                    </div>
+                                    <div className="flex  justify-center items-center gap-2">
+                                        <Buttons
+                                            label="ยกเลิก"
+                                            buttonType="danger"
+                                            className="text-white mt-5 w-1/3 p-2 rounded-full"
+                                            onClick={() => { setPaymentOpen(false) }}
+                                        />
+                                    </div>
+                                </Modal>
                                 <Modal
                                     title="ใบเสร็จการชำระเงิน"
                                     open={isModalOpen}

@@ -18,7 +18,7 @@ export const ServiceCard = ({ detail }: ServiceCardGroupProps) => {
                 {detail.img}
             </>
         ) : (
-            <div className={`bg-[${detail.color}] p-10 shadow-md`}>
+            <div className={`bg-[${detail.color}] p-10 shadow-md w-auto h-auto`}>
                 <h2 className='text-3xl pb-6'>{detail.title}</h2>
                 <p className=''>{detail.subtitle}</p>
             </div>
